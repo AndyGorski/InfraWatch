@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InfraWatch • SAR temporal comparison + GIS · Demo v0.2</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{--bg:#080f1b;--surface:#101b2a;--surface2:#172539;--border:#26364b;--ink:#eaf2fb;--muted:#9eafc3;--teal:#5ce1c5;--orange:#ffb773;--red:#ff7d87;--blue:#8dcef9;--yellow:#fbd976}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.app{height:100dvh;min-height:670px;display:grid;grid-template-columns:355px minmax(0,1fr);grid-template-rows:69px minmax(0,1fr)}
+.top{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding:0 23px;background:#0b1423;border-bottom:1px solid var(--border);gap:14px}
+.logo{display:flex;align-items:center;gap:12px}.logo-mark{width:38px;height:38px;display:grid;place-items:center;border:1px solid #326e79;border-radius:11px;background:#153c46;color:var(--teal);font-size:24px}.logo-title{font-weight:800;font-size:17px;letter-spacing:-.5px}.logo-sub{color:#b4c3d6;letter-spacing:1.15px;font-size:10px;text-transform:uppercase}.version{border:1px solid #326657;color:#8eebd6;background:#12332f;border-radius:99px;padding:6px 12px;font-size:11px;white-space:nowrap}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 19px 32px;overflow:auto;scrollbar-width:thin}
+.kicker{font-size:10px;font-weight:850;letter-spacing:1.5px;color:var(--teal);text-transform:uppercase}.lead{font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-.8px;margin:6px 0 9px}.desc{color:var(--muted);font-size:12px;margin:0 0 19px}
+.section{padding:17px 0;border-top:1px solid var(--border)}.section h2{font-size:10px;text-transform:uppercase;letter-spacing:1.6px;color:#d9e6f4;margin:0 0 12px}.section-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.section-top h2{margin:0}
+.field{display:block;margin-bottom:11px}.field span{display:block;font-size:11px;color:#aebed0;margin-bottom:5px}.field select,.field input[type=month]{appearance:none;width:100%;background:#1a2a40;color:var(--ink);border:1px solid #344960;border-radius:9px;padding:10px 11px;min-height:39px;outline:none;color-scheme:dark}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.two input[type=month]{font-size:12px;padding:8px 7px}.btn{border:1px solid #387b72;border-radius:9px;background:#195649;color:#e6fff9;padding:10px 12px;font-weight:750;min-height:38px;transition:background .15s}.btn:hover{background:#247164}.btn.secondary{border-color:#375169;background:#1b3047;color:#dbeafb}.btn.secondary:hover{background:#253d55}.btn.ghost{border-color:#35465b;background:transparent;color:#c3d3e4}.btn-block{width:100%}.button-row{display:flex;gap:7px}.button-row .btn{flex:1}
+.toggle{display:flex;align-items:center;gap:10px;padding:8px 0;color:#dce9f5;cursor:pointer;font-size:12px}.toggle input{accent-color:#47d3b5;width:16px;height:16px;flex:0 0 auto}.toggle small{display:block;font-size:10px;color:#92a6bb}
+.range-title{display:flex;justify-content:space-between;font-size:11px;margin-top:14px;color:#d5e4f2}input[type=range]{width:100%;accent-color:var(--teal);margin-top:7px;cursor:pointer}
+.indicator{display:flex;align-items:center;gap:7px;color:#b8c8da;font-size:11px;margin-top:10px}.dot{width:7px;height:7px;background:#667990;border-radius:50%;flex:0 0 auto}.indicator.ok .dot{background:var(--teal)}.indicator.warning .dot{background:var(--orange)}.indicator.warning{color:#ffcaaa}.indicator.ok{color:#8ee9d5}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kpi{background:#17263a;border:1px solid #2a4256;border-radius:9px;padding:11px}.kpi span{font-size:10px;color:#95aac3;display:block}.kpi strong{font-size:16px;letter-spacing:-.35px;display:block;margin-top:2px}.small{font-size:10px;color:#9bb0c5}.note{border-left:3px solid var(--orange);padding:11px 12px;background:#302922;border-radius:0 7px 7px 0;color:#ead9c9;font-size:11px}.note strong{color:#fff5e8}.note2{border-left-color:var(--teal);background:#17312e;color:#bcddd6}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:#cadbea;margin:8px 0}.swatch{display:inline-block;width:24px;height:4px;border-radius:10px;vertical-align:3px;margin-right:5px}.swatch.a{background:#ffb46e}.swatch.b{background:#f7db79}.swatch.c{background:#7ed8ff}.swatch.d{background:#b7adc8}
+a{color:#83dce5;text-decoration:none}a:hover{text-decoration:underline}.sources{font-size:11px;color:#aabdd2;line-height:1.7}.sources a{overflow-wrap:anywhere}
+.stage{position:relative;min-width:0;overflow:hidden;background:#0d1e30}#map{height:100%;width:100%;background:#1c2b39}
+.map-overlay{position:absolute;z-index:600;pointer-events:none}.area-card{top:18px;left:20px;background:#091624e9;border:1px solid #658fa055;backdrop-filter:blur(10px);padding:12px 15px;border-radius:11px;box-shadow:0 10px 30px #0004;max-width:310px}.area-card .overline{font-size:9px;letter-spacing:1.2px;color:#91e9d5;text-transform:uppercase}.area-card .title{font-size:19px;font-weight:780;line-height:1.2;letter-spacing:-.6px}.area-card .subtitle{font-size:11px;color:#bacbdd;margin-top:5px}
+.tag{position:absolute;top:20px;padding:7px 10px;font-size:11px;color:#fff;font-weight:700;border-radius:6px;z-index:560;pointer-events:none;background:#19293be8;border:1px solid #75839555}.tag.before{left:calc(50% - 55px);transform:translateX(-100%)}.tag.after{right:19px}.tag b{font-size:11px;font-weight:850;display:block;color:var(--teal)}.tag.before b{color:var(--orange)}
+.scrub{position:absolute;top:0;bottom:0;width:2px;background:#f0fffe;z-index:530;pointer-events:none;box-shadow:0 0 12px #fff6;left:50%}.handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);height:38px;width:38px;background:#f5fbfc;color:#12354a;border:5px solid #142c3a;border-radius:40px;display:grid;place-items:center;box-shadow:0 5px 18px #0005;font-weight:900;font-size:14px}
+.scrub-control{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:750;width:min(480px,calc(100% - 32px));background:#0d1a2ce8;padding:10px 15px 8px;border-radius:10px;border:1px solid #7ba4b355;box-shadow:0 9px 23px #0003}.scrub-label{display:flex;justify-content:space-between;color:#e5f4fb;font-size:11px;font-weight:750;gap:8px}.scrub-label span:first-child{color:#ffd09a}.scrub-label span:last-child{color:#a9f0e1}.scrub-control input{margin:3px 0 0}
+.coord{position:absolute;z-index:520;bottom:83px;left:18px;color:#bbcadb;font-size:10px;background:#0d1c2cd7;border:1px solid #52677666;padding:7px 9px;border-radius:5px;pointer-events:none}
+.alert-pin{border-radius:50%;width:20px;height:20px;background:#ffb875;border:3px solid #ffe0b0;box-shadow:0 0 0 8px #fdae5d40}.leaflet-popup-content-wrapper{background:#142337;color:#edf8ff;border-radius:10px;border:1px solid #507080}.leaflet-popup-tip{background:#142337}.leaflet-popup-content{font:12px/1.6 system-ui,sans-serif}.leaflet-popup-content strong{color:#7dedd2}.leaflet-control-attribution{font-size:9px!important}.leaflet-bar a{background:#203549!important;color:#fff!important;border:1px solid #355269!important}
+.fatal{position:absolute;z-index:1000;inset:20% 10%;border-radius:12px;background:#222c39;border:1px solid #b9887d;padding:30px;display:none;align-items:center;justify-content:center;text-align:center}
+@media(max-width:880px){.app{grid-template-columns:300px minmax(0,1fr)}.sidebar{padding:15px}.lead{font-size:21px}.tag.before{display:none}}
+@media(max-width:690px){.app{height:auto;display:block}.top{height:60px;padding:0 15px}.version{display:none}.sidebar{height:auto;max-height:none}.stage{height:73vh;min-height:470px}.area-card{top:12px;left:11px;padding:8px 11px}.area-card .title{font-size:16px}.tag.after{top:12px;right:10px;max-width:120px;font-size:10px}.coord{left:10px;bottom:81px}.scrub-control{bottom:10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="logo"><div class="logo-mark">⌁</div><div><div class="logo-title">InfraWatch</div><div class="logo-sub">Radar data fusion / power infrastructure</div></div></div><div class="version">INTERAKTYWNY PROTOTYP · v0.2</div></header>
+<aside class="sidebar">
+<div class="kicker">Wizualizacja produktu / MVP</div><h1 class="lead">Co zmieniło się<br>w otoczeniu linii?</h1>
+<p class="desc">Dwa okresy Sentinel‑1 SAR, geometria sieci energetycznej i korytarz obserwacji na jednej mapie. Suwak odkrywa warstwę „po”.</p>
+<section class="section"><h2>01 / Obszar i źródło SAR</h2>
+<label class="field"><span>Obszar</span><select id="region"><option value="kozienice">Kozienice / Mazowieckie</option><option value="belchatow">Bełchatów / Łódzkie</option><option value="wroclaw">Wrocław / Dolnośląskie</option></select></label>
+<label class="field"><span>Usługa zobrazowań</span><select id="sarSource"><option value="sagris">SAGRIS ODC · Sentinel‑1 γ⁰ RTC</option><option value="terrascope">Terrascope · Sentinel‑1 σ⁰ (VV/VH)</option></select></label>
+<label class="field"><span>Polaryzacja / kompozycja</span><select id="polarization"><option value="VV">VV (SAGRIS)</option><option value="VH">VH (SAGRIS)</option></select></label>
+<p class="small">Mapa SAR z WMS. Nie jest to obraz optyczny ani podkład lotniczy.</p>
+</section>
+<section class="section"><h2>02 / Porównanie w czasie</h2>
+<div class="two"><label class="field"><span>PRZED · miesiąc</span><input type="month" id="beforeMonth" value="2026-07" max="2026-10" /></label><label class="field"><span>PO · miesiąc</span><input type="month" id="afterMonth" value="2026-08" max="2026-10" /></label></div>
+<button class="btn btn-block" id="applyDates">Zastosuj okresy obserwacji</button>
+<div class="indicator" id="beforeStatus"><i class="dot"></i><span>PRZED: WMS jeszcze nie odpowiedział</span></div><div class="indicator" id="afterStatus"><i class="dot"></i><span>PO: WMS jeszcze nie odpowiedział</span></div>
+<p class="small">Wskazujesz miesięczne <b>okna wyszukiwania</b> (parametr WMS TIME), nie zweryfikowane daty konkretnych scen. WMS może zwrócić pusty obraz lub wybrać scenę według własnych reguł.</p>
+</section>
+<section class="section"><h2>03 / Warstwy i korytarz GIS</h2>
+<label class="toggle"><input id="linesToggle" type="checkbox" checked /><span>Linie energetyczne <small>OSM / ArcGIS FeatureServer</small></span></label>
+<label class="toggle"><input id="corridorToggle" type="checkbox" checked /><span>Korytarz wybranej linii <small>Bufor GIS wokół geometrii linii</small></span></label>
+<label class="toggle"><input id="exampleToggle" type="checkbox" checked /><span>Przykładowe punkty weryfikacji <small>Wyłącznie syntetyczne — nie detekcje SAR</small></span></label>
+<label class="toggle"><input id="baseToggle" type="checkbox" checked /><span>Podkład OSM / CARTO</span></label>
+<div class="range-title"><span>Półszerokość korytarza</span><b id="bufferVal">150 m</b></div><input type="range" min="50" max="500" step="25" value="150" id="bufferRange" />
+<div class="range-title"><span>Krycie radarem</span><b id="opacityVal">88%</b></div><input type="range" min="20" max="100" step="2" value="88" id="opacityRange" />
+<div class="legend"><span><i class="swatch a"></i>≥400 kV</span><span><i class="swatch b"></i>220 kV</span><span><i class="swatch c"></i>110 kV</span><span><i class="swatch d"></i>inne</span></div>
+<div class="button-row"><button id="select400" class="btn secondary">Wybierz linię 400 kV</button><button id="zoomCorridor" class="btn ghost">Pokaż korytarz</button></div>
+<div class="indicator" id="gisStatus"><i class="dot"></i><span>Ładowanie linii GIS…</span></div>
+</section>
+<section class="section"><h2>04 / Wybrany obiekt</h2>
+<div class="kpis"><div class="kpi"><span>Napięcie (OSM)</span><strong id="kpiKV">—</strong></div><div class="kpi"><span>Długość fragmentu</span><strong id="kpiLength">—</strong></div><div class="kpi"><span>Powierzchnia bufora</span><strong id="kpiArea">—</strong></div><div class="kpi"><span>Punkty przykładowe</span><strong id="kpiAlerts">0</strong></div></div>
+<p class="small" id="selectionNote">Kliknij linię na mapie lub wybierz automatycznie linię ≥400 kV. Długość jest liczona dla fragmentu geometrii, nie całej relacji przesyłowej.</p>
+<button class="btn btn-block secondary" id="exportGeo" disabled>Eksportuj linię i korytarz (GeoJSON)</button>
+</section>
+<section class="section"><h2>05 / Interpretacja dla klienta</h2>
+<div class="note"><strong>UWAGA – brak automatycznej detekcji.</strong> Dwa zestawy kafli WMS można porównać wizualnie, ale aplikacja nie oblicza rzeczywistych różnic pikselowych ani nie weryfikuje, czy sceny mają zgodne orbity, geometrię rejestracji, polaryzację i kalibrację. Znaczniki są demonstracyjne.</div>
+<p class="small">Następny etap analityczny: wyszukanie dwóch konkretnych akwizycji z tej samej orbity, współrejestracja, filtracja speckle, Δσ⁰/Δγ⁰, maska korytarza i walidacja terenem lub optyką.</p>
+<div class="note note2"><strong>Scenariusz demo:</strong> operator wskazuje linię 400 kV, definiuje bufor 150 m, porównuje dwa okresy i rejestruje obszary do przeglądu. To demonstracja workflow, nie gotowy system alarmowania.</div>
+</section>
+<section class="section"><h2>Źródła otwartych usług</h2><div class="sources">
+<a href="https://odcube.landimage.info/mapper/" target="_blank" rel="noopener">SAGRIS ODC Mapper / wyszukiwanie dat scen</a><br>
+<a href="https://odcube.landimage.info/portal/" target="_blank" rel="noopener">SAGRIS Sentinel‑1 data cube</a><br>
+<a href="https://docs.terrascope.be/Developers/WebServices/OGC/WMTSv2.html" target="_blank" rel="noopener">Terrascope WMS</a><br>
+<a href="https://services-eu1.arcgis.com/zci5bUiJ8olAal7N/ArcGIS/rest/services/OpenStreetMap_Power_Lines_for_Europe/FeatureServer/0" target="_blank" rel="noopener">GIS: OSM Power Lines for Europe</a><br>
+<a href="https://browser.dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Browser / ręczna weryfikacja</a><br>
+© OpenStreetMap contributors / dane Copernicus Sentinel‑1. Internet wymagany; serwery zewnętrzne mogą nie odpowiedzieć lub odmówić dostępu.
+</div></section>
+</aside>
+<main class="stage"><div id="map"></div>
+<div class="map-overlay area-card"><div class="overline">InfraWatch / Satellite monitoring</div><div class="title" id="mapTitle">Elektrownia Kozienice</div><div class="subtitle">Porównanie SAR × wektory GIS × korytarz linii</div></div>
+<div class="tag before">PRZED <b id="beforeTag">lipiec 2026</b></div><div class="tag after">PO <b id="afterTag">sierpień 2026</b></div>
+<div class="scrub" id="divider"><div class="handle">◀ ▶</div></div>
+<div class="scrub-control"><div class="scrub-label"><span>← PRZED</span><span>Przesuń suwak porównania</span><span>PO →</span></div><input id="compareRange" type="range" min="0" max="100" value="50" aria-label="Pozycja podziału obrazów SAR" /></div>
+<div class="coord" id="coords">WGS84 • położenie kursora</div>
+<div class="fatal" id="fatal">Nie udało się wczytać biblioteki mapy. Sprawdź połączenie internetowe i odśwież stronę.</div>
+</main>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+if(!window.L){$('fatal').style.display='flex';return;}
+const PLACE={kozienice:{name:'Elektrownia Kozienice',coords:[51.663,21.49],zoom:12},belchatow:{name:'Elektrownia Bełchatów',coords:[51.269,19.33],zoom:12},wroclaw:{name:'Wrocław · sieć energetyczna',coords:[51.12,17.015],zoom:12}};
+const WMS={sagris:{url:'https://odcube.landimage.info/ows/',layer:p=>'sagris_s1_rtc_'+p.toLowerCase()+'_img_europe'},terrascope:{url:'https://titiler.terrascope.be/wms',layer:p=>'terrascope-s1-grd-sigma0-v1_vv-vh'}};
+const GIS='https://services-eu1.arcgis.com/zci5bUiJ8olAal7N/ArcGIS/rest/services/OpenStreetMap_Power_Lines_for_Europe/FeatureServer/0/query';
+const map=L.map('map',{preferCanvas:true,zoomControl:false,worldCopyJump:false}).setView(PLACE.kozienice.coords,PLACE.kozienice.zoom);
+L.control.zoom({position:'bottomright'}).addTo(map);L.control.scale({metric:true,imperial:false,position:'bottomleft'}).addTo(map);
+for(const [name,z] of [['sarBefore',310],['sarAfter',315],['buffer',420],['lines',430],['selection',445],['alerts',470]]){map.createPane(name);map.getPane(name).style.zIndex=String(z);}
+map.getPane('sarAfter').style.pointerEvents='none';
+const base=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap contributors, © CARTO'}).addTo(map);
+let beforeLayer=null,afterLayer=null,sarCount={before:0,after:0},sarError={before:0,after:0};
+const bufferLayer=L.geoJSON(null,{pane:'buffer',style:{color:'#62ddc6',weight:2,fillColor:'#2dbba8',fillOpacity:.16,dashArray:'7 5'},interactive:false}).addTo(map);
+const selectionLayer=L.geoJSON(null,{pane:'selection',style:{color:'#ffffff',weight:8,opacity:.87},interactive:false}).addTo(map);
+const examplesLayer=L.layerGroup().addTo(map);
+const linesLayer=L.geoJSON(null,{pane:'lines',style:feature=>({color:colorKV(kv(feature.properties?.voltage)),weight:kv(feature.properties?.voltage)>=400?4.5:3.1,opacity:.95}),onEachFeature:(feature,layer)=>{
+ let p=feature.properties||{};let voltage=kv(p.voltage);layer.bindTooltip((voltage?voltage+' kV':'Linia elektroenergetyczna')+' • kliknij, aby wybrać',{sticky:true});layer.on('click',()=>selectLine(feature));
+ layer.on('mouseover',()=>layer.setStyle({weight:7}));layer.on('mouseout',()=>linesLayer.resetStyle(layer));
+}}).addTo(map);
+let selected=null,selectedCorridor=null,fetchController=null,fetchSeq=0,lineFeatures=[],reloadTimer=null,hasAutoPicked=false;
+function kv(value){let raw=String(value||'').match(/\d+(?:\.\d+)?/g)||[];return Math.max(0,...raw.map(x=>+x).filter(Number.isFinite).map(x=>x>=1000?x/1000:x));}
+function colorKV(v){return v>=400?'#ffb46e':v>=220?'#f7db79':v>=110?'#7ed8ff':'#b7adc8';}
+function status(which,text,state=''){const e=$(which);e.className='indicator '+state;e.querySelector('span').textContent=text;}
+function monthRange(value){const [yr,mon]=String(value).split('-').map(Number);if(!yr||!mon||mon>12)throw Error('Nieprawidłowy miesiąc');const last=new Date(Date.UTC(yr,mon,0)).getUTCDate();return `${value}-01/${value}-${String(last).padStart(2,'0')}`;}
+function fmtMonth(value){let [y,m]=value.split('-').map(Number);return new Intl.DateTimeFormat('pl-PL',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(y,m-1,1)));}
+function paneSplit(){let percent=Number($('compareRange').value);map.getPane('sarAfter').style.clipPath=`inset(0 0 0 ${percent}%)`;$('divider').style.left=percent+'%';}
+function setupSAR(){
+ const src=WMS[$('sarSource').value],pol=$('polarization').value;const sourceLayer=src.layer(pol);
+ const first=$('beforeMonth').value,second=$('afterMonth').value;if(first>second){alert('Okres PRZED musi przypadać nie później niż okres PO.');return;}
+ try{monthRange(first);monthRange(second)}catch(e){alert(e.message);return;}
+ if(beforeLayer)map.removeLayer(beforeLayer);if(afterLayer)map.removeLayer(afterLayer);
+ sarCount={before:0,after:0};sarError={before:0,after:0};
+ $('beforeTag').textContent=fmtMonth(first);$('afterTag').textContent=fmtMonth(second);
+ for(const key of ['before','after']){
+  const period=monthRange(key==='before'?first:second);
+  status(key+'Status',(key==='before'?'PRZED':'PO')+': ładowanie WMS ('+period+')');
+  const newLayer=L.tileLayer.wms(src.url,{layers:sourceLayer,styles:'',format:'image/png',transparent:true,version:'1.1.1',time:period,opacity:Number($('opacityRange').value)/100,pane:key==='before'?'sarBefore':'sarAfter',tileSize:256,attribution:'Copernicus Sentinel‑1 / '+$('sarSource').selectedOptions[0].text});
+  newLayer.on('tileload',()=>{sarCount[key]++;if(sarCount[key]===1)status(key+'Status',(key==='before'?'PRZED':'PO')+': kafle WMS odebrane; brak weryfikacji sceny','ok');});
+  newLayer.on('tileerror',()=>{sarError[key]++;if(sarCount[key]===0&&sarError[key]>=2)status(key+'Status',(key==='before'?'PRZED':'PO')+': błąd WMS; spróbuj drugiego źródła albo innego okresu','warning');});
+  newLayer.addTo(map);if(key==='before')beforeLayer=newLayer;else afterLayer=newLayer;
+ }
+ paneSplit();
+}
+function featureKey(f){let p=f?.properties||{};return String(p.osm_id||p.OBJECTID||'')+'|'+String(p.voltage||'');}
+function selectLine(feature){if(!feature?.geometry||!window.turf){status('gisStatus',window.turf?'Nieprawidłowa geometria':'Nie załadowano Turf.js — brak narzędzi bufora','warning');return;}
+ selected=JSON.parse(JSON.stringify(feature));refreshSelection();}
+function refreshSelection(){if(!selected||!window.turf)return;
+ selectionLayer.clearLayers();selectionLayer.addData(selected);
+ let width=Number($('bufferRange').value);$('bufferVal').textContent=width+' m';
+ try{
+  const buff=window.turf.buffer(selected,width,{units:'meters',steps:12});
+  selectedCorridor=buff;bufferLayer.clearLayers();bufferLayer.addData(buff);
+  let dist=window.turf.length(selected,{units:'kilometers'});
+  let area=window.turf.area(buff)/1e6;
+  $('kpiKV').textContent=kv(selected.properties?.voltage)?kv(selected.properties.voltage)+' kV':'brak';
+  $('kpiLength').textContent=dist.toFixed(2)+' km';$('kpiArea').textContent=area.toFixed(2)+' km²';
+  $('selectionNote').textContent='Źródło: OSM / ArcGIS · '+(selected.properties?.name||'nienazwany fragment')+' · '+(selected.properties?.operator||'operator niewskazany')+'. Korytarz jest buforem wyłącznie wybranej geometrii.';
+  $('exportGeo').disabled=false;updateExamples();
+ }catch(e){status('gisStatus','Błąd obliczania korytarza: '+e.message,'warning');}
+}
+function updateExamples(){examplesLayer.clearLayers();$('kpiAlerts').textContent='0';if(!selected||!window.turf||!$('exampleToggle').checked)return;
+ try{let len=window.turf.length(selected,{units:'kilometers'});let qty=0;
+ for(const [frac,title] of [[.31,'Przykład A: obszar wymagający przeglądu'],[.72,'Przykład B: zmiana otoczenia linii']]){
+  let p=window.turf.along(selected,len*frac,{units:'kilometers'});
+  const latlng=[p.geometry.coordinates[1],p.geometry.coordinates[0]];
+  const m=L.marker(latlng,{pane:'alerts',icon:L.divIcon({className:'',html:'<div class="alert-pin"></div>',iconSize:[20,20],iconAnchor:[10,10]})});
+  m.bindPopup('<strong>'+title+'</strong><br><b>SYMULACJA / fikcyjny znacznik</b><br>Nie jest to rzeczywiste zdarzenie, wykrycie z SAR ani potwierdzona usterka. Służy pokazaniu interfejsu weryfikacji terenowej.');
+  m.addTo(examplesLayer);qty++;
+ }
+ $('kpiAlerts').textContent=String(qty);
+ }catch(e){$('kpiAlerts').textContent='0';}
+}
+function pickHighVoltage(auto=false){if(!lineFeatures.length)return false;
+ const candidates=lineFeatures.filter(f=>kv(f.properties?.voltage)>=400);
+ if(!candidates.length){if(!auto)status('gisStatus','W aktualnym widoku nie znaleziono linii ≥400 kV. Oddal/przesuń mapę.','warning');return false;}
+ if(!window.turf){status('gisStatus','Turf.js niedostępny — nie można utworzyć korytarza.','warning');return false;}
+ const center=map.getCenter();
+ candidates.sort((a,b)=>{
+  const centerPt=window.turf.point([center.lng,center.lat]);
+  let da=Infinity,db=Infinity;
+  try{da=window.turf.pointToLineDistance(centerPt,a,{units:'kilometers'});}catch(e){}
+  try{db=window.turf.pointToLineDistance(centerPt,b,{units:'kilometers'});}catch(e){}
+  return da-db;
+ });
+ selectLine(candidates[0]);return true;
+}
+async function loadLines(){const b=map.getBounds();if(map.getZoom()<9){status('gisStatus','Zbliż mapę do poziomu 9+','warning');return;}
+ if(fetchController)fetchController.abort();fetchController=new AbortController();const seq=++fetchSeq;
+ status('gisStatus','Pobieranie rzeczywistych geometrii OSM…');
+ const q=new URLSearchParams({where:'1=1',geometry:JSON.stringify({xmin:b.getWest(),ymin:b.getSouth(),xmax:b.getEast(),ymax:b.getNorth(),spatialReference:{wkid:4326}}),geometryType:'esriGeometryEnvelope',spatialRel:'esriSpatialRelIntersects',inSR:'4326',outSR:'4326',outFields:'OBJECTID,osm_id,name,voltage,operator,power',returnGeometry:'true',resultRecordCount:'1000',f:'geojson'});
+ try{
+  const r=await fetch(GIS+'?'+q,{signal:fetchController.signal});if(!r.ok)throw Error('HTTP '+r.status);const out=await r.json();if(out.error)throw Error(out.error.message||'błąd serwera');if(!Array.isArray(out.features))throw Error('odpowiedź nie jest GeoJSON');if(seq!==fetchSeq)return;
+  lineFeatures=out.features.filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type));linesLayer.clearLayers();linesLayer.addData({type:'FeatureCollection',features:lineFeatures});
+  const count400=lineFeatures.filter(f=>kv(f.properties?.voltage)>=400).length;
+  status('gisStatus',`Wczytano ${lineFeatures.length} fragmentów linii GIS • ≥400 kV: ${count400}`+(out.exceededTransferLimit?' • limit serwera':''),'ok');
+  if(!selected&&!hasAutoPicked){if(pickHighVoltage(true))hasAutoPicked=true;}
+  if(selected){const exists=lineFeatures.find(f=>featureKey(f)===featureKey(selected));if(exists){selected=JSON.parse(JSON.stringify(exists));refreshSelection();}}
+ }catch(e){if(e.name==='AbortError')return;status('gisStatus','GIS niedostępny: '+e.message+'. Mapa nadal może wyświetlać SAR.','warning');}
+}
+$('region').addEventListener('change',e=>{let p=PLACE[e.target.value];$('mapTitle').textContent=p.name;selected=null;selectedCorridor=null;hasAutoPicked=false;selectionLayer.clearLayers();bufferLayer.clearLayers();examplesLayer.clearLayers();$('kpiKV').textContent='—';$('kpiLength').textContent='—';$('kpiArea').textContent='—';$('kpiAlerts').textContent='0';$('exportGeo').disabled=true;map.setView(p.coords,p.zoom);});
+$('sarSource').addEventListener('change',e=>{let isTer=e.target.value==='terrascope';$('polarization').disabled=isTer;$('polarization').title=isTer?'Terrascope wystawia kompozycję VV/VH; VV i VH nie są rozdzielnymi warstwami w tym wyborze.':'';});
+$('applyDates').addEventListener('click',setupSAR);
+$('compareRange').addEventListener('input',paneSplit);
+$('opacityRange').addEventListener('input',e=>{let op=+e.target.value/100;$('opacityVal').textContent=e.target.value+'%';if(beforeLayer)beforeLayer.setOpacity(op);if(afterLayer)afterLayer.setOpacity(op);});
+$('bufferRange').addEventListener('input',refreshSelection);
+$('linesToggle').addEventListener('change',e=>{if(e.target.checked)linesLayer.addTo(map);else map.removeLayer(linesLayer);});
+$('corridorToggle').addEventListener('change',e=>{if(e.target.checked)bufferLayer.addTo(map);else map.removeLayer(bufferLayer);});
+$('exampleToggle').addEventListener('change',updateExamples);
+$('baseToggle').addEventListener('change',e=>{if(e.target.checked)base.addTo(map);else map.removeLayer(base);});
+$('select400').addEventListener('click',()=>pickHighVoltage(false));
+$('zoomCorridor').addEventListener('click',()=>{if(selectedCorridor&&window.turf){const group=L.geoJSON(selectedCorridor);map.fitBounds(group.getBounds(),{padding:[50,50],maxZoom:15});}else status('gisStatus','Najpierw wybierz linię.','warning');});
+$('exportGeo').addEventListener('click',()=>{if(!selected||!selectedCorridor)return;const selectedCopy=JSON.parse(JSON.stringify(selected));selectedCopy.properties={...selectedCopy.properties,infrawatch_type:'selected_line',source:'OSM via ArcGIS FeatureServer'};const bufferCopy=JSON.parse(JSON.stringify(selectedCorridor));bufferCopy.properties={...(bufferCopy.properties||{}),infrawatch_type:'analysis_corridor',buffer_m:Number($('bufferRange').value),source:'InfraWatch generated geometry',not_a_detected_change:true};const fc={type:'FeatureCollection',name:'InfraWatch GIS demo export',features:[selectedCopy,bufferCopy]};const u=URL.createObjectURL(new Blob([JSON.stringify(fc,null,2)],{type:'application/geo+json'}));const a=document.createElement('a');a.href=u;a.download='InfraWatch_korytarz_GIS.geojson';a.click();setTimeout(()=>URL.revokeObjectURL(u),500);});
+map.on('moveend',()=>{clearTimeout(reloadTimer);reloadTimer=setTimeout(loadLines,550);});
+map.on('mousemove',e=>{$('coords').textContent='WGS84 · '+e.latlng.lat.toFixed(5)+'° N, '+e.latlng.lng.toFixed(5)+'° E';});
+setupSAR();paneSplit();setTimeout(loadLines,350);setTimeout(()=>map.invalidateSize(),300);
+})();
+</script>
+</body>
+</html>

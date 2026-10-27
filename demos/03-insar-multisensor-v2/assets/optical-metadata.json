@@ -1,0 +1,13 @@
+{
+  "id": "S2C_34UEC_20250702_0_L2A",
+  "datetime": "2025-07-02T09:46:32.829000Z",
+  "cloud_cover_scene_percent": 0.000182,
+  "source_asset": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/34/U/EC/2025/7/S2C_34UEC_20250702_0_L2A/TCI.tif",
+  "native_pixel_m": 10,
+  "bounds": [
+    21.32,
+    51.57,
+    21.61,
+    51.73
+  ]
+}

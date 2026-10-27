@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>InfraWatch | SAR + GIS — demonstrator</title>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<style>
+ :root{--bg:#0a101c;--panel:#111a2a;--panel2:#162137;--muted:#a3b2c9;--line:#28364b;--ink:#f0f5ff;--accent:#69e0cb;--orange:#f5bd64;--red:#f17c7c}
+ *{box-sizing:border-box}body{margin:0;font:14px/1.48 Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+ .shell{height:100vh;min-height:620px;display:grid;grid-template-columns:338px minmax(0,1fr);grid-template-rows:67px minmax(0,1fr)}
+ header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 25px;background:rgba(10,16,28,.98);border-bottom:1px solid var(--line);z-index:6}
+ .brand{display:flex;align-items:center;gap:12px}.logo{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,#193746,#246875);color:#bffcf0;font-size:22px;box-shadow:inset 0 0 0 1px #4eaeac66}
+ h1{font-size:17px;margin:0;letter-spacing:-.25px}.subtitle{color:var(--muted);font-size:11px;letter-spacing:1.3px;text-transform:uppercase}.version{font-size:11px;color:#a9b9cf;background:#18263a;border:1px solid #2e4159;border-radius:20px;padding:6px 12px;white-space:nowrap}
+ aside{background:var(--panel);overflow-y:auto;border-right:1px solid var(--line);padding:22px 20px 24px;scrollbar-width:thin}
+ .micro{color:var(--accent);letter-spacing:1.5px;font-size:10px;font-weight:750;text-transform:uppercase}.intro{font-size:22px;font-weight:690;line-height:1.22;letter-spacing:-.6px;margin:8px 0 10px}.desc{color:var(--muted);margin:0 0 24px;font-size:12px}
+ .group{border-top:1px solid var(--line);padding:20px 0}.group h2{font-size:11px;color:#d3e0f1;text-transform:uppercase;letter-spacing:1.3px;margin:0 0 15px}
+ label.switch{display:flex;gap:12px;align-items:flex-start;margin:13px 0;cursor:pointer}.switch input{appearance:none;flex:0 0 auto;width:36px;height:21px;border-radius:40px;position:relative;margin:2px 0 0;border:1px solid #4a5e77;background:#2c3950;transition:background .2s}.switch input::after{content:"";display:block;position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#e2ecf5;transition:transform .2s}.switch input:checked{background:#188a80;border-color:#52c7b8}.switch input:checked::after{transform:translateX(15px)}.switch b{font-size:12px;display:block;font-weight:680}.switch small{display:block;font-size:11px;color:var(--muted);line-height:1.5}
+ .range-head{display:flex;justify-content:space-between;color:#dae7f4;font-size:12px;margin-top:17px}input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:10px 0 0}
+ select{width:100%;color:#e6f2fe;border:1px solid #364962;background:#19263b;border-radius:9px;padding:11px 12px;font-size:13px;margin-bottom:8px;outline:none}
+ .legend{display:grid;gap:9px;font-size:12px;color:#d7e2ef}.leg-item{display:flex;align-items:center;gap:10px}.stroke{width:27px;height:4px;background:#f9ae7b;border-radius:10px}.st220{background:#f2c868}.st110{background:#74d7f9}.stOther{background:#c3bad4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{padding:11px;border:1px solid #304058;background:#18253a;border-radius:11px}.metric span{display:block;font-size:10px;color:#9fb2c8}.metric strong{display:block;font-size:13px;margin-top:4px;font-weight:690}
+ .state{font-size:11px;color:#a4bbd0;margin:6px 0 0;min-height:33px;overflow-wrap:anywhere}.state.good{color:#87dcc9}.state.bad{color:#f6a99f}
+ .notice{color:#b5c5da;background:#172338;border-left:3px solid #69e0cb;padding:11px 13px;border-radius:0 6px 6px 0;font-size:11px}.notice strong{color:#f3f6fb}
+ a{color:#82ddf7;text-decoration:none}a:hover{text-decoration:underline}.credits{font-size:10px;color:#9aabc1;line-height:1.6;margin-top:16px}.credits a{color:#b8dafb}
+ main{position:relative;min-width:0;overflow:hidden}#map{width:100%;height:100%;background:#101d2b}.leaflet-control-attribution{font-size:10px!important}.leaflet-bar a{background:#203047!important;color:#e7f6fa!important;border-color:#3a5166!important}.leaflet-container{font:inherit}
+ .hero{position:absolute;top:22px;left:25px;z-index:500;pointer-events:none;background:#0a1522df;border:1px solid #6c8ca03b;box-shadow:0 10px 26px #0003;border-radius:11px;padding:12px 17px;min-width:215px;backdrop-filter:blur(10px)}.hero small{display:block;color:#a4b8d1;font-size:10px;letter-spacing:1px;text-transform:uppercase}.hero strong{display:block;font-size:17px;line-height:1.25;margin:4px 0}.hero span{font-size:11px;color:#b0c5d3}
+ .coordinates{position:absolute;bottom:28px;left:24px;background:#101b2dd9;border:1px solid #455b754a;border-radius:7px;color:#c1d4e6;font-size:11px;z-index:500;padding:7px 10px;pointer-events:none}
+ .corner{position:absolute;right:25px;top:22px;z-index:500;background:#121e2ce8;border:1px solid #52647765;border-radius:9px;padding:8px 12px;color:#c7d6e7;font-size:11px;pointer-events:none;max-width:190px}
+ .alert-pin{font-size:13px;background:#e9a467;border:3px solid #f3d5a1;width:18px;height:18px;box-shadow:0 0 0 6px #e8a25a36;border-radius:50%}.leaflet-popup-content-wrapper{background:#192538;color:#e8f1f8;border:1px solid #53627a;border-radius:10px}.leaflet-popup-tip{background:#192538}.leaflet-popup-content{font:12px/1.55 Inter,system-ui,sans-serif}.leaflet-popup-content strong{color:#9ef4dc}
+ #fatal{display:none;position:absolute;inset:25% 15%;z-index:1000;align-items:center;justify-content:center;background:#16243b;color:#f6d1ce;border:1px solid #a45656;border-radius:12px;text-align:center;padding:20px}
+ @media(max-width:780px){.shell{display:block;height:auto;min-height:100vh}header{height:62px;padding:0 15px}.version{display:none}aside{border-right:0;border-bottom:1px solid var(--line);padding:15px;max-height:none}.group{padding:14px 0}.intro{font-size:19px}main{height:65vh;min-height:480px}.hero{top:12px;left:12px;padding:9px 12px}.corner{right:12px;top:12px;max-width:125px;font-size:10px}.coordinates{left:12px;bottom:18px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><div class="brand"><div class="logo">⌁</div><div><h1>InfraWatch</h1><div class="subtitle">EARTH OBSERVATION × GEOSPATIAL INTELLIGENCE</div></div></div><span class="version">DEMO KONCEPCJI • v0.1</span></header>
+<aside>
+<div class="micro">Warstwowy obraz sytuacji</div>
+<div class="intro">SAR + GIS<br>infrastruktura energetyczna</div>
+<p class="desc">Nałóż radarowy obraz powierzchni Ziemi na wektorową sieć linii elektroenergetycznych. Klikaj linie, aby zobaczyć atrybuty GIS.</p>
+<div class="group">
+<h2>01 / Obszar obserwacji</h2>
+<select id="region" aria-label="Obszar obserwacji">
+<option value="kozienice">Kozienice · Mazowieckie</option><option value="belchatow">Bełchatów · Łódzkie</option><option value="wroclaw">Wrocław · Dolnośląskie</option>
+</select><div class="state" id="areaText">Infrastruktura przesyłowa w sąsiedztwie Elektrowni Kozienice.</div>
+</div>
+<div class="group">
+<h2>02 / Warstwy danych</h2>
+<label class="switch"><input type="checkbox" id="sarToggle" checked><span><b>Sentinel‑1 SAR · VV</b><small>Radarowe zobrazowania RTC, usługa WMS SAGRIS ODC</small></span></label>
+<label class="switch"><input type="checkbox" id="linesToggle" checked><span><b>Linie energetyczne · GIS</b><small>Geometria i atrybuty OSM przez ArcGIS FeatureServer</small></span></label>
+<label class="switch"><input type="checkbox" id="basemapToggle" checked><span><b>Mapa orientacyjna OSM</b><small>Podkład kontekstowy — drogi i miejscowości</small></span></label>
+<label class="switch"><input type="checkbox" id="alertsToggle"><span><b>Przykładowe punkty analizy</b><small>Syntetyczne znaczniki interfejsu; NIE są wykryciami</small></span></label>
+<div class="range-head"><span>Widoczność warstwy SAR</span><b id="opacityValue">82%</b></div><input type="range" id="opacityRange" min="0" max="100" value="82" aria-label="Przezroczystość SAR" />
+</div>
+<div class="group">
+<h2>03 / Legenda linii — według OSM</h2>
+<div class="legend"><div class="leg-item"><i class="stroke"></i>400 kV lub więcej</div><div class="leg-item"><i class="stroke st220"></i>220–399 kV</div><div class="leg-item"><i class="stroke st110"></i>110–219 kV</div><div class="leg-item"><i class="stroke stOther"></i>Pozostałe / brak atrybutu</div></div>
+</div>
+<div class="group">
+<h2>04 / Stan połączenia</h2>
+<div class="grid"><div class="metric"><span>Warstwa SAR</span><strong id="sarMetric">Ładowanie...</strong></div><div class="metric"><span>Obiekty linii GIS</span><strong id="linesMetric">—</strong></div></div>
+<p class="state" id="sarStatus">Sprawdzanie usługi WMS…</p><p class="state" id="linesStatus">Pobieranie danych wektorowych…</p>
+<div class="notice"><strong>Uwaga:</strong> ten demonstrator wyświetla rzeczywiste źródła danych online, ale nie wyznacza anomalii i nie zna dokładnej daty sceny WMS. Wartości napięć zależą od kompletności OpenStreetMap.</div>
+</div>
+<div class="group">
+<h2>05 / Źródła i dalsze kroki</h2>
+<div class="credits">
+Obraz SAR: <a href="https://odcube.landimage.info/portal/" target="_blank" rel="noopener">SAGRIS ODC</a>, dane Copernicus Sentinel‑1; prezentacja za pomocą OGC WMS.<br>
+Linie GIS: <a href="https://services-eu1.arcgis.com/zci5bUiJ8olAal7N/ArcGIS/rest/services/OpenStreetMap_Power_Lines_for_Europe/FeatureServer/0" target="_blank" rel="noopener">FeatureServer – OSM Power Lines Europe</a> © OpenStreetMap contributors (ODbL).<br>
+Oficjalna weryfikacja geometrii NN: <a href="https://mapy.geoportal.gov.pl/wss/ext/PSE" target="_blank" rel="noopener">WMS PSE / Geoportal</a> (stan według III kw. 2026).<br>
+Dodatkowe obrazy SAR: <a href="https://browser.dataspace.copernicus.eu/" target="_blank" rel="noopener">Copernicus Browser</a>.<br><br>
+Wymagane połączenie z Internetem. WMS/FeatureServer mogą mieć przerwy, limity lub restrykcje CORS. Ten plik nie przechowuje obrazów ani ścieżek linii i nie gwarantuje ich dostępności.
+</div>
+</div>
+</aside>
+<main><div id="map"></div><div class="hero"><small>Obszar analizy</small><strong id="mapTitle">Kozienice</strong><span>Sentinel‑1 SAR × elektroenergetyka GIS</span></div><div class="corner">● <span id="displayMode">Podgląd wielowarstwowy</span></div><div class="coordinates" id="coordinates">WGS84 • najedź na mapę</div><div id="fatal">Aby wyświetlić mapę, otwórz plik z dostępem do Internetu. Nie udało się wczytać biblioteki Leaflet.</div></main>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!window.L){$('fatal').style.display='flex';return;}
+const REGIONS={
+ kozienice:{label:'Kozienice',center:[51.665,21.49],zoom:11,description:'Obszar wokół Elektrowni Kozienice, Wisły i połączeń sieci przesyłowej.',examples:[[51.701,21.49],[51.624,21.531]]},
+ belchatow:{label:'Bełchatów',center:[51.255,19.33],zoom:11,description:'Elektrownia Bełchatów i infrastruktura elektroenergetyczna regionu.',examples:[[51.28,19.34],[51.245,19.40]]},
+ wroclaw:{label:'Wrocław',center:[51.109,17.023],zoom:11,description:'Miejski i podmiejski krajobraz energetyczny Wrocławia.',examples:[[51.165,17.06],[51.075,16.94]]}
+};
+const SOURCE_SAR='https://odcube.landimage.info/ows/';
+const SOURCE_LINES='https://services-eu1.arcgis.com/zci5bUiJ8olAal7N/ArcGIS/rest/services/OpenStreetMap_Power_Lines_for_Europe/FeatureServer/0/query';
+const region=REGIONS.kozienice;
+const map=L.map('map',{zoomControl:false,preferCanvas:true,worldCopyJump:false}).setView(region.center,region.zoom);
+L.control.zoom({position:'bottomright'}).addTo(map);L.control.scale({metric:true,imperial:false,position:'bottomleft'}).addTo(map);
+map.createPane('sarPane');map.getPane('sarPane').style.zIndex='320';
+map.createPane('linesPane');map.getPane('linesPane').style.zIndex='430';
+map.createPane('alertsPane');map.getPane('alertsPane').style.zIndex='470';
+const basemap=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+let sarLayer=null,sarOk=false,sarErrors=0,activeLayer='sagris_s1_rtc_vv_img_europe';
+let lineLayer=L.geoJSON(null,{pane:'linesPane',style:feature=>{
+ const kv=voltageKV(feature.properties&&feature.properties.voltage);
+ return {color:kv>=400?'#f9aa7d':kv>=220?'#f2cb73':kv>=110?'#73d8fa':'#c5bedb',weight:kv>=110?4.6:3.1,opacity:.97};
+},onEachFeature:(f,layer)=>{
+ const p=f.properties||{};const kv=voltageKV(p.voltage);const heading=p.name||'Linia elektroenergetyczna';
+ const ltxt=kv?kv+' kV':(p.voltage||'Nie podano');
+ const safe=s=>String(s==null?'—':s).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+ layer.bindPopup('<strong>'+safe(heading)+'</strong><br>Napięcie: '+safe(ltxt)+'<br>Operator: '+safe(p.operator||'brak w OSM')+'<br>OSM ID: '+safe(p.osm_id||'brak')+'<br><span style="color:#a8bacb">Źródło: OpenStreetMap / ArcGIS</span>');
+ layer.on('mouseover',()=>layer.setStyle({weight:7}));layer.on('mouseout',()=>lineLayer.resetStyle(layer));
+}}).addTo(map);
+let markers=L.layerGroup();let abortController=null;let activeToken=0;let timer;
+function voltageKV(value){
+ let nums=String(value||'').match(/\d+(?:\.\d+)?/g);if(!nums)return 0;
+ return Math.max(...nums.map(n=>Number(n)).filter(Number.isFinite).map(v=>v>=1000?v/1000:v));
+}
+function showState(id,message,bad=false,good=false){let el=$(id);el.textContent=message;el.className='state'+(bad?' bad':good?' good':'');}
+function updateSARStatus(){ $('sarMetric').textContent=sarOk?'Aktywny':(sarErrors?'Błąd WMS':'Oczekiwanie'); }
+function createSAR(name){
+ if(sarLayer){map.removeLayer(sarLayer)}sarOk=false;sarErrors=0;updateSARStatus();
+ sarLayer=L.tileLayer.wms(SOURCE_SAR,{layers:name,styles:'',format:'image/png',transparent:true,version:'1.1.1',pane:'sarPane',tileSize:256,opacity:Number($('opacityRange').value)/100,attribution:'SAR: Copernicus Sentinel-1 / SAGRIS ODC'});
+ sarLayer.on('tileload',()=>{if(!sarOk){sarOk=true;showState('sarStatus','Kafle SAR WMS zostały odebrane (czas obserwacji niezweryfikowany).',false,true);updateSARStatus();}});
+ sarLayer.on('tileerror',()=>{sarErrors++;if(!sarOk&&sarErrors>=3){showState('sarStatus','Nie udało się wczytać obrazu SAR. Możliwe: niedostępny serwer, warstwa lub brak sceny.',true);updateSARStatus();}});
+ if($('sarToggle').checked)sarLayer.addTo(map);
+}
+createSAR(activeLayer);
+async function tryDiscoverSAR(){
+ // WMS discovery is optional; CORS restrictions may block reading GetCapabilities.
+ try{
+ const controller=new AbortController();const t=setTimeout(()=>controller.abort(),7000);
+ const resp=await fetch(SOURCE_SAR+'?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities',{signal:controller.signal});clearTimeout(t);
+ if(!resp.ok)return;const xml=new DOMParser().parseFromString(await resp.text(),'text/xml');
+ const names=[...xml.getElementsByTagName('Layer')].map(el=>{let n=[...el.children].find(x=>x.localName==='Name');return n?n.textContent.trim():''}).filter(Boolean);
+ if(names.includes(activeLayer))return;
+ const vv=names.find(n=>/vv/i.test(n)&&/europe|sentinel|sar/i.test(n));
+ if(vv){activeLayer=vv;createSAR(activeLayer);showState('sarStatus','Odnaleziono warstwę WMS: '+vv);}
+ }catch(err){ /* WMS tiles do not require GetCapabilities CORS success. */ }
+}
+tryDiscoverSAR();
+async function loadLines(){
+ const b=map.getBounds();if(map.getZoom()<9){showState('linesStatus','Przybliż mapę, aby pobrać linie GIS.');return;}
+ if(abortController)abortController.abort();abortController=new AbortController();let own=++activeToken;
+ const q=new URLSearchParams({where:'1=1',geometry:JSON.stringify({xmin:b.getWest(),ymin:b.getSouth(),xmax:b.getEast(),ymax:b.getNorth(),spatialReference:{wkid:4326}}),geometryType:'esriGeometryEnvelope',inSR:'4326',outSR:'4326',spatialRel:'esriSpatialRelIntersects',outFields:'OBJECTID,osm_id,voltage,name,operator',returnGeometry:'true',resultRecordCount:'2000',f:'geojson'});
+ showState('linesStatus','Pobieranie geometrii linii dla widocznego obszaru…');
+ try{
+   const res=await fetch(SOURCE_LINES+'?'+q.toString(),{signal:abortController.signal});
+   if(!res.ok)throw Error('HTTP '+res.status);const geo=await res.json();
+   if(geo.error)throw Error(geo.error.message||'Błąd API');
+   if(own!==activeToken)return;
+   if(!Array.isArray(geo.features))throw Error('Nieoczekiwany format odpowiedzi GIS');
+   lineLayer.clearLayers();lineLayer.addData(geo);
+   $('linesMetric').textContent=String(geo.features.length);
+   showState('linesStatus',geo.features.length?'Załadowano '+geo.features.length+' obiektów linii (liczba fragmentów GIS).':'Brak obiektów linii w bieżącym zasięgu.',false,true);
+   if(geo.features.length>=2000)showState('linesStatus','Osiągnięto limit 2000 obiektów. Przybliż mapę dla pełniejszego widoku.');
+ }catch(e){if(e.name==='AbortError')return;showState('linesStatus','Nie udało się pobrać GIS: '+e.message+'. Sprawdź Internet lub CORS.',true);$('linesMetric').textContent='Brak danych';}
+}
+function scheduleLines(){clearTimeout(timer);timer=setTimeout(loadLines,650);}
+function resetMarkers(){markers.clearLayers();const region=REGIONS[$('region').value];region.examples.forEach((pt,i)=>{let marker=L.marker(pt,{pane:'alertsPane',icon:L.divIcon({className:'',html:'<div class="alert-pin"></div>',iconSize:[18,18],iconAnchor:[9,9]})}).bindPopup('<strong>Przykładowy punkt '+(i+1)+'</strong><br>Symulacja elementu interfejsu InfraWatch.<br><b>Nie jest to wykryta anomalia ani alert rzeczywisty.</b>');markers.addLayer(marker)});if($('alertsToggle').checked)markers.addTo(map);}
+$('sarToggle').addEventListener('change',e=>{if(e.target.checked)sarLayer.addTo(map);else map.removeLayer(sarLayer);$('displayMode').textContent=e.target.checked?'Podgląd wielowarstwowy':'GIS / mapa bazowa';});
+$('linesToggle').addEventListener('change',e=>{if(e.target.checked)lineLayer.addTo(map);else map.removeLayer(lineLayer);});
+$('basemapToggle').addEventListener('change',e=>{if(e.target.checked)basemap.addTo(map);else map.removeLayer(basemap);});
+$('alertsToggle').addEventListener('change',e=>{if(e.target.checked)markers.addTo(map);else map.removeLayer(markers);});
+$('opacityRange').addEventListener('input',e=>{let opacity=Number(e.target.value)/100;$('opacityValue').textContent=e.target.value+'%';sarLayer.setOpacity(opacity);});
+$('region').addEventListener('change',e=>{const r=REGIONS[e.target.value];$('mapTitle').textContent=r.label;$('areaText').textContent=r.description;map.setView(r.center,r.zoom);resetMarkers();});
+map.on('moveend',scheduleLines);map.on('mousemove',e=>{$('coordinates').textContent='WGS84 • '+e.latlng.lat.toFixed(5)+'° N, '+e.latlng.lng.toFixed(5)+'° E';});
+resetMarkers();setTimeout(loadLines,200);setTimeout(()=>map.invalidateSize(),300);
+})();
+</script>
+</body>
+</html>
