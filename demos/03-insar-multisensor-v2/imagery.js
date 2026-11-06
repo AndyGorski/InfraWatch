@@ -4,7 +4,7 @@ function createInfraWatchImagery(map, byId) {
   const wmts='https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTOFOTOMAPA&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=EPSG:3857&TILEMATRIX=EPSG:3857:{z}&TILEROW={y}&TILECOL={x}';
   map.createPane('historyImagery');map.getPane('historyImagery').style.zIndex=250;
   const sar=L.imageOverlay('assets/sar-after.png',sarArea,{opacity:1,pane:'historyImagery'});
-  const aerial=L.tileLayer(wmts,{minZoom:12,maxZoom:19,maxNativeZoom:19,tileSize:256,attribution:'© GUGiK / Geoportal · ortofotomapa WMTS'});
+  const aerial=L.tileLayer(wmts,{minZoom:6,maxZoom:19,maxNativeZoom:19,tileSize:256,attribution:'© GUGiK / Geoportal · ortofotomapa WMTS'});
   let meta,sceneIndex=3,mode='optical',effective='optical',rgb,ndvi,timer=null,tileErrors=0,tileLoading=false,loadFailed=false;
   const date=value=>new Date(value).toLocaleDateString('pl-PL',{day:'2-digit',month:'long',year:'numeric'});
   const activeScene=()=>meta?.scenes[sceneIndex];
@@ -27,6 +27,7 @@ function createInfraWatchImagery(map, byId) {
     if(scene)byId('historySlider').setAttribute('aria-valuetext',date(scene.date));
     for(const button of byId('historyYears').querySelectorAll('button'))button.setAttribute('aria-pressed',String(+button.dataset.index===sceneIndex));
     for(const [id,key] of [['optBtn','optical'],['ndviBtn','ndvi'],['sarBtn','sar'],['mixBtn','mix'],['orthoBtn','ortho']])byId(id).setAttribute('aria-pressed',String(effective===key));
+    if(InfraWatchArea.coverage(InfraWatchArea.getBox(),[21.24,51.48,21.86,51.78])==='none')byId('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
   }
   function update(){
     const next=mode==='ortho'||map.getZoom()>=detailZoom?'ortho':mode;
@@ -39,10 +40,10 @@ function createInfraWatchImagery(map, byId) {
     else if(rgb)rgb.setOpacity(1).addTo(map);
     renderStatus();
   }
-  function setMode(next){
+  function setMode(next,keepView=false){
     stop();mode=next;
-    if(next==='ortho'&&map.getZoom()<detailZoom)map.setZoom(13);
-    else if(next!=='ortho'&&map.getZoom()>=detailZoom)map.fitBounds(area,{padding:[18,18],maxZoom:11});
+    if(!keepView&&next==='ortho'&&map.getZoom()<detailZoom)map.setZoom(13);
+    else if(!keepView&&next!=='ortho'&&map.getZoom()>=detailZoom)map.fitBounds(area,{padding:[18,18],maxZoom:11});
     update();
   }
   function setScene(index){

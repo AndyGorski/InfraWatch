@@ -9,3 +9,22 @@ $('closeExport').onclick=()=>$('exportDialog').close();
 $('downloadSchema').onclick=()=>$('sample').click();
 const extent=document.createElement('button');extent.type='button';extent.textContent='⌗';extent.title='Pokaż obszar GIS';extent.setAttribute('aria-label','Pokaż obszar GIS');extent.onclick=event=>{event.stopPropagation();$('fitGIS').click()};map.zoomControl.getContainer().append(extent);
 document.querySelector('.leaflet-control-zoom-in').setAttribute('aria-label','Przybliż');document.querySelector('.leaflet-control-zoom-out').setAttribute('aria-label','Oddal');
+const historyBox=[21.24,51.48,21.86,51.78],radarBox=[21.32,51.57,21.61,51.73];
+map.setMinZoom(6);
+function areaAvailability({sentinel,sar}){
+  for(const id of ['optBtn','ndviBtn','showHistory','playHistory','historySlider']){$(id).disabled=sentinel==='none';$(id).title=sentinel==='none'?'Brak przygotowanego archiwum dla wybranego obszaru':''}
+  document.querySelectorAll('#historyYears button').forEach(b=>b.disabled=sentinel==='none');
+  for(const id of ['sarBtn','mixBtn','blend'])$(id).disabled=sar==='none'||(id==='mixBtn'&&sentinel==='none');
+  if(sentinel==='none')$('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
+}
+InfraWatchArea.install(map,{
+  name:'Kozienice',imageryBox:historyBox,gisBox:historyBox,sarBox:radarBox,showMap:()=>showWorkspaceView('map'),
+  stats:()=>({total:Object.values(powerGIS.getReport().counts||{}).reduce((a,b)=>a+b,0)}),
+  onChange:()=>{powerGIS.refreshStudyArea();render();imagery.refresh()},setAvailability:areaAvailability,
+  onNavigate:coverage=>{if(coverage!=='full')imagery.setMode('ortho',true);else if(InfraWatchArea.coverage(InfraWatchArea.getBox(),radarBox)==='none'&&['sar','mix'].includes(imagery.getReport().requested_mode))imagery.setMode('optical',true)}
+});
+const fitOriginalGIS=$('fitGIS').onclick,fitOriginalLine=$('fitBtn').onclick;
+$('fitGIS').onclick=()=>InfraWatchArea.getBox()?InfraWatchArea.focus():fitOriginalGIS();
+$('fitBtn').onclick=()=>InfraWatchArea.getBox()?InfraWatchArea.focus():fitOriginalLine();
+imagery.ready.then(()=>InfraWatchArea.refresh());
+map.on('zoomend moveend',()=>{const b=InfraWatchArea.getBox();if(b)areaAvailability({sentinel:InfraWatchArea.coverage(b,historyBox),sar:InfraWatchArea.coverage(b,radarBox)})});
