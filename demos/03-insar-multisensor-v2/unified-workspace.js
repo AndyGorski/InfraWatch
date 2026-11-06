@@ -19,9 +19,13 @@ function areaAvailability({sentinel,sar}){
 }
 InfraWatchArea.install(map,{
   name:'Kozienice',imageryBox:historyBox,gisBox:historyBox,sarBox:radarBox,showMap:()=>showWorkspaceView('map'),
-  stats:()=>({total:Object.values(powerGIS.getReport().counts||{}).reduce((a,b)=>a+b,0)}),
+  stats:()=>{const c=powerGIS.getReport().counts||{};return {total:Object.values(c).reduce((a,b)=>a+b,0),lines:(c.line||0)+(c.minor_line||0)}},
   onChange:()=>{powerGIS.refreshStudyArea();render();imagery.refresh()},setAvailability:areaAvailability,
   onNavigate:coverage=>{if(coverage!=='full')imagery.setMode('ortho',true);else if(InfraWatchArea.coverage(InfraWatchArea.getBox(),radarBox)==='none'&&['sar','mix'].includes(imagery.getReport().requested_mode))imagery.setMode('optical',true)}
+});
+InfraWatchFacility.install(map,{region:'kozienice',name:'Kozienice',ready:powerGIS.ready,getFeatures:()=>powerGIS.getSourceFeatures(),
+  prepareLayers:local=>{$('showGISLines').checked=true;$('showGISMinor').checked=local},
+  showLines:()=>{$('gisSearch').value='';$('gisSearch').oninput();document.querySelector('[data-deform-side="objects"]').click()},selectLine:id=>powerGIS.selectFeature(id)
 });
 const fitOriginalGIS=$('fitGIS').onclick,fitOriginalLine=$('fitBtn').onclick;
 $('fitGIS').onclick=()=>InfraWatchArea.getBox()?InfraWatchArea.focus():fitOriginalGIS();

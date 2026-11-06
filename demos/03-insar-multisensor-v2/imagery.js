@@ -43,7 +43,7 @@ function createInfraWatchImagery(map, byId) {
   function setMode(next,keepView=false){
     stop();mode=next;
     if(!keepView&&next==='ortho'&&map.getZoom()<detailZoom)map.setZoom(13);
-    else if(!keepView&&next!=='ortho'&&map.getZoom()>=detailZoom)map.fitBounds(area,{padding:[18,18],maxZoom:11});
+    else if(!keepView&&next!=='ortho'&&map.getZoom()>=detailZoom){const b=InfraWatchArea.getBox();map.fitBounds(b?[[b[1],b[0]],[b[3],b[2]]]:area,{padding:[18,18],maxZoom:11})}
     update();
   }
   function setScene(index){

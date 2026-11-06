@@ -19,7 +19,8 @@ function createInfraWatchPowerGIS(map, byId, options) {
     const root=byId('gisResults');root.replaceChildren();if(!data)return;
     const q=byId('gisSearch').value.trim().toLocaleLowerCase('pl');
     let matches=q?visibleFeatures().filter(f=>(name(f)+' '+f.id+' '+(f.properties.voltage||'')).toLocaleLowerCase('pl').includes(q)):visibleFeatures().filter(f=>f.properties.power==='line').sort((a,b)=>b.properties.length_km_in_aoi-a.properties.length_km_in_aoi);
-    const note=document.createElement('p');note.textContent=q?'Dopasowania: '+matches.length.toLocaleString('pl-PL')+' · maks. 8 na liście':'Najdłuższe odcinki w obszarze';root.append(note);
+    matches=InfraWatchArea.sortNearby(matches);
+    const note=document.createElement('p');note.textContent=q?'Dopasowania: '+matches.length.toLocaleString('pl-PL')+' · maks. 8 na liście':InfraWatchArea.getReport()?.facility?'Linie w otoczeniu · najbliższe jako pierwsze':'Najdłuższe odcinki w obszarze';root.append(note);
     for(const f of matches.slice(0,8)){const b=document.createElement('button'),small=document.createElement('small');b.type='button';b.className='gis-result';b.dataset.osmId=f.id;b.textContent=name(f);small.textContent=f.id+' · '+voltageLabel(f.properties);b.append(small);b.onclick=()=>{select(f);map.fitBounds(L.geoJSON(f).getBounds().pad(.15),{maxZoom:17})};root.append(b)}
   }
   function bind(f,layer){layer.bindTooltip(()=>{const e=document.createElement('span');e.textContent=name(f);return e},{sticky:true});layer.on('click',()=>select(f))}
@@ -99,5 +100,5 @@ function createInfraWatchPowerGIS(map, byId, options) {
     renderSearch();sync();
   }
   const ready=load();
-  return {ready,setFocusLayers,clearSelection,refreshStudyArea,getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'Regional GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
+  return {ready,setFocusLayers,clearSelection,refreshStudyArea,getSourceFeatures:()=>data?.features||[],selectFeature:id=>{const f=features.get(id);if(f&&InfraWatchArea.intersectsFeature(f))select(f)},getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'Regional GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
 }
