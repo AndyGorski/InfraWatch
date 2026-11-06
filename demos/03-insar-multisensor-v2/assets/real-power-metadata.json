@@ -1,0 +1,26 @@
+{
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "copyright_url": "https://www.openstreetmap.org/copyright",
+  "api": "https://overpass-api.de/api/interpreter",
+  "snapshot": "2026-11-06T20:18:05Z",
+  "retrieved_at": "2026-11-06T20:19:12.342523+00:00",
+  "aoi_bbox": [
+    21.24,
+    51.48,
+    21.86,
+    51.78
+  ],
+  "counts": {
+    "line": 142,
+    "minor_line": 773,
+    "substation": 94,
+    "pole": 7270,
+    "tower": 1181
+  },
+  "excluded": {},
+  "scope": "Objects returned by Overpass for AOI; lines clipped to AOI. Not an exhaustive or operator-certified inventory.",
+  "date_note": "OSM edit timestamp is not a field survey date or commissioning date. GIS snapshot is independent of imagery year.",
+  "geometry_note": "No synthetic line, pole or station geometry added. No clearance, canopy or risk measurements inferred.",
+  "query": "[out:json][timeout:120];(way[\"power\"=\"line\"](51.48,21.24,51.78,21.86);way[\"power\"=\"minor_line\"](51.48,21.24,51.78,21.86);node[\"power\"~\"^(tower|pole)$\"](51.48,21.24,51.78,21.86);nwr[\"power\"=\"substation\"](51.48,21.24,51.78,21.86););out meta geom;"
+}
