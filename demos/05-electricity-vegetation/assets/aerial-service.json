@@ -1,0 +1,15 @@
+{
+  "provider": "GUGiK / Geoportal",
+  "service": "WMTS StandardResolution",
+  "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution",
+  "layer": "ORTOFOTOMAPA",
+  "matrixSet": "EPSG:3857",
+  "format": "image/jpeg",
+  "verified": "2026-11-06",
+  "autoDetailZoom": 12,
+  "maxMatrixLevel": 19,
+  "acquisitionDate": null,
+  "nativeResolution": null,
+  "history": "Live mosaic; independent of Sentinel observation year",
+  "documentation": "https://www.geoportal.gov.pl/pl/dane/ortofotomapa-orto/"
+}
