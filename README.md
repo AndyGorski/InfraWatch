@@ -54,3 +54,5 @@ Aplikacje roślinności (`05`) i deformacji (`03`) korzystają ze wspólnego sty
 | Dostępność | Strzałki oraz Home/End w głównej nawigacji, aktualne aria-selected/expanded/pressed, widoczne obramowanie fokusu |
 
 Zmiana obejmuje prezentację i sterowanie. Nie dodaje nowych pomiarów ani nie łączy dat GIS, zobrazowań i symulacji. Bufory oraz wyniki demonstracyjne zachowują dotychczasowe oznaczenia i ograniczenia.
+
+W obu panelach przycisk **Legenda GIS** na mapie włącza lub wyłącza opis kolorów napięć. Legenda boczna pozostaje dostępna. W scenariuszu roślinności, który zastępuje rzeczywisty GIS, przycisk jest ukryty. W lewym dolnym rogu obu map znajduje się wspólna metryczna **Skala odległości** (m / km), aktualizowana przy zmianie zbliżenia. Nie jest to informacja o wysokości terenu ani obiektu.

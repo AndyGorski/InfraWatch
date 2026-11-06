@@ -97,6 +97,19 @@ body.iw-monitoring{
 .iw-monitoring .export-options{display:flex;flex-wrap:wrap;gap:8px}
 .iw-monitoring .map-status{position:static;flex-shrink:0;font-size:9px;text-align:left;line-height:1.5;background:#0c232b;padding:5px 10px;border:0;color:#b9d2d1}
 .iw-monitoring .leaflet-control-attribution{font-size:8px!important;bottom:0!important;background:#102a33d9!important;color:#c3d7d4!important}.iw-monitoring .leaflet-control-attribution a{color:#b8e2d3}
+.iw-monitoring .leaflet-bottom.leaflet-left{bottom:0;left:0}
+.iw-monitoring .iw-distance-scale{margin:0 0 28px 10px!important}
+.iw-monitoring .iw-distance-scale{background:#102a33ed;border:1px solid #41636a;border-radius:5px;padding:5px 7px}
+.iw-monitoring .iw-scale-title{display:block;font:10px/1.4 system-ui;color:#bdd5d0;margin-bottom:3px}
+.iw-monitoring .iw-distance-scale .leaflet-control-scale-line{box-sizing:border-box;background:transparent!important;color:#e4efef!important;border:2px solid #b6d9cc!important;border-top:0!important;margin:0;text-shadow:none;font:11px/1.4 system-ui!important}
+.iw-monitoring .iw-gis-map-legend{position:absolute;left:10px;bottom:84px;z-index:600;width:max-content;max-width:calc(100vw - 40px)}
+.iw-monitoring .iw-gis-map-legend>button{background:#102a33ed;border-color:#41636a;color:#d3eae3;font:11px/1.4 system-ui;padding:6px 9px;min-height:29px}
+.iw-monitoring .iw-gis-map-legend>button[aria-expanded=true]{background:#28584b;border-color:#84e2c2;color:#d3faeb}
+.iw-monitoring .iw-gis-map-legend-content{width:210px;max-width:calc(100vw - 40px);background:#102a33f5;border:1px solid #41636a;border-radius:5px;padding:10px 12px;margin:0 0 6px;max-height:min(260px,var(--iw-legend-max-height,130px));overflow:auto;scrollbar-width:thin;color:#d3eae3}
+.iw-monitoring .iw-gis-map-legend-content h3{font:600 12px/1.5 system-ui;margin:0 0 8px;color:#d3eae3}
+.iw-monitoring .iw-gis-map-legend-content>span,.iw-monitoring .iw-gis-map-legend-content>div{display:flex;align-items:center;gap:8px;font:11px/1.5 system-ui;margin:5px 0;color:#c0d6d2}
+.iw-monitoring .iw-gis-map-legend-content i{display:inline-block;width:14px;height:3px;flex-shrink:0}
+.iw-monitoring .iw-gis-map-legend-content p{font:10px/1.6 system-ui;color:#acc7c0;margin:9px 0 0}
 .iw-monitoring .ndvi-legend{font-size:10px;background:#102a33ed;color:#d0e8df;right:14px;bottom:42px}
 .iw-monitoring .timeline{position:relative;background:var(--iw-panel);border-top:1px solid var(--iw-border);padding:12px 16px 10px;flex-shrink:0}
 .iw-monitoring .timeline-header{display:flex;align-items:center;justify-content:space-between;gap:12px}

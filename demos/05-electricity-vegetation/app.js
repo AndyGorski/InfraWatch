@@ -55,7 +55,7 @@ function initMap(){
  const b=data.bbox,bounds=[[b[1],b[0]],[b[3],b[2]]];
  map=L.map('map',{zoomControl:false,zoomSnap:.1,zoomDelta:.5,maxZoom:19,minZoom:9,maxBounds:L.latLngBounds(bounds).pad(.15),maxBoundsViscosity:.7});
  map.createPane('imagery');map.getPane('imagery').style.zIndex=200;
- L.control.scale({position:'bottomleft',imperial:false,maxWidth:75}).addTo(map);map.attributionControl.setPrefix(false);
+ map.attributionControl.setPrefix(false);
  baseOverlay=L.imageOverlay('assets/sentinel-2025.jpg',bounds,{pane:'imagery',attribution:'© Copernicus / Element 84'}).addTo(map);
  mainGIS=createGISLayers(map,state.year,true);routeLayer=mainGIS.route;bufferLayer=mainGIS.buffer;markerGroup=mainGIS.points;
  map.on('move zoom resize',()=>{resizeRiskSymbols()});fit();updateMarkers();
