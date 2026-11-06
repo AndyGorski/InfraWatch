@@ -1,4 +1,5 @@
 InfraWatchUI.install({layersButton:'#openLayers',detailsButton:'#openDetail',isMap:()=>!$('mapView').hidden,showMap:()=>showWorkspaceView('map'),resize:()=>map.invalidateSize({pan:false})});
+InfraWatchUI.installMapTools(map,{legend:()=>document.querySelector('#deformLayers .gis-legend')});
 document.querySelectorAll('[data-deform-side]').forEach(b=>b.onclick=()=>{
   const layers=b.dataset.deformSide==='layers';$('deformLayers').hidden=!layers;$('deformObjects').hidden=layers;
   document.querySelectorAll('[data-deform-side]').forEach(x=>{x.classList.toggle('selected',x===b);x.setAttribute('aria-pressed',String(x===b))});

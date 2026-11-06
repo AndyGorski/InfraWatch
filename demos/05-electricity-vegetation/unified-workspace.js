@@ -11,8 +11,9 @@ function installUnifiedVegetation(){
   }
   new MutationObserver(mirrorObject).observe(document.getElementById('detailPanel'),{childList:true,subtree:true,characterData:true});mirrorObject();
   InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>state.view==='map',showMap:()=>switchView('map'),resize:()=>map?.invalidateSize({pan:false})});
+  const mapTools=InfraWatchUI.installMapTools(map,{legend:()=>document.getElementById('realLegend'),available:()=>!demoMode});
   const oldMode=setGISMode;
-  setGISMode=function(demo){oldMode(demo);updateSummary()};
+  setGISMode=function(demo){oldMode(demo);updateSummary();mapTools.refresh()};
   function updateSummary(){
     if(realMeta)document.getElementById('realMinorCount').textContent=Number(realMeta.counts.minor_line||0).toLocaleString('pl-PL');
     document.getElementById('workspaceBadge').textContent=demoMode?'Zobrazowania rzeczywiste · scenariusz symulowany':'Zobrazowania i GIS rzeczywiste';

@@ -35,5 +35,37 @@ window.InfraWatchUI = (() => {
     const map=q('#map');if(map)new ResizeObserver(()=>requestAnimationFrame(()=>config.resize())).observe(map);
     sync();
   }
-  return {install,sync,openDetails,closePanels};
+  function installMapTools(map,config){
+    const scale=L.control.scale({position:'bottomleft',metric:true,imperial:false,maxWidth:100}).addTo(map);
+    const scaleRoot=scale.getContainer();scaleRoot.classList.add('iw-distance-scale');scaleRoot.title='Skala odległości w terenie (m / km)';
+    const caption=document.createElement('span');caption.className='iw-scale-title';caption.textContent='Skala odległości';scaleRoot.prepend(caption);
+    let container,panel,button,opened=false;
+    function toggle(on){opened=on;panel.hidden=!on;button.setAttribute('aria-expanded',String(on));button.setAttribute('aria-pressed',String(on))}
+    function refresh(){
+      const available=!config.available||config.available();container.hidden=!available;if(!available)toggle(false);
+      const source=config.legend();panel.replaceChildren();
+      const title=document.createElement('h3');title.textContent='Napięcie wg OSM';panel.append(title);
+      if(source)for(const child of source.children){if(child.tagName==='SUMMARY'||child.classList.contains('legend-title'))continue;const copy=child.cloneNode(true);copy.removeAttribute('id');panel.append(copy)}
+    }
+    function createLegend(){
+      container=L.DomUtil.create('div','iw-gis-map-legend');
+      panel=document.createElement('section');panel.className='iw-gis-map-legend-content';panel.id='mapGISLegend';panel.hidden=true;panel.setAttribute('aria-label','Legenda warstw GIS');
+      button=document.createElement('button');button.type='button';button.id='toggleMapGISLegend';button.textContent='Legenda GIS';button.setAttribute('aria-controls',panel.id);button.setAttribute('aria-expanded','false');button.setAttribute('aria-pressed','false');
+      button.onclick=()=>toggle(!opened);container.append(panel,button);
+      L.DomEvent.disableClickPropagation(container);L.DomEvent.disableScrollPropagation(container);
+      return container;
+    };
+    map.getContainer().parentElement.append(createLegend());refresh();
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&opened){toggle(false);button.focus()}});
+    const attribution=map.attributionControl?.getContainer();
+    const resize=()=>{
+      const scaleBottom=(attribution?.offsetHeight||0)+8;
+      scaleRoot.style.setProperty('margin-bottom',scaleBottom+'px','important');
+      const legendBottom=scaleBottom+scaleRoot.offsetHeight+8;container.style.bottom=legendBottom+'px';
+      container.style.setProperty('--iw-legend-max-height',Math.max(48,map.getContainer().clientHeight-legendBottom-45)+'px');
+    };
+    const observer=new ResizeObserver(resize);observer.observe(map.getContainer());observer.observe(scaleRoot);if(attribution)observer.observe(attribution);resize();
+    return {refresh};
+  }
+  return {install,sync,openDetails,closePanels,installMapTools};
 })();
