@@ -1,0 +1,180 @@
+{
+  "bbox": [
+    18.0,
+    49.98,
+    19.2,
+    50.46
+  ],
+  "width": 2400,
+  "height": 1500,
+  "scenes": [
+    {
+      "year": 2020,
+      "id": "S2A_33UYR_20200701_0_L2A",
+      "date": "2020-07-01T09:56:51.662000Z",
+      "cloud": 0.74,
+      "url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_33UYR_20200701_0_L2A",
+      "boaOffsetApplied": false,
+      "appliedReflectanceOffset": 0,
+      "assets": {
+        "visual": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2020/7/S2A_33UYR_20200701_0_L2A/TCI.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2020/7/S2A_33UYR_20200701_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2020/7/S2A_33UYR_20200701_0_L2A/B08.tif",
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2020/7/S2A_33UYR_20200701_0_L2A/SCL.tif"
+      },
+      "points": [
+        {
+          "ndvi": 0.77,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.909,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.71,
+          "validPixels": 79,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.865,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.706,
+          "validPixels": 80,
+          "totalPixels": 81
+        }
+      ]
+    },
+    {
+      "year": 2022,
+      "id": "S2B_33UYR_20220805_0_L2A",
+      "date": "2022-08-05T09:56:51.101000Z",
+      "cloud": 0.01,
+      "url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_33UYR_20220805_0_L2A",
+      "boaOffsetApplied": true,
+      "appliedReflectanceOffset": 0,
+      "assets": {
+        "visual": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2022/8/S2B_33UYR_20220805_0_L2A/TCI.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2022/8/S2B_33UYR_20220805_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2022/8/S2B_33UYR_20220805_0_L2A/B08.tif",
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2022/8/S2B_33UYR_20220805_0_L2A/SCL.tif"
+      },
+      "points": [
+        {
+          "ndvi": 0.66,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.883,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.722,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.85,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.551,
+          "validPixels": 81,
+          "totalPixels": 81
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "id": "S2B_33UYR_20240814_0_L2A",
+      "date": "2024-08-14T09:56:50.602000Z",
+      "cloud": 0.0,
+      "url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_33UYR_20240814_0_L2A",
+      "boaOffsetApplied": true,
+      "appliedReflectanceOffset": 0,
+      "assets": {
+        "visual": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2024/8/S2B_33UYR_20240814_0_L2A/TCI.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2024/8/S2B_33UYR_20240814_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2024/8/S2B_33UYR_20240814_0_L2A/B08.tif",
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2024/8/S2B_33UYR_20240814_0_L2A/SCL.tif"
+      },
+      "points": [
+        {
+          "ndvi": 0.856,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.865,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.709,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.835,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.549,
+          "validPixels": 81,
+          "totalPixels": 81
+        }
+      ]
+    },
+    {
+      "year": 2025,
+      "id": "S2B_33UYR_20250630_0_L2A",
+      "date": "2025-06-30T09:56:49.499000Z",
+      "cloud": 0.0,
+      "url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_33UYR_20250630_0_L2A",
+      "boaOffsetApplied": true,
+      "appliedReflectanceOffset": 0,
+      "assets": {
+        "visual": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2025/6/S2B_33UYR_20250630_0_L2A/TCI.tif",
+        "red": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2025/6/S2B_33UYR_20250630_0_L2A/B04.tif",
+        "nir": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2025/6/S2B_33UYR_20250630_0_L2A/B08.tif",
+        "scl": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/33/U/YR/2025/6/S2B_33UYR_20250630_0_L2A/SCL.tif"
+      },
+      "points": [
+        {
+          "ndvi": 0.783,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.897,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.723,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.867,
+          "validPixels": 81,
+          "totalPixels": 81
+        },
+        {
+          "ndvi": 0.614,
+          "validPixels": 81,
+          "totalPixels": 81
+        }
+      ]
+    }
+  ]
+}

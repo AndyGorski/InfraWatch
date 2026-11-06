@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "bbox": [
+      18.4505,
+      50.4108,
+      18.4635,
+      50.4192
+    ],
+    "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolutionTime?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=Raster&STYLES=&SRS=EPSG%3A4326&BBOX=18.4505%2C50.4108%2C18.4635%2C50.4192&WIDTH=1000&HEIGHT=1000&FORMAT=image%2Fjpeg&TIME=2024-12-31",
+    "source": "GUGiK / Geoportal",
+    "acquisitionDate": null,
+    "retrieved": "2026-11-05",
+    "notice": "Mozaika archiwalna na wskazany dzień; data nalotu nieustalona. Rok stanu mozaiki nie jest potwierdzoną datą zdjęcia.",
+    "mosaicSnapshot": "2024-12-31"
+  },
+  {
+    "id": 2,
+    "bbox": [
+      18.5375,
+      50.3138,
+      18.5505,
+      50.322199999999995
+    ],
+    "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolutionTime?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=Raster&STYLES=&SRS=EPSG%3A4326&BBOX=18.5375%2C50.3138%2C18.5505%2C50.322199999999995&WIDTH=1000&HEIGHT=1000&FORMAT=image%2Fjpeg",
+    "source": "GUGiK / Geoportal",
+    "acquisitionDate": null,
+    "retrieved": "2026-11-05",
+    "notice": "Mozaika domyślna usługi; data nalotu nieustalona. Rok stanu mozaiki nie jest potwierdzoną datą zdjęcia.",
+    "mosaicSnapshot": null
+  },
+  {
+    "id": 3,
+    "bbox": [
+      18.5515,
+      50.2488,
+      18.5645,
+      50.2572
+    ],
+    "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolutionTime?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=Raster&STYLES=&SRS=EPSG%3A4326&BBOX=18.5515%2C50.2488%2C18.5645%2C50.2572&WIDTH=1000&HEIGHT=1000&FORMAT=image%2Fjpeg&TIME=2022-12-31",
+    "source": "GUGiK / Geoportal",
+    "acquisitionDate": null,
+    "retrieved": "2026-11-05",
+    "notice": "Mozaika archiwalna na wskazany dzień; data nalotu nieustalona. Rok stanu mozaiki nie jest potwierdzoną datą zdjęcia.",
+    "mosaicSnapshot": "2022-12-31"
+  },
+  {
+    "id": 4,
+    "bbox": [
+      18.517500000000002,
+      50.174800000000005,
+      18.5305,
+      50.1832
+    ],
+    "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolutionTime?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=Raster&STYLES=&SRS=EPSG%3A4326&BBOX=18.517500000000002%2C50.174800000000005%2C18.5305%2C50.1832&WIDTH=1000&HEIGHT=1000&FORMAT=image%2Fjpeg&TIME=2024-12-31",
+    "source": "GUGiK / Geoportal",
+    "acquisitionDate": null,
+    "retrieved": "2026-11-05",
+    "notice": "Mozaika archiwalna na wskazany dzień; data nalotu nieustalona. Rok stanu mozaiki nie jest potwierdzoną datą zdjęcia.",
+    "mosaicSnapshot": "2024-12-31"
+  },
+  {
+    "id": 5,
+    "bbox": [
+      18.4545,
+      50.0998,
+      18.467499999999998,
+      50.1082
+    ],
+    "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolutionTime?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=Raster&STYLES=&SRS=EPSG%3A4326&BBOX=18.4545%2C50.0998%2C18.467499999999998%2C50.1082&WIDTH=1000&HEIGHT=1000&FORMAT=image%2Fjpeg",
+    "source": "GUGiK / Geoportal",
+    "acquisitionDate": null,
+    "retrieved": "2026-11-05",
+    "notice": "Mozaika domyślna usługi; data nalotu nieustalona. Rok stanu mozaiki nie jest potwierdzoną datą zdjęcia.",
+    "mosaicSnapshot": null
+  }
+]
