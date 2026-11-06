@@ -1,6 +1,10 @@
 # InfraWatch — demonstratory
 
-Zbiór dotychczasowych wersji demonstracyjnych projektu InfraWatch. Każda wersja znajduje się w osobnym katalogu; pliki oryginalnych demonstratorów pozostawiono jako osobne migawki.
+Centrum demonstracyjne projektu InfraWatch. Strona główna prezentuje trzy aktualne zastosowania: roślinność przy liniach energetycznych, deformacje terenu i infrastruktury oraz zalanie infrastruktury. Każda aplikacja znajduje się w osobnym katalogu.
+
+Wspólna nawigacja prowadzi do katalogu aplikacji, [danych i metodologii](dane-i-metodologia.html), [archiwum](archiwum.html) i repozytorium. Nagłówki aktualnych aplikacji oraz wersji SAR/GIS i InSAR v1 korzystają z komponentu `shared/infrawatch-shell.js` i stylów `shared/infrawatch-shell.css`. W nagłówku aplikacji można przełączyć demonstrator lub wrócić do katalogu. Oryginalne wczesne prototypy zachowano jako migawki w archiwum.
+
+Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`). Karty oddzielnie opisują pochodzenie podkładów/GIS i charakter wyników analizy. Gaz, transport i woda są oznaczone jako planowane moduły drugiego zestawu.
 
 | Katalog | Zawartość |
 | --- | --- |
