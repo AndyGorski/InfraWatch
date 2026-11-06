@@ -48,3 +48,5 @@ Contains modified Copernicus Sentinel data 2020, 2022, 2024, 2025 · Earth Searc
 
 
 Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / Obiekt / Analiza, zakładki Warstwy / Obiekty, zwijane panele, historia pod mapą i okno eksportu. Adapter `unified-workspace.js` zachowuje funkcje tego przypadku użycia.
+
+Menu **Wybierz obiekt** pozwala rozpocząć od elektrowni lub stacji, np. Elektrowni Kozienice, i wybrać promień 1–30 km. Wybór filtruje pobliską sieć, listę obiektów, punkty InSAR oraz statystyki. Katalog obejmuje 3 obiekty wytwarzania energii i 94 stacje w regionie Kozienic. **Obszar ręcznie** zachowuje wybór prostokąta. Wybór nowego obiektu nie tworzy pomiarów deformacji: dostępne początkowo szeregi pozostają syntetyczne. Bliskość linii nie jest potwierdzeniem połączenia z elektrownią. Szczegóły katalogu i eksportu znajdują się w głównym README.

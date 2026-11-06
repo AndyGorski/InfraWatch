@@ -39,7 +39,7 @@ function installUnifiedVegetation(){
   }
   map.setMaxBounds(null);map.setMinZoom(6);aerialTiles.options.minZoom=6;
   InfraWatchArea.install(map,{
-    name:'Śląsk',imageryBox:data.bbox,gisBox:realMeta.aoi_bbox,showMap:()=>switchView('map'),stats:()=>({total:realPower.features.length}),
+    name:'Śląsk',imageryBox:data.bbox,gisBox:realMeta.aoi_bbox,showMap:()=>switchView('map'),stats:()=>({total:realPower.features.length,lines:realPower.features.filter(f=>f.properties.kind==='line').length}),
     onChange:b=>{
       stopHistory();if(b&&demoMode)setGISMode(false);
       realPower={...allPower,features:allPower.features.filter(InfraWatchArea.intersectsFeature)};realLayerIndex.clear();
@@ -52,6 +52,12 @@ function installUnifiedVegetation(){
     },setAvailability:availability,
     onNavigate:coverage=>{if(coverage!=='full'){stopHistory();state.layer='aerial';applyImageryPolicy(true)}}
   });
+  InfraWatchFacility.install(map,{region:'silesia',name:'Śląsk',getFeatures:()=>allPower.features,
+    prepareLayers:local=>{if(demoMode)setGISMode(false);document.getElementById('showRealLines').checked=true;realGroups.lines.addTo(map);document.getElementById('showRealMinor').checked=local;local?realGroups.minor.addTo(map):map.removeLayer(realGroups.minor)},
+    showLines:()=>{document.getElementById('realSearch').value='';document.querySelector('[data-side="locations"]').click();renderRealList()},selectLine:id=>selectRealFeature(id,false)
+  });
+  const oldPlayHistory=document.getElementById('playHistory').onclick;
+  document.getElementById('playHistory').onclick=()=>{const b=InfraWatchArea.getBox();if(b&&!historyTimer&&(state.layer==='aerial'||isDetailView())){state.layer='rgb';map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{padding:[18,18],maxZoom:11,animate:false});updateLayer()}oldPlayHistory()};
   document.getElementById('fitMap').onclick=()=>{if(InfraWatchArea.getBox())InfraWatchArea.focus();else {if(state.layer==='aerial')state.layer='rgb';fit();updateLayer();renderTimeline()}};
   updateSummary();renderImageryStatus();
 }

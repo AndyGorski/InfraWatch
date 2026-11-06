@@ -83,7 +83,7 @@ function renderRealList(){
  const favorites=['way/171537807','way/182863859','way/306655947','way/171724615','way/40946796'].map(id=>realFeatureIndex.get(id)).filter(f=>f&&InfraWatchArea.intersectsFeature(f));
  $('#realQuick').innerHTML=favorites.map(f=>`<button class="quick-location real-quick ${f.id===realSelected?'selected':''}" data-real-id="${f.id}"><span>ϟ</span><span><strong>${gisEsc(realName(f))}</strong><small>${realVoltageLabel(f.properties)} · ${fmt(f.properties.length_km_in_aoi)} km w zbiorze źródłowym</small></span></button>`).join('');
  const q=$('#realSearch').value.toLocaleLowerCase('pl');
- const matches=realPower.features.filter(f=>(q||f.properties.kind==='line')&&`${realName(f)} ${f.id} ${f.properties.voltage||''}`.toLocaleLowerCase('pl').includes(q));
+ let matches=realPower.features.filter(f=>(q||f.properties.kind==='line')&&`${realName(f)} ${f.id} ${f.properties.voltage||''}`.toLocaleLowerCase('pl').includes(q));
  $('#realResults').innerHTML=`<p class="real-result-count">Dopasowania: ${gisCount(matches.length)} · pokazano ${Math.min(35,matches.length)}</p>`+matches.slice(0,35).map(f=>`<button class="location ${f.id===realSelected?'selected':''}" data-real-id="${f.id}"><div class="location-top"><span>OSM ${f.properties.osm_id}</span><span>${realVoltageLabel(f.properties)}</span></div><strong>${gisEsc(realName(f))}</strong><p>${f.properties.kind==='line'?fmt(f.properties.length_km_in_aoi)+' km w zbiorze źródłowym':gisEsc(realKind(f))} <span>↗</span></p></button>`).join('');
  $$('[data-real-id]').forEach(b=>b.onclick=()=>selectRealFeature(b.dataset.realId,true));
 }

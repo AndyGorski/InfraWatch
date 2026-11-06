@@ -33,3 +33,5 @@ Zapisz odpowiedź JSON zapytania z metadanych jako `power-osm-raw.json`. Następ
 
 
 Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / Obiekt / Analiza, zakładki Warstwy / Obiekty, zwijane panele, historia pod mapą i okno eksportu. Adapter `unified-workspace.js` zachowuje funkcje tego przypadku użycia.
+
+Menu **Wybierz obiekt** pozwala rozpocząć od elektrowni lub stacji, np. Elektrowni Rybnik, i wybrać promień 1–30 km. Rzeczywiste linie w tym otoczeniu można wybrać z listy, otworzyć ich karty i porównać historię zobrazowań. Menu zawiera 6 obiektów wytwarzania energii i 817 stacji z obszaru Śląska. **Obszar ręcznie** zachowuje dotychczasowy wybór prostokąta. Bliskość przestrzenna nie potwierdza połączenia elektrycznego; koło odnosi się do punktu referencyjnego OSM. Szczegóły katalogu i eksportu znajdują się w głównym README.
