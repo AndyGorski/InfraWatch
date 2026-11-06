@@ -11,7 +11,7 @@ Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`)
 | `demos/00-early-prototypes/` | Dwa pierwsze prototypy HTML: mapa SAR/GIS oraz porównanie SAR/GIS. |
 | `demos/01-sar-gis/` | Demo SAR Sentinel‑1 i geometrii linii energetycznej koło Kozienic. |
 | `demos/02-insar-v1/` | Pierwsza wersja InSAR: syntetyczne szeregi przemieszczeń, prognoza trendu i import CSV. |
-| `demos/03-insar-multisensor-v2/` | InSAR, Sentinel‑1, Sentinel‑2, ortofotomapa GUGiK i karty słupów OSM. |
+| `demos/03-insar-multisensor-v2/` | Mapa deformacji: historia Sentinel-2 / NDVI 2020–2025, szczegółowy GUGiK WMTS, osobna oś epok InSAR, karty słupów OSM i import CSV. |
 | `demos/04-flood-2d-3d/` | Flood Lab: mapa 2D, model terenu 3D i scenariusze wezbrania 0–72 godzin. |
 | `demos/05-electricity-vegetation/` | Zestaw 2 / Energia: rzeczywiste GIS OSM na Śląsku, historia Sentinel-2 / NDVI, zbliżenia GUGiK oraz osobny scenariusz zarastania pasa linii. |
 
