@@ -45,3 +45,6 @@ Zakładki „Obiekt” i „Punkty” udostępniają kartę GIS, dawny wycinek r
 Uruchom statyczny serwer HTTP z katalogu repozytorium, np. `python -m http.server 8000`, a następnie otwórz `/demos/03-insar-multisensor-v2/`. Zobrazowania archiwalne i biblioteka Leaflet są lokalne; WMTS wymaga internetu.
 
 Contains modified Copernicus Sentinel data 2020, 2022, 2024, 2025 · Earth Search / Element 84. SAR: Copernicus / Geomatrix SAGRIS. Ortofotomapy: GUGiK / Geoportal. GIS: © OpenStreetMap contributors, ODbL. Leaflet 1.9.4: BSD-2-Clause. Szczegóły znajdują się także w oknie „Źródła danych”.
+
+
+Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / Obiekt / Analiza, zakładki Warstwy / Obiekty, zwijane panele, historia pod mapą i okno eksportu. Adapter `unified-workspace.js` zachowuje funkcje tego przypadku użycia.

@@ -36,3 +36,21 @@ Następnie otwórz `http://localhost:8000/` i wybierz wersję. Serwer HTTP jest 
 ## Źródła i prawa
 
 Dane obejmują m.in. Copernicus Sentinel‑1/2 (w tym przetworzenia Geomatrix SAGRIS / Earth Search), ortofotomapy GUGiK, © OpenStreetMap contributors (ODbL), Terrain Tiles / Mapzen (m.in. EU‑DEM oraz USGS SRTM). Leaflet jest oprogramowaniem zewnętrznym. Należy zachować ich atrybucję i warunki korzystania. Zawartość repozytorium nie nadaje automatycznie odrębnej licencji na dane dostawców.
+
+
+## Wspólny interfejs paneli monitoringu
+
+Aplikacje roślinności (`05`) i deformacji (`03`) korzystają ze wspólnego stylu i zachowania paneli w `shared/monitoring-workspace.css` oraz `shared/monitoring-workspace.js`. Adaptery `unified-workspace.js` zachowują logikę i zbiory danych każdej aplikacji.
+
+| Element | Wspólny wzorzec |
+| --- | --- |
+| Nawigacja | Mapa / Obiekt / Analiza; dodatkowy plan inspekcji w roślinności |
+| Układ | Wskaźniki u góry, GIS po lewej, mapa pośrodku, szczegóły po prawej |
+| Panele | Warstwy i Szczegóły można zwijać na komputerze; do 1000 px działają jako wzajemnie wykluczające się szuflady z przyciskiem zamknięcia i Escape |
+| GIS | Zakładki Warstwy / Obiekty, wyszukiwanie linii, podpór i stacji, legenda napięć i karta źródłowa |
+| Obrazy | Sentinel-2 / NDVI / lotnicze, automatyczny GUGiK w zbliżeniu, przycisk Pokaż archiwum |
+| Czas | Jednakowy pasek lat i odtwarzanie pod mapą; niezależna dodatkowa oś epok InSAR w deformacjach |
+| Eksport | Okno wyboru danych i formatu; zakres właściwy dla aplikacji |
+| Dostępność | Strzałki oraz Home/End w głównej nawigacji, aktualne aria-selected/expanded/pressed, widoczne obramowanie fokusu |
+
+Zmiana obejmuje prezentację i sterowanie. Nie dodaje nowych pomiarów ani nie łączy dat GIS, zobrazowań i symulacji. Bufory oraz wyniki demonstracyjne zachowują dotychczasowe oznaczenia i ograniczenia.

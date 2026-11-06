@@ -42,7 +42,7 @@ function renderDetail(){
 function selectLocation(id,zoom=false){
  state.selected=id;renderList();renderDetail();updateMarkers();
  if(zoom){const p=selected();map.flyTo([p.lat,p.lon],16,{duration:.6})}
- if(window.innerWidth<=980){document.body.classList.add('show-detail');document.body.classList.remove('detail-collapsed','show-layers');$('#toggleDetail').setAttribute('aria-expanded','true')}
+ InfraWatchUI.openDetails();
 }
 function toggleSchedule(id){if(scheduled[id])delete scheduled[id];else scheduled[id]={addedAt:new Date().toISOString(),status:'Do inspekcji'};try{localStorage.setItem('infrawatch-inspections-v1',JSON.stringify(scheduled))}catch(e){toast('Status zachowany w tej sesji; pamięć przeglądarki jest niedostępna.')}renderList();renderDetail();renderActions();toast(scheduled[id]?'Dodano do lokalnego planu inspekcji.':'Usunięto z lokalnego planu inspekcji.')}
 function updateMarkers(){
@@ -107,10 +107,10 @@ function bind(){
  $('#gridButton').onclick=()=>{const on=$('#mapGrid').hidden;$('#mapGrid').hidden=!on;$('#gridButton').setAttribute('aria-pressed',on)};$('#focusButton').onclick=()=>selectLocation(state.selected,true);
  $('#toggleDetail').onclick=()=>{if(window.innerWidth<=980)document.body.classList.toggle('show-detail');else document.body.classList.toggle('detail-collapsed');const on=window.innerWidth<=980?document.body.classList.contains('show-detail'):!document.body.classList.contains('detail-collapsed');$('#toggleDetail').setAttribute('aria-expanded',on);map.invalidateSize()};
  $('#mobileLayers').onclick=()=>{document.body.classList.toggle('show-layers');document.body.classList.remove('show-detail')};$('#mobileDetail').onclick=()=>{document.body.classList.toggle('show-detail');document.body.classList.remove('show-layers','detail-collapsed')};
- $('#playHistory').onclick=()=>{if(historyTimer){stopHistory();return}if(state.layer==='aerial'||isDetailView()){state.layer='rgb';fit();updateLayer()}let i=0;setYear(data.scenes[i].year);$('#playHistory').textContent='Ⅱ';$('#playHistory').setAttribute('aria-pressed','true');historyTimer=setInterval(()=>{i++;if(i>=data.scenes.length){stopHistory();return}setYear(data.scenes[i].year)},1800)};
- document.addEventListener('visibilitychange',()=>{if(document.hidden)stopHistory()});window.addEventListener('resize',()=>{$('#toggleDetail').setAttribute('aria-expanded',window.innerWidth>980&&!document.body.classList.contains('detail-collapsed'))});
+ $('#playHistory').onclick=()=>{if(historyTimer){stopHistory();return}if(state.layer==='aerial'||isDetailView()){state.layer='rgb';fit();updateLayer()}let i=0;setYear(data.scenes[i].year);$('#playHistory').textContent='Ⅱ';$('#playHistory').setAttribute('aria-pressed','true');$('#playHistory').setAttribute('aria-label','Zatrzymaj historię zobrazowań');historyTimer=setInterval(()=>{i++;if(i>=data.scenes.length){stopHistory();return}setYear(data.scenes[i].year)},2200)};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopHistory()});window.addEventListener('resize',()=>InfraWatchUI.sync());
 }
-async function init(){try{const r=await fetch('assets/scenes.json');if(!r.ok)throw Error('Brak metadanych scen');data=await r.json();try{const o=await fetch('assets/ortho.json');if(o.ok)orthos=await o.json()}catch(e){}$('#routeLength').textContent=fmt(routeLength)+' km';await loadRealPowerData();routeLayerLabels=L.layerGroup();initMap();routeLayerLabels.addTo(map);renderList();renderDetail();renderTimeline();renderAnalysis();renderActions();bind();mountRealPowerGIS();}catch(e){console.error(e);$('#currentDate').textContent='Nie udało się wczytać danych. Odśwież stronę.';toast('Błąd wczytywania mapy. Sprawdź połączenie i odśwież stronę.')}}
+async function init(){try{const r=await fetch('assets/scenes.json');if(!r.ok)throw Error('Brak metadanych scen');data=await r.json();try{const o=await fetch('assets/ortho.json');if(o.ok)orthos=await o.json()}catch(e){}$('#routeLength').textContent=fmt(routeLength)+' km';await loadRealPowerData();routeLayerLabels=L.layerGroup();initMap();routeLayerLabels.addTo(map);renderList();renderDetail();renderTimeline();renderAnalysis();renderActions();bind();mountRealPowerGIS();installUnifiedVegetation();}catch(e){console.error(e);$('#currentDate').textContent='Nie udało się wczytać danych. Odśwież stronę.';toast('Błąd wczytywania mapy. Sprawdź połączenie i odśwież stronę.')}}
 
 
 
@@ -144,7 +144,7 @@ function updatePointVisibility(){if(!mainGIS)return;const visible=p=>(state.filt
 
 
 
-function stopHistory(){if(historyTimer)clearInterval(historyTimer);historyTimer=null;$('#playHistory').textContent='▷';$('#playHistory').setAttribute('aria-pressed','false')}
+function stopHistory(){if(historyTimer)clearInterval(historyTimer);historyTimer=null;$('#playHistory').textContent='▷';$('#playHistory').setAttribute('aria-pressed','false');$('#playHistory').setAttribute('aria-label','Odtwórz historię zobrazowań')}
 
 const AERIAL_DETAIL_ZOOM=12;
 const AERIAL_WMTS='https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTOFOTOMAPA&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=EPSG:3857&TILEMATRIX=EPSG:3857:{z}&TILEROW={y}&TILECOL={x}';
