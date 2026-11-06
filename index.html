@@ -4,30 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Demonstratory InfraWatch: monitoring infrastruktury z wykorzystaniem zobrazowań satelitarnych, ortofotomap i danych GIS.">
-<title>InfraWatch — demonstratory</title>
-<style>
-body{max-width:900px;margin:60px auto;padding:0 25px;background:#091823;color:#e6f3f3;font:16px/1.65 system-ui}h1{font-size:38px}h1 span,a{color:#71e0c0}a{font-weight:650}h2{font-size:21px;margin-top:36px}li{background:#142936;border:1px solid #34515b;border-radius:10px;padding:15px;margin:12px 0}ul{list-style:none;padding:0}small{color:#abc1c7}strong{color:#ffd298}.featured{border-color:#71e0c0;background:#153c3d;padding:22px}.badge{display:inline-block;font-size:11px;letter-spacing:.08em;color:#a4f0d9;border:1px solid #477d70;border-radius:20px;padding:3px 9px;margin-bottom:9px}.featured a{font-size:21px}.featured p{font-size:14px;color:#c9dddf;margin:10px 0}.note{font-size:13px;color:#abc1c7}a:focus-visible{outline:2px solid #ffd298;outline-offset:5px}@media(max-width:600px){body{margin-top:28px;padding:0 18px}h1{font-size:29px}.featured a{font-size:19px}}
-</style>
+<title>InfraWatch — centrum demonstracyjne</title>
+<link rel="stylesheet" href="shared/portal.css">
+<link rel="stylesheet" href="shared/infrawatch-shell.css">
+<script src="shared/infrawatch-shell.js" defer></script>
 </head>
-<body>
-<h1>Infra<span>Watch</span> / demonstratory</h1>
-<p>Wybierz aplikację lub wcześniejszą wersję demonstracyjną.</p>
-<h2>Zestaw 2 · monitoring infrastruktury</h2>
-<ul><li class="featured">
-<span class="badge">NOWA APLIKACJA · ENERGIA · 01 / 04</span><br>
-<a href="demos/05-electricity-vegetation/">Energia · roślinność w pasie linii →</a>
-<p>Rzeczywiste linie, słupy i stacje OSM na Śląsku, historia Sentinel-2 i NDVI z lat 2020–2025 oraz szczegółowa ortofotomapa GUGiK przy zbliżeniach.</p>
-<small>Start: linia oznaczona w OSM jako 400 kV · 50,8 km w obszarze · 137 powiązanych podpór. Osobny przełącznik uruchamia symulację zarastania.</small>
-<p class="note">GIS jest publicznym snapshotem wymagającym walidacji operatora. Symulacja nie jest oceną zagrożeń rzeczywistej linii.</p>
-</li></ul>
-<h2>Wcześniejsze demonstratory</h2>
-<ul>
-<li><a href="demos/01-sar-gis/">SAR + GIS · Kozienice</a><br><small>Porównanie rzeczywistych zobrazowań SAR i warstwy linii.</small></li>
-<li><a href="demos/02-insar-v1/">InSAR · wersja 1</a><br><small>Szeregi przemieszczeń i prognoza trendu.</small></li>
-<li><a href="demos/03-insar-multisensor-v2/">InSAR · wersja wielosensorowa</a><br><small>SAR, optyka, ortofotomapa i karty słupów.</small></li>
-<li><a href="demos/04-flood-2d-3d/">Flood Lab · 2D / 3D</a><br><small>Hipotetyczny scenariusz wezbrania w rejonie Wisły.</small></li>
-<li><a href="demos/00-early-prototypes/InfraWatch_demo_SAR_GIS_Kozienice.html">Wczesny prototyp SAR/GIS</a> · <a href="demos/00-early-prototypes/InfraWatch_demo_porownanie_SAR_GIS_v02.html">porównanie SAR/GIS</a></li>
-</ul>
-<p><strong>Uwaga:</strong> wyniki InSAR, scenariusz powodziowy i scenariusz zarastania są symulowane; nie są podstawą ostrzeżeń ani decyzji operacyjnych.</p>
+<body class="portal">
+<a class="portal-skip" href="#aplikacje">Przejdź do aplikacji</a>
+<infrawatch-header page="apps"></infrawatch-header>
+<main class="portal-main">
+<section class="portal-hero" aria-labelledby="portal-title">
+<p class="portal-eyebrow">Centrum demonstracyjne / Polska</p>
+<h1 id="portal-title">Wybierz obszar monitoringu.</h1>
+<p class="portal-lead">Zobrazowania satelitarne, dane lotnicze i GIS w jednym środowisku. Poznaj zastosowania InfraWatch i sprawdź, jak obserwacje przestrzenne mogą wspierać weryfikację stanu infrastruktury.</p>
+</section>
+<section class="portal-section" id="aplikacje" aria-labelledby="apps-title">
+<div class="portal-section-head"><div><h2 id="apps-title">Aplikacje demonstracyjne</h2><p>Trzy zastosowania. Wspólny dostęp do danych, analiz i scenariuszy.</p></div><a href="dane-i-metodologia.html">Jak czytać dane i wyniki ↗</a></div>
+<div class="app-grid">
+<article class="app-card">
+<div class="app-preview"><img src="demos/05-electricity-vegetation/assets/sentinel-2025.jpg" alt="Zobrazowanie Sentinel-2 obszaru demonstracji na Śląsku" width="600" height="300"><span class="app-area">Śląsk · korytarz energetyczny</span></div>
+<div class="app-body"><div class="app-kicker"><span>Energia / zestaw sektorowy</span><span class="available">Dostępne</span></div><h3>Roślinność przy liniach energetycznych</h3><p class="app-description">Przeglądaj rzeczywiste linie i podpory, historię wegetacji oraz szczegółowe ortofotomapy. Odkryj osobny scenariusz zarastania pasa linii.</p>
+<dl class="app-facts"><div><dt>Podkłady i GIS</dt><dd>Rzeczywiste źródła</dd></div><div><dt>Analiza</dt><dd>Obliczone NDVI<br><span class="simulation">Zagrożenia: osobna symulacja</span></dd></div></dl>
+<a class="portal-button" href="demos/05-electricity-vegetation/" aria-label="Uruchom demo: roślinność przy liniach energetycznych">Uruchom demo <span aria-hidden="true">→</span></a><p class="app-tech">SENTINEL-2 · NDVI · GUGiK · OSM</p></div>
+</article>
+<article class="app-card">
+<div class="app-preview"><img src="demos/03-insar-multisensor-v2/assets/sentinel2.jpg" alt="Zobrazowanie optyczne okolic Kozienic" width="600" height="300"><span class="app-area">Kozienice · korytarz linii 400 kV</span></div>
+<div class="app-body"><div class="app-kicker"><span>Analizy przekrojowe</span><span class="available">Dostępne</span></div><h3>Deformacje terenu i infrastruktury</h3><p class="app-description">Porównuj perspektywy sensorów, przeglądaj karty słupów i sprawdź przebieg analizy szeregów przemieszczeń oraz trendów.</p>
+<dl class="app-facts"><div><dt>Podkłady i GIS</dt><dd>Rzeczywiste źródła</dd></div><div><dt>Analiza</dt><dd class="simulation">Szeregi InSAR i prognozy:<br>symulacja demonstracyjna</dd></div></dl>
+<a class="portal-button" href="demos/03-insar-multisensor-v2/" aria-label="Uruchom demo: deformacje terenu i infrastruktury">Uruchom demo <span aria-hidden="true">→</span></a><p class="app-tech">INSAR · SENTINEL-1/2 · GUGiK · OSM</p></div>
+</article>
+<article class="app-card">
+<div class="app-preview"><img src="demos/04-flood-2d-3d/assets/ortho-overview.jpg" alt="Ortofotomapa doliny Wisły w obszarze demonstracji" width="600" height="300"><span class="app-area">Dolina Wisły · rejon Kozienic</span></div>
+<div class="app-body"><div class="app-kicker"><span>Analizy przekrojowe</span><span class="available">Dostępne</span></div><h3>Zalanie infrastruktury</h3><p class="app-description">Poznaj otoczenie infrastruktury na mapie 2D i modelu terenu 3D. Prześledź hipotetyczne scenariusze wezbrania wody.</p>
+<dl class="app-facts"><div><dt>Podkłady i GIS</dt><dd>Rzeczywiste źródła</dd></div><div><dt>Analiza</dt><dd class="simulation">Scenariusz i zasięg zalania:<br>uproszczona symulacja</dd></div></dl>
+<a class="portal-button" href="demos/04-flood-2d-3d/" aria-label="Uruchom demo: zalanie infrastruktury">Uruchom demo <span aria-hidden="true">→</span></a><p class="app-tech">MODEL TERENU · 2D / 3D · GUGiK · OSM</p></div>
+</article>
+</div></section>
+<section class="portal-section" aria-labelledby="sectors-title"><div class="portal-section-head"><div><h2 id="sectors-title">Rozwój monitoringu sektorowego</h2><p>Drugi zestaw InfraWatch: cztery obszary infrastruktury.</p></div></div>
+<div class="sector-grid"><article class="sector-card"><h3>Energia</h3><p>Linie przesyłowe i otoczenie sieci.</p><a href="demos/05-electricity-vegetation/">Dostępne demo →</a></article><article class="sector-card"><h3>Gaz</h3><p>Gazociągi i instalacje przesyłowe.</p><span class="planned">Planowane</span></article><article class="sector-card"><h3>Transport</h3><p>Kolej, mosty i infrastruktura drogowa.</p><span class="planned">Planowane</span></article><article class="sector-card"><h3>Woda</h3><p>Ujęcia i infrastruktura wody pitnej.</p><span class="planned">Planowane</span></article></div></section>
+<aside class="portal-note"><strong>Demonstratory technologii.</strong> Rzeczywiste obrazy i geometrie nie oznaczają potwierdzonych pomiarów bezpieczeństwa. Symulacje są oznaczone w aplikacjach. Dane GIS wymagają walidacji operatora, a wyniki demonstracyjne nie stanowią ostrzeżeń operacyjnych.</aside>
+<footer class="portal-footer"><p>InfraWatch · obserwacje przestrzenne dla infrastruktury</p><p><a href="archiwum.html">Wcześniejsze wersje i prototypy</a> · <a href="dane-i-metodologia.html">Źródła i ograniczenia</a></p></footer>
+</main>
 </body>
 </html>
