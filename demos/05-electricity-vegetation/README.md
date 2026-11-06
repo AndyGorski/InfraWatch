@@ -30,3 +30,6 @@ Dla rzeczywistych obiektów nie wyznaczono kolizji, prześwitu ani wysokości dr
 Zapisz odpowiedź JSON zapytania z metadanych jako `power-osm-raw.json`. Następnie uruchom z tego katalogu `python prepare_real_gis.py power-osm-raw.json --output przygotowane-assets`. Skrypt wymaga wyłącznie biblioteki standardowej Python. Nowe pobranie może zwrócić inny stan danych niż zapisany snapshot.
 
 © OpenStreetMap contributors · [ODbL 1.0](https://www.openstreetmap.org/copyright). Contains modified Copernicus Sentinel data 2020, 2022, 2024, 2025 · Earth Search / Element 84. Ortofotomapy: GUGiK / Geoportal. Leaflet 1.9.4: BSD-2-Clause. Zachowano oznaczenia źródeł w aplikacji i eksporcie. Repozytorium nie nadaje odrębnej licencji na dane dostawców.
+
+
+Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / Obiekt / Analiza, zakładki Warstwy / Obiekty, zwijane panele, historia pod mapą i okno eksportu. Adapter `unified-workspace.js` zachowuje funkcje tego przypadku użycia.
