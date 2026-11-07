@@ -95,7 +95,7 @@ window.InfraWatchArea = (() => {
       <p class="note">Archiwum Sentinel-2 i GIS obejmuje przygotowane obszary Śląska i Kozienic. W nowej lokalizacji można przeglądać usługę lotniczą GUGiK; nie powstaje automatycznie nowa analiza ani historia satelitarna. Geometrie wybranych obiektów są zachowane w całości.</p></form>`;
     document.body.append(dialog);
     const bar=document.createElement('div');bar.className='study-area-bar';bar.id='studyAreaBar';bar.hidden=true;
-    bar.innerHTML='<div><strong id="studyAreaSummary"></strong><details class="study-area-coverage"><summary id="studyAreaCoverageTitle">Zasięg danych</summary><p id="studyAreaCoverage"></p></details></div><div class="study-area-actions"><button type="button" id="editStudyArea">Zmień obszar</button><button type="button" id="fitStudyArea">Pokaż</button><button type="button" id="removeStudyArea" aria-label="Wyłącz wybór obszaru">×</button></div>';
+    bar.innerHTML='<div><strong id="studyAreaSummary"></strong><p id="studyAreaCoverage"></p></div><div class="study-area-actions"><button type="button" id="editStudyArea">Zmień obszar</button><button type="button" id="fitStudyArea">Pokaż</button><button type="button" id="removeStudyArea" aria-label="Wyłącz wybór obszaru">×</button></div>';
     const column=document.querySelector('.map-column');column.insertBefore(bar,column.querySelector('.timeline'));
     const instruction=document.createElement('div');instruction.className='study-area-instruction';instruction.hidden=true;instruction.innerHTML='<span id="areaPickMessage"></span><button type="button" id="cancelAreaPick">Anuluj</button>';map.getContainer().parentElement.append(instruction);
     map.createPane('studyArea');map.getPane('studyArea').style.zIndex=390;
@@ -117,7 +117,6 @@ window.InfraWatchArea = (() => {
       const s2Text=s2==='full'?'Sentinel-2: w zasięgu archiwum':s2==='partial'?'Sentinel-2: archiwum obejmuje część obszaru':'Sentinel-2: brak archiwum dla tego obszaru';
       el('studyAreaCoverage').textContent=(facilitySelection&&stats?.lines!==undefined?`Pobliskie linie: ${stats.lines} · `:'')+s2Text+' · '+(gis==='none'?'GIS: poza przygotowanym zbiorem':`${gis==='partial'?'GIS: częściowe pokrycie':'Wczytany GIS'} · ${stats?.total??'…'} obiektów przecina wybór`)+'. Lotnicze: usługa GUGiK online.';
       bar.classList.toggle('coverage-warning',s2!=='full'||gis!=='full');
-      el('studyAreaCoverageTitle').textContent=(s2==='none'?'Brak archiwum Sentinel-2':s2!=='full'||gis!=='full'?'Częściowy zasięg danych':'Zasięg danych')+(stats?.lines!==undefined?' · '+stats.lines+' linii GIS':'');
       config.setAvailability?.({sentinel:s2,sar:config.sarBox?coverage(box,config.sarBox):'none'});
     }
     function stopPick(){

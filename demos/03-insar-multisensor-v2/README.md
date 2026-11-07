@@ -4,7 +4,7 @@ Widok GIS z mapą jako główną częścią aplikacji, panelem warstw oraz wykre
 
 ## Dane obrazowe
 
-Takie same źródła jak w aplikacji roślinności: Copernicus Sentinel-2 L2A przez Earth Search / Element 84 oraz szczegółowa ortofotomapa GUGiK WMTS StandardResolution. Obszar pozostaje w Kozienicach. Nie użyto obrazów ze Śląska w lokalizacji Kozienic.
+Takie same źródła jak w aplikacji roślinności: Copernicus Sentinel-2 L2A przez Earth Search / Element 84 oraz szczegółowa ortofotomapa GUGiK WMTS StandardResolution. Wybór obiektu przełącza właściwe regionalne mozaiki Śląska lub Kozienic; obrazy zachowują rzeczywiste współrzędne.
 
 W `assets/imagery-history.json` znajdują się identyfikatory, dokładne daty, poziom zachmurzenia całej sceny, adresy źródłowych COG, skala/offset oraz zakres i rozdzielczość wycinków. Przygotowano cztery rzeczywiste obserwacje z lat 2020, 2022, 2024 i 2025. RGB i NDVI można zmieniać na całym widoku mapy suwakiem, przyciskami lat lub odtwarzaniem. Dobór wymaga pokrycia obszaru przez footprint sceny; maska SCL może nadal wykluczać część pikseli.
 
@@ -16,7 +16,7 @@ Zachowano dodatkowy, pojedynczy kadr SAR Sentinel-1C z 13.07.2025 oraz opcję fu
 
 ## Rzeczywiste warstwy GIS
 
-Regionalny snapshot OpenStreetMap z 06.11.2026 obejmuje ten sam obszar co przygotowane obrazy: bbox 21.24, 51.48, 21.86, 51.78. Wczytano 142 odcinki `power=line`, 773 `minor_line`, 1 181 `tower`, 7 270 `pole` i 94 stacje. Dane i metadane są w `assets/real-power.geojson` oraz `assets/real-power-metadata.json`. Zachowano źródłowe identyfikatory, wersje, daty edycji i dostępne atrybuty. Linie przycięto do obszaru, nie dodano sztucznych obiektów. Zbiór nie jest kompletną ewidencją operatora.
+Regionalny snapshot OpenStreetMap z 06.11.2026 obejmuje pierwotny obszar GIS, mniejszy od rozszerzonych mozaik Sentinel-2: bbox 21.24, 51.48, 21.86, 51.78. Wczytano 142 odcinki `power=line`, 773 `minor_line`, 1 181 `tower`, 7 270 `pole` i 94 stacje. Dane i metadane są w `assets/real-power.geojson` oraz `assets/real-power-metadata.json`. Zachowano źródłowe identyfikatory, wersje, daty edycji i dostępne atrybuty. Linie przycięto do obszaru, nie dodano sztucznych obiektów. Zbiór nie jest kompletną ewidencją operatora.
 
 Przełączniki osobno sterują liniami, siecią lokalną, podporami i stacjami. Kolory linii oznaczają napięcie wg OSM, nie poziom zagrożenia. Podpory sieci regionalnej pojawiają się w widocznym obszarze od poziomu 13, a lokalne słupy od 16. Kliknięcie obiektu lub wybór z wyszukiwarki otwiera kartę z linkiem do OSM. Regionalnym obiektom nie przypisano przemieszczeń. GeoJSON eksportuje rzeczywiste geometrie z pełnymi metadanymi i licencją ODbL; JSON analizy zawiera snapshot i widoczność warstw.
 
@@ -50,3 +50,5 @@ Contains modified Copernicus Sentinel data 2020, 2022, 2024, 2025 · Earth Searc
 Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / Obiekt / Analiza, zakładki Warstwy / Obiekty, zwijane panele, historia pod mapą i okno eksportu. Adapter `unified-workspace.js` zachowuje funkcje tego przypadku użycia.
 
 Menu **Wybierz obiekt** udostępnia wspólną listę 9 elektrowni / elektrociepłowni / OZE i 911 stacji ze Śląska oraz Kozienic. Obrazy i GIS przełączają się do rzeczywistego regionu obiektu. Odnośniki Roślinność / Deformacje / Zalanie zachowują wybrany obiekt, promień 1–30 km oraz ustawienie lokalnych linii; wybór można także udostępnić przez URL. Obszar ręczny pozostaje dostępny. Model zarastania z pierwotnego demo pozostaje na Śląsku, syntetyczne punkty InSAR i model zalania przy F401 koło Kozienic. Dla innych lokalizacji brakujące analizy nie są wypełniane fikcyjnymi pomiarami. Bliskość linii nie potwierdza połączenia z elektrownią. Szczegóły katalogu i eksportu znajdują się w głównym README.
+
+Regionalne RGB i NDVI rozszerzono do bbox [20.75,51.15,22.25,52.05] dla Kozienic i [17.8,49.75,19.6,50.75] dla Śląska. Cztery terminy są mozaikami sąsiednich kafli z tego samego dnia i orbity; każdy kafel ma osobny wpis pochodzenia w `imagery-history.json` lub `scenes.json`. GIS, kadr SAR i punkty InSAR nie zostały powiększone ani przeniesione. Szczegóły i odtworzenie opisano w głównym README.

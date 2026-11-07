@@ -25,6 +25,7 @@ const areaConfig={
   onNavigate:coverage=>{if(coverage!=='full')imagery.setMode('ortho',true);else if(InfraWatchArea.coverage(InfraWatchArea.getBox(),radarBox)==='none'&&['sar','mix'].includes(imagery.getReport().requested_mode))imagery.setMode('optical',true)}
 };InfraWatchArea.install(map,areaConfig);
 const regionalReady=Promise.all([InfraWatchData.all().then(items=>items.forEach(s=>sources.set(s.region,s))),powerGIS.ready,imagery.ready,initialInfrastructureReady]);
+regionalReady.then(()=>{const s=sources.get(activeRegion);historyBox=s.imagery.bbox;areaConfig.imageryBox=historyBox;areaConfig.gisBox=s.meta.aoi_bbox;InfraWatchArea.refresh()});
 InfraWatchFacility.install(map,{mode:'deformation',region:'kozienice',name:'Wszystkie regiony',ready:regionalReady,getFeatures:f=>sources.get(f.region).gis.features,
   beforeApply:async f=>{await regionalReady;const s=sources.get(f.region);activeRegion=s.region;historyBox=s.imagery.bbox;areaConfig.name=s.name;areaConfig.imageryBox=historyBox;areaConfig.gisBox=s.meta.aoi_bbox;powerGIS.setDataset(s);imagery.setDataset(s);document.querySelector('.sidebar-heading .eyebrow').textContent=s.name+' / GIS energetyczny';document.querySelector('#areaLocationPreset option[value=source]').textContent='Obszar danych: '+s.name;if(!imported)$('mode').textContent=s.region==='kozienice'?'36 syntetycznych epok miesięcznych':'Punkty demo: Kozienice · dla tego regionu użyj importu CSV'},
   prepareLayers:local=>{$('showGISLines').checked=true;$('showGISMinor').checked=local},

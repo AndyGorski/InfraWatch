@@ -1,39 +1,13 @@
-.iw-flood .workspace-view{flex:1;min-height:0}
-.iw-flood .imagery-label{position:absolute;left:14px;top:14px;z-index:500;pointer-events:none}
-.iw-flood .imagery-label small{margin-left:8px}
-.iw-flood .leaflet-top.leaflet-left{left:auto;right:0}
-.iw-flood .flood-map-view{position:absolute;top:54px;left:14px;z-index:500;background:#102a33ed;border-radius:4px;padding:5px 9px;font-size:10px;color:var(--iw-amber);pointer-events:none}
-.iw-flood .mapShell{border-radius:0;min-height:180px}
-.iw-flood #canvas3d{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
-.iw-flood #canvas3d:active{cursor:grabbing}
-.iw-flood .buttons,.iw-flood .scenario{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
-.iw-flood .scenario button{flex:1}
-.iw-flood .sensorbar{grid-template-columns:repeat(2,minmax(0,1fr))}
-.iw-flood .optical-thumb{background-image:url('assets/sentinel2.jpg')}
-.iw-flood .aerial-thumb{background-image:url('assets/ortho-overview.jpg')}
-.iw-flood .control{padding:10px 0;border-top:1px solid var(--iw-border)}
-.iw-flood .control label{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--iw-muted)}
-.iw-flood input[type=range]{width:100%;accent-color:var(--iw-accent);cursor:pointer}
-.iw-flood .control input{margin-top:10px}
-.iw-flood .model-settings{margin:18px 0}
-.iw-flood .model-settings summary{cursor:pointer;font-size:12px;color:#c7e9df;line-height:2.4}
-.iw-flood .model-settings .sim-tag{margin-left:5px}
-.iw-flood .note,.iw-flood .flood-model-coverage{color:var(--iw-muted);font-size:11px;line-height:1.65}
-.iw-flood .flood-model-coverage.unavailable{color:var(--iw-amber)}
-.iw-flood #floodSourceLegend{display:none!important}
-.iw-flood .towerIcon{text-align:center;font-size:18px;color:#ffdc8f;text-shadow:0 1px 4px #000}
-.iw-flood .flood-analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:1500px;margin:auto}
-.iw-flood .chart{display:block;width:100%;height:240px;margin:16px 0}
-.iw-flood #chart text{font-size:10px}
-.iw-flood .riskrow{padding:10px 0;border-bottom:1px solid var(--iw-border);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.iw-flood .riskrow button{font-size:11px;text-align:left}
-.iw-flood .chip{border-radius:12px;padding:3px 8px;font-size:10px;background:#253b46;color:#b7cfdb}
-.iw-flood .chip.wet{background:#4e3528;color:#ffce99}
-.iw-flood .flood-gis-details h3{font-size:19px;line-height:1.4}
-.iw-flood .flood-gis-details p{font-size:12px;line-height:1.7;color:var(--iw-muted)}
-.iw-flood #floodGISSearch{width:100%;margin:8px 0}
-.iw-flood .flood-gis-result{display:block;width:100%;text-align:left;border-radius:0;border-width:0 0 1px;padding:12px 5px;background:none}
-.iw-flood .flood-gis-result small{display:block;color:var(--iw-muted);font-size:10px;margin-top:4px}
-.iw-flood .year-track{font-size:10px;color:var(--iw-muted)}
-.iw-flood #asset p{font-size:12px;line-height:1.75}
-@media(max-width:650px){.iw-flood .flood-analysis-grid{grid-template-columns:1fr;gap:14px}.iw-flood .chart{height:180px}.iw-flood .riskrow{flex-wrap:wrap}.iw-flood .flood-map-view{font-size:9px}}
+body.iw-flood{--iw-muted:#abc2c8;--iw-border:#304d56;--iw-text:#e4efef}
+.iw-flood .map-column{min-width:0}.iw-flood .mapShell{position:relative}
+.iw-flood .dialog-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 24px;border-bottom:1px solid #304d56}
+.iw-flood .dialog-head h2{font-size:22px;margin:5px 0}.iw-flood .dialog-body{padding:20px 24px}
+.iw-flood .close-dialog{font-size:22px;line-height:1;padding:5px 10px}
+.iw-flood .facility-body p{font-size:12px}.iw-flood .note{font-size:11px}
+.iw-flood .flood-model-coverage{padding:12px;border:1px solid #49665d;background:#17392f;color:#c3ead6;border-radius:6px;font-size:12px}
+.iw-flood .flood-model-coverage.unavailable{background:#382e20;border-color:#8b7447;color:#f0d2a2}
+.iw-flood .flood-gis-details{padding:12px;border:1px solid #3d5d67;border-radius:6px;font-size:12px}
+.iw-flood button:disabled,.iw-flood input:disabled{opacity:.4;cursor:not-allowed}
+.iw-flood .study-area-bar{border:1px solid #42745d;border-radius:6px;margin-top:12px}
+.iw-flood .facility-map-pin{border:0;background:none}
+@media(max-width:650px){.iw-flood .dialog-body{padding:15px}.iw-flood .dialog-head h2{font-size:19px}}
