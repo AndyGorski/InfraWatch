@@ -62,12 +62,11 @@ function createInfraWatchPowerGIS(map, byId, options) {
   byId('gisSearch').oninput=renderSearch;
   byId('gisBackToAnalysis').onclick=clearSelection;
   byId('fitGIS').onclick=()=>{if(meta){const b=meta.aoi_bbox;map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{padding:[15,15],maxZoom:11})}};
-  byId('exportGIS').onclick=()=>{if(!data)return;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify({...activeData,metadata:meta,study_area:InfraWatchArea.getReport()})],{type:'application/geo+json'}));a.href=url;a.download='InfraWatch_Kozienice_GIS_OSM.geojson';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+  byId('exportGIS').onclick=()=>{if(!data)return;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify({...activeData,metadata:meta,study_area:InfraWatchArea.getReport()})],{type:'application/geo+json'}));a.href=url;a.download='InfraWatch_GIS_OSM.geojson';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
   map.on('moveend zoomend',renderSupports);groups.selection.addTo(map);sync();
   async function load(){
     try{
-      const responses=await Promise.all([fetch('assets/real-power.geojson'),fetch('assets/real-power-metadata.json')]);if(responses.some(r=>!r.ok))throw Error('Brak zbioru GIS');
-      [data,meta]=await Promise.all(responses.map(r=>r.json()));if(data.type!=='FeatureCollection'||!data.features.length)throw Error('Niepoprawny zbiór GIS');
+      const source=await InfraWatchData.load('kozienice');[data,meta]=[source.gis,source.meta];if(data.type!=='FeatureCollection'||!data.features.length)throw Error('Niepoprawny zbiór GIS');
       data.features.forEach(f=>features.set(f.id,f));
       const c=meta.counts,fmt=n=>Number(n||0).toLocaleString('pl-PL');
       for(const [id,value] of [['gisLineCount',c.line],['gisMinorCount',c.minor_line],['gisSupportCount',(c.tower||0)+(c.pole||0)],['gisStationCount',c.substation]])byId(id).textContent=fmt(value);
@@ -99,6 +98,7 @@ function createInfraWatchPowerGIS(map, byId, options) {
     for(const [id,value] of [['gisLineCount',c.line],['gisMinorCount',c.minor_line],['gisSupportCount',c.tower+c.pole],['gisStationCount',c.substation]])byId(id).textContent=fmt(value);
     renderSearch();sync();
   }
+  function setDataset(source){clearSelection();data=source.gis;meta=source.meta;features.clear();data.features.forEach(f=>features.set(f.id,f));byId('gisSnapshot').textContent=source.name+' · OSM '+date(meta.snapshot);byId('gisSourceSummary').textContent=source.name+' · publiczny GIS OSM / ODbL 1.0 · snapshot '+date(meta.snapshot)+'. Bbox: '+meta.aoi_bbox.join(', ')+'. Linie przycięto do obszaru danych; regionalny GIS nie ma przypisanych pomiarów InSAR.';refreshStudyArea()}
   const ready=load();
-  return {ready,setFocusLayers,clearSelection,refreshStudyArea,getSourceFeatures:()=>data?.features||[],selectFeature:id=>{const f=features.get(id);if(f&&InfraWatchArea.intersectsFeature(f))select(f)},getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'Regional GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
+  return {ready,setDataset,setFocusLayers,clearSelection,refreshStudyArea,getSourceFeatures:()=>data?.features||[],selectFeature:id=>{const f=features.get(id);if(f&&InfraWatchArea.intersectsFeature(f))select(f)},getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'Regional GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
 }

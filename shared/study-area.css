@@ -1,18 +1,18 @@
-.iw-monitoring #studyAreaButton{color:#c4f6df;border-color:#4e8b75}
-.iw-monitoring button:disabled,.iw-monitoring input:disabled{opacity:.42;cursor:not-allowed}
-.iw-monitoring .study-area-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:15px 0}
-.iw-monitoring #studyAreaForm label{display:block;font-size:12px;color:var(--iw-muted);margin-bottom:6px}
-.iw-monitoring #studyAreaForm input,.iw-monitoring #studyAreaForm select{display:block;width:100%;margin-top:5px;background:#0c222c;border:1px solid var(--iw-border);border-radius:5px;padding:9px;color:var(--iw-text);font:13px system-ui}
-.iw-monitoring #studyAreaForm select{margin-bottom:15px}
-.iw-monitoring .study-area-presets,.iw-monitoring .study-area-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
-.iw-monitoring .study-area-actions button,.iw-monitoring .study-area-presets button{font-size:11px}
-.iw-monitoring #applyStudyArea{background:#285b48;border-color:#81dab5;color:#dbffed}
-.iw-monitoring #areaFormError{color:#ffc793;min-height:20px}.iw-monitoring .study-area-draft{color:#b7e8d6!important}
-.iw-monitoring .study-area-bar{flex-shrink:0;background:#16362f;border-top:1px solid #42745d;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.iw-monitoring .study-area-bar strong{font-size:11px;color:#c9f1dd;display:block;line-height:1.5}.iw-monitoring .study-area-bar p{font-size:10px;color:#a8d0bd;line-height:1.5;margin:3px 0 0}
-.iw-monitoring .study-area-bar.coverage-warning{background:#382e20;border-color:#8b7447}.iw-monitoring .study-area-bar.coverage-warning strong,.iw-monitoring .study-area-bar.coverage-warning p{color:#f0d2a2}
-.iw-monitoring .study-area-bar .study-area-actions{flex-shrink:0;gap:5px;margin:0}.iw-monitoring .study-area-bar button{padding:5px 7px;font-size:10px}
-.iw-monitoring .study-area-instruction{position:absolute;z-index:1200;left:50%;top:12px;transform:translateX(-50%);width:min(410px,calc(100% - 30px));background:#11362ef5;border:1px solid #8de1bb;border-radius:5px;padding:10px 12px;color:#e3fff0;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.iw-monitoring.iw-picking-area .leaflet-container{cursor:crosshair}
-.iw-monitoring.iw-has-study-area .map-area{min-height:120px}
-@media(max-width:650px){.iw-monitoring .study-area-bar{flex-direction:column;align-items:stretch;gap:6px;padding:7px 10px}.iw-monitoring .study-area-bar strong{font-size:10px}.iw-monitoring .study-area-bar p{font-size:9px}.iw-monitoring .study-area-bar .study-area-actions{justify-content:flex-end}.iw-monitoring .study-area-fields{gap:9px}.iw-monitoring .study-area-instruction{font-size:11px;padding:8px}.iw-monitoring .panel-buttons{width:auto}.iw-monitoring .workspace-toolbar .view-tabs{min-width:115px}}
+:is(.iw-monitoring,.iw-flood) #studyAreaButton{color:#c4f6df;border-color:#4e8b75}
+:is(.iw-monitoring,.iw-flood) button:disabled,:is(.iw-monitoring,.iw-flood) input:disabled{opacity:.42;cursor:not-allowed}
+:is(.iw-monitoring,.iw-flood) .study-area-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:15px 0}
+:is(.iw-monitoring,.iw-flood) #studyAreaForm label{display:block;font-size:12px;color:var(--iw-muted);margin-bottom:6px}
+:is(.iw-monitoring,.iw-flood) #studyAreaForm input,:is(.iw-monitoring,.iw-flood) #studyAreaForm select{display:block;width:100%;margin-top:5px;background:#0c222c;border:1px solid var(--iw-border);border-radius:5px;padding:9px;color:var(--iw-text);font:13px system-ui}
+:is(.iw-monitoring,.iw-flood) #studyAreaForm select{margin-bottom:15px}
+:is(.iw-monitoring,.iw-flood) .study-area-presets,:is(.iw-monitoring,.iw-flood) .study-area-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+:is(.iw-monitoring,.iw-flood) .study-area-actions button,:is(.iw-monitoring,.iw-flood) .study-area-presets button{font-size:11px}
+:is(.iw-monitoring,.iw-flood) #applyStudyArea{background:#285b48;border-color:#81dab5;color:#dbffed}
+:is(.iw-monitoring,.iw-flood) #areaFormError{color:#ffc793;min-height:20px}:is(.iw-monitoring,.iw-flood) .study-area-draft{color:#b7e8d6!important}
+:is(.iw-monitoring,.iw-flood) .study-area-bar{flex-shrink:0;background:#16362f;border-top:1px solid #42745d;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+:is(.iw-monitoring,.iw-flood) .study-area-bar strong{font-size:11px;color:#c9f1dd;display:block;line-height:1.5}:is(.iw-monitoring,.iw-flood) .study-area-bar p{font-size:10px;color:#a8d0bd;line-height:1.5;margin:3px 0 0}
+:is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning{background:#382e20;border-color:#8b7447}:is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning strong,:is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning p{color:#f0d2a2}
+:is(.iw-monitoring,.iw-flood) .study-area-bar .study-area-actions{flex-shrink:0;gap:5px;margin:0}:is(.iw-monitoring,.iw-flood) .study-area-bar button{padding:5px 7px;font-size:10px}
+:is(.iw-monitoring,.iw-flood) .study-area-instruction{position:absolute;z-index:1200;left:50%;top:12px;transform:translateX(-50%);width:min(410px,calc(100% - 30px));background:#11362ef5;border:1px solid #8de1bb;border-radius:5px;padding:10px 12px;color:#e3fff0;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+:is(.iw-monitoring,.iw-flood).iw-picking-area .leaflet-container{cursor:crosshair}
+:is(.iw-monitoring,.iw-flood).iw-has-study-area .map-area{min-height:120px}
+@media(max-width:650px){:is(.iw-monitoring,.iw-flood) .study-area-bar{flex-direction:column;align-items:stretch;gap:6px;padding:7px 10px}:is(.iw-monitoring,.iw-flood) .study-area-bar strong{font-size:10px}:is(.iw-monitoring,.iw-flood) .study-area-bar p{font-size:9px}:is(.iw-monitoring,.iw-flood) .study-area-bar .study-area-actions{justify-content:flex-end}:is(.iw-monitoring,.iw-flood) .study-area-fields{gap:9px}:is(.iw-monitoring,.iw-flood) .study-area-instruction{font-size:11px;padding:8px}:is(.iw-monitoring,.iw-flood) .panel-buttons{width:auto}:is(.iw-monitoring,.iw-flood) .workspace-toolbar .view-tabs{min-width:115px}}

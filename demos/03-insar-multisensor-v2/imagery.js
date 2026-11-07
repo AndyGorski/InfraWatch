@@ -1,6 +1,6 @@
 /* Real imagery history and live aerial detail; independent of InSAR epochs. */
 function createInfraWatchImagery(map, byId) {
-  const area=[[51.48,21.24],[51.78,21.86]],sarArea=[[51.57,21.32],[51.73,21.61]],detailZoom=12;
+  let area=[[51.48,21.24],[51.78,21.86]];const sarArea=[[51.57,21.32],[51.73,21.61]],detailZoom=12;
   const wmts='https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTOFOTOMAPA&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=EPSG:3857&TILEMATRIX=EPSG:3857:{z}&TILEROW={y}&TILECOL={x}';
   map.createPane('historyImagery');map.getPane('historyImagery').style.zIndex=250;
   const sar=L.imageOverlay('assets/sar-after.png',sarArea,{opacity:1,pane:'historyImagery'});
@@ -27,7 +27,7 @@ function createInfraWatchImagery(map, byId) {
     if(scene)byId('historySlider').setAttribute('aria-valuetext',date(scene.date));
     for(const button of byId('historyYears').querySelectorAll('button'))button.setAttribute('aria-pressed',String(+button.dataset.index===sceneIndex));
     for(const [id,key] of [['optBtn','optical'],['ndviBtn','ndvi'],['sarBtn','sar'],['mixBtn','mix'],['orthoBtn','ortho']])byId(id).setAttribute('aria-pressed',String(effective===key));
-    if(InfraWatchArea.coverage(InfraWatchArea.getBox(),[21.24,51.48,21.86,51.78])==='none')byId('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
+    if(InfraWatchArea.coverage(InfraWatchArea.getBox(),meta?.bbox||[21.24,51.48,21.86,51.78])==='none')byId('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
   }
   function update(){
     const next=mode==='ortho'||map.getZoom()>=detailZoom?'ortho':mode;
@@ -51,8 +51,8 @@ function createInfraWatchImagery(map, byId) {
     sceneIndex=Math.max(0,Math.min(meta.scenes.length-1,Number(index)));
     const scene=activeScene();
     if(rgb)map.removeLayer(rgb);if(ndvi)map.removeLayer(ndvi);
-    rgb=L.imageOverlay('assets/'+scene.rgb,area,{opacity:1,pane:'historyImagery'});
-    ndvi=L.imageOverlay('assets/'+scene.ndvi,area,{opacity:1,pane:'historyImagery'});
+    rgb=L.imageOverlay(scene.rgbURL,area,{opacity:1,pane:'historyImagery'});
+    ndvi=L.imageOverlay(scene.ndviURL,area,{opacity:1,pane:'historyImagery'});
     byId('historySlider').value=String(sceneIndex);update();
   }
   function stop(){if(timer)clearInterval(timer);timer=null;byId('playHistory').textContent='▷';byId('playHistory').setAttribute('aria-pressed','false');byId('playHistory').setAttribute('aria-label','Odtwórz historię zobrazowań')}
@@ -67,19 +67,17 @@ function createInfraWatchImagery(map, byId) {
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
   map.on('zoomend',update);
   map.on('movestart',()=>{if(timer&&map.getZoom()>=detailZoom)stop()});
-  async function load(){
-    try{
-      const response=await fetch('assets/imagery-history.json');if(!response.ok)throw Error('Missing history');
-      meta=await response.json();if(meta.scenes.length!==4)throw Error('Invalid history');
-      byId('historyYears').replaceChildren();
-      meta.scenes.forEach((scene,index)=>{const button=document.createElement('button');button.type='button';button.dataset.index=String(index);button.textContent=String(scene.year);button.title=date(scene.date);button.setAttribute('aria-pressed',String(index===sceneIndex));button.onclick=()=>{stop();setScene(index)};byId('historyYears').append(button);for(const key of ['rgb','ndvi']){const image=new Image();image.src='assets/'+scene[key]}});
-      byId('historySlider').disabled=false;byId('playHistory').disabled=false;
-      byId('imagerySources').replaceChildren();
-      const intro=document.createElement('p');intro.textContent=`Sentinel-2 L2A / Earth Search / Element 84, kafel 34UEC. Natywne pasma B04/B08: 10 m; podkłady przeskalowano do około ${meta.approx_ground_pixel_m} m na ziemi. Bbox: ${meta.bbox.join(', ')}.`;byId('imagerySources').append(intro);
-      meta.scenes.forEach(scene=>{const p=document.createElement('p'),a=document.createElement('a');a.href=scene.url;a.target='_blank';a.rel='noopener';a.textContent=scene.id+' ↗';p.append(a,document.createTextNode(` · ${date(scene.date)} · chmury całej sceny ${Number(scene.cloud_scene_percent).toLocaleString('pl-PL',{maximumFractionDigits:3})}%`));byId('imagerySources').append(p)});
-      setScene(sceneIndex);
-    }catch(error){loadFailed=true;console.error(error);renderStatus()}
+  function setDataset(source){
+    stop();meta=source.imagery;const b=meta.bbox;area=[[b[1],b[0]],[b[3],b[2]]];loadFailed=false;sceneIndex=Math.min(sceneIndex,meta.scenes.length-1);
+    if(source.region!=='kozienice'&&['sar','mix'].includes(mode))mode='optical';
+    byId('historyYears').replaceChildren();
+    meta.scenes.forEach((scene,index)=>{const button=document.createElement('button');button.type='button';button.dataset.index=String(index);button.textContent=String(scene.year);button.title=date(scene.date);button.onclick=()=>{stop();setScene(index)};byId('historyYears').append(button)});
+    byId('historySlider').disabled=false;byId('playHistory').disabled=false;byId('imagerySources').replaceChildren();
+    const intro=document.createElement('p');intro.textContent=source.name+' · Sentinel-2 L2A / Earth Search / Element 84, kafel '+meta.scenes[0].id.split('_')[1]+'. Natywne pasma B04/B08: 10 m. Bbox: '+b.join(', ')+'.';byId('imagerySources').append(intro);
+    meta.scenes.forEach(scene=>{const p=document.createElement('p'),a=document.createElement('a');a.href=scene.url;a.target='_blank';a.rel='noopener';a.textContent=scene.id+' ↗';p.append(a,document.createTextNode(' · '+date(scene.date)+' · chmury całej sceny '+Number(scene.cloud).toLocaleString('pl-PL',{maximumFractionDigits:3})+'%'));byId('imagerySources').append(p)});
+    setScene(sceneIndex);
   }
+  async function load(){try{setDataset(await InfraWatchData.load('kozienice'))}catch(error){loadFailed=true;console.error(error);renderStatus()}}
   update();const ready=load();
-  return {setMode,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_history_scene:activeScene()||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
+  return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_history_scene:activeScene()||null,sentinel_history_bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
 }

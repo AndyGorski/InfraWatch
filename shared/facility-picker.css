@@ -1,21 +1,25 @@
-.iw-monitoring #facilityPickerButton{color:#c4f6df;border-color:#4e8b75}
-.iw-monitoring #facilityDialog{width:min(880px,calc(100% - 24px));padding:0;max-height:90dvh;overflow:hidden}
-.iw-monitoring #facilityDialog[open]{display:flex;flex-direction:column}
-.iw-monitoring #facilityDialog .dialog-head,.iw-monitoring .facility-footer{flex-shrink:0}
-.iw-monitoring .facility-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;min-height:0;flex:1;overflow:auto}
-.iw-monitoring .facility-body section{min-width:0}
-.iw-monitoring .facility-body label{display:block;color:var(--iw-muted);font-size:12px;margin:10px 0 5px}
-.iw-monitoring .facility-body input[type=search],.iw-monitoring .facility-body select{display:block;width:100%;background:#0c222c;border:1px solid var(--iw-border);padding:9px;border-radius:5px;color:var(--iw-text)}
-.iw-monitoring .facility-results{display:grid;gap:6px;margin:12px 0;max-height:340px;overflow:auto;padding:2px}
-.iw-monitoring .facility-results button,.iw-monitoring .facility-nearby button{display:block;text-align:left;width:100%;padding:9px 10px;white-space:normal;overflow-wrap:anywhere}
-.iw-monitoring .facility-results strong,.iw-monitoring .facility-nearby strong{font-size:12px;display:block;font-weight:600}
-.iw-monitoring .facility-results small,.iw-monitoring .facility-nearby small{font-size:10px;color:var(--iw-muted);display:block;margin-top:3px}
-.iw-monitoring .facility-summary{border:1px solid #426b5b;border-radius:6px;padding:12px;background:#183b32}
-.iw-monitoring .facility-summary h3{font-size:17px;margin:7px 0}.iw-monitoring .facility-summary p{font-size:11px;margin:5px 0}
-.iw-monitoring .facility-local{display:flex!important;align-items:center;gap:8px}
-.iw-monitoring #facilityNearbyCount{color:#c4f6df;font-size:12px}
-.iw-monitoring .facility-nearby{display:grid;gap:6px;max-height:205px;overflow:auto;padding:2px}
-.iw-monitoring .facility-footer{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 24px;border-top:1px solid var(--iw-border);background:#102b33}
-.iw-monitoring #applyFacility{background:#285b48;border-color:#81dab5;color:#dbffed}
-.iw-monitoring .facility-map-pin span{display:grid;place-items:center;width:30px;height:30px;border:2px solid #d1ffbe;background:#24583d;border-radius:50%;color:#edffc7;box-shadow:0 2px 8px #0008;font-size:18px}
-@media(max-width:650px){.iw-monitoring .facility-body{grid-template-columns:1fr;gap:15px}.iw-monitoring .facility-results{max-height:170px}.iw-monitoring .facility-footer{padding:10px 15px}.iw-monitoring .facility-footer button{font-size:11px}.iw-monitoring #facilityDialog .dialog-head{padding:15px}.iw-monitoring #facilityDialogTitle{font-size:19px}.iw-monitoring .facility-nearby{max-height:150px}.iw-monitoring .study-area-bar .study-area-actions{flex-wrap:wrap}}
+:is(.iw-monitoring,.iw-flood) #facilityPickerButton{color:#c4f6df;border-color:#4e8b75}
+:is(.iw-monitoring,.iw-flood) #facilityDialog{width:min(880px,calc(100% - 24px));padding:0;max-height:90dvh;overflow:hidden}
+:is(.iw-monitoring,.iw-flood) #facilityDialog[open]{display:flex;flex-direction:column}
+:is(.iw-monitoring,.iw-flood) #facilityDialog .dialog-head,:is(.iw-monitoring,.iw-flood) .facility-footer{flex-shrink:0}
+:is(.iw-monitoring,.iw-flood) .facility-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;min-height:0;flex:1;overflow:auto}
+:is(.iw-monitoring,.iw-flood) .facility-body section{min-width:0}
+:is(.iw-monitoring,.iw-flood) .facility-body label{display:block;color:var(--iw-muted);font-size:12px;margin:10px 0 5px}
+:is(.iw-monitoring,.iw-flood) .facility-body input[type=search],:is(.iw-monitoring,.iw-flood) .facility-body select{display:block;width:100%;background:#0c222c;border:1px solid var(--iw-border);padding:9px;border-radius:5px;color:var(--iw-text)}
+:is(.iw-monitoring,.iw-flood) .facility-results{display:grid;gap:6px;margin:12px 0;max-height:340px;overflow:auto;padding:2px}
+:is(.iw-monitoring,.iw-flood) .facility-results button,:is(.iw-monitoring,.iw-flood) .facility-nearby button{display:block;text-align:left;width:100%;padding:9px 10px;white-space:normal;overflow-wrap:anywhere}
+:is(.iw-monitoring,.iw-flood) .facility-results strong,:is(.iw-monitoring,.iw-flood) .facility-nearby strong{font-size:12px;display:block;font-weight:600}
+:is(.iw-monitoring,.iw-flood) .facility-results small,:is(.iw-monitoring,.iw-flood) .facility-nearby small{font-size:10px;color:var(--iw-muted);display:block;margin-top:3px}
+:is(.iw-monitoring,.iw-flood) .facility-summary{border:1px solid #426b5b;border-radius:6px;padding:12px;background:#183b32}
+:is(.iw-monitoring,.iw-flood) .facility-summary h3{font-size:17px;margin:7px 0}:is(.iw-monitoring,.iw-flood) .facility-summary p{font-size:11px;margin:5px 0}
+:is(.iw-monitoring,.iw-flood) .facility-local{display:flex!important;align-items:center;gap:8px}
+:is(.iw-monitoring,.iw-flood) #facilityNearbyCount{color:#c4f6df;font-size:12px}
+:is(.iw-monitoring,.iw-flood) .facility-nearby{display:grid;gap:6px;max-height:205px;overflow:auto;padding:2px}
+:is(.iw-monitoring,.iw-flood) .facility-footer{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 24px;border-top:1px solid var(--iw-border);background:#102b33}
+:is(.iw-monitoring,.iw-flood) #applyFacility{background:#285b48;border-color:#81dab5;color:#dbffed}
+:is(.iw-monitoring,.iw-flood) .facility-cases{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+:is(.iw-monitoring,.iw-flood) .facility-cases a{padding:5px 8px;border:1px solid #4b7764;border-radius:4px;color:#c4f6df;text-decoration:none;font-size:11px}
+:is(.iw-monitoring,.iw-flood) .facility-cases a[aria-current=page]{background:#285b48;border-color:#92d5b5}
+:is(.iw-monitoring,.iw-flood) .facility-coverage{color:#f0d2a2;font-size:11px;line-height:1.6}
+:is(.iw-monitoring,.iw-flood) .facility-map-pin span{display:grid;place-items:center;width:30px;height:30px;border:2px solid #d1ffbe;background:#24583d;border-radius:50%;color:#edffc7;box-shadow:0 2px 8px #0008;font-size:18px}
+@media(max-width:650px){:is(.iw-monitoring,.iw-flood) .facility-body{grid-template-columns:1fr;gap:15px}:is(.iw-monitoring,.iw-flood) .facility-results{max-height:170px}:is(.iw-monitoring,.iw-flood) .facility-footer{padding:10px 15px}:is(.iw-monitoring,.iw-flood) .facility-footer button{font-size:11px}:is(.iw-monitoring,.iw-flood) #facilityDialog .dialog-head{padding:15px}:is(.iw-monitoring,.iw-flood) #facilityDialogTitle{font-size:19px}:is(.iw-monitoring,.iw-flood) .facility-nearby{max-height:150px}:is(.iw-monitoring,.iw-flood) .study-area-bar .study-area-actions{flex-wrap:wrap}}
