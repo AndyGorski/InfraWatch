@@ -9,7 +9,7 @@ window.InfraWatchData=(()=>{
     if(!regions[region])return Promise.reject(Error('Nieznany region.'));
     if(!cache.has(region))cache.set(region,(async()=>{
       const r=regions[region],base=url(`demos/${r.folder}/assets/`),seed=seeded.get(region);
-      const [gis,meta,history]=await Promise.all([seed?.gis||json(base+'real-power.geojson'),seed?.meta||json(base+'real-power-metadata.json'),json(base+r.history)]);
+      const [gis,meta,history]=await Promise.all([seed?.gis||json(base+'real-power.geojson'),seed?.meta||json(base+'real-power-metadata.json'),json(base+r.history+'?v=20261107-coverage3')]);
       if(gis.type!=='FeatureCollection'||!gis.features.length||history.scenes.length!==4)throw Error('Niepoprawny zbiór regionalny.');
       const imagery={...history,scenes:history.scenes.map(s=>({...s,cloud:s.cloud??s.cloud_scene_percent,rgbURL:new URL(s.rgb||`sentinel-${s.year}.jpg`,base).href,ndviURL:new URL(s.ndvi||`ndvi-${s.year}.png`,base).href}))};
       return {region,name:r.name,gis,meta,imagery};

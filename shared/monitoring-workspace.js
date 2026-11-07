@@ -1,34 +1,30 @@
 /* Shared navigation, panel behaviour and keyboard controls for monitoring apps. */
 window.InfraWatchUI = (() => {
-  let settings,layersOpen=false,detailsOpen=false;
+  let settings,desktopLayers=true,desktopDetails=true,mobileLayers=false,mobileDetails=false;
+  const small=()=>matchMedia('(max-width: 1000px)').matches;
   const q=selector=>document.querySelector(selector);
   function sync(){
     if(!settings)return;
     const isMap=settings.isMap();document.body.dataset.iwView=isMap?'map':'other';
-    document.body.classList.toggle('iw-layers-collapsed',!layersOpen);
-    document.body.classList.toggle('iw-details-collapsed',!detailsOpen);
-    document.body.classList.toggle('iw-open-layers',isMap&&layersOpen);
-    document.body.classList.toggle('iw-open-details',isMap&&detailsOpen);
-    q(settings.layersButton).setAttribute('aria-expanded',String(isMap&&layersOpen));
-    q(settings.detailsButton).setAttribute('aria-expanded',String(isMap&&detailsOpen));
+    document.body.classList.toggle('iw-layers-collapsed',!desktopLayers);
+    document.body.classList.toggle('iw-details-collapsed',!desktopDetails);
+    document.body.classList.toggle('iw-open-layers',isMap&&small()&&mobileLayers);
+    document.body.classList.toggle('iw-open-details',isMap&&small()&&mobileDetails);
+    q(settings.layersButton).setAttribute('aria-expanded',String(isMap&&(small()?mobileLayers:desktopLayers)));
+    q(settings.detailsButton).setAttribute('aria-expanded',String(isMap&&(small()?mobileDetails:desktopDetails)));
     document.querySelectorAll('.view-tabs [role="tab"]').forEach(b=>b.tabIndex=b.getAttribute('aria-selected')==='true'?0:-1);
     requestAnimationFrame(()=>settings.resize());
   }
-  function openDetails(){if(!settings)return;if(!settings.isMap())settings.showMap();detailsOpen=true;layersOpen=false;sync()}
-  function closePanels(){layersOpen=false;detailsOpen=false;sync()}
+  function openDetails(){if(!settings)return;if(!settings.isMap())settings.showMap();desktopDetails=true;mobileDetails=true;mobileLayers=false;sync()}
+  function closePanels(){mobileLayers=false;mobileDetails=false;sync()}
   function install(config){
     settings=config;
     const layers=q('.locations-panel,.layer-panel'),details=q('.detail-panel');layers.id||='workspaceLayers';details.id||='workspaceDetails';
     q(config.layersButton).setAttribute('aria-controls',layers.id);q(config.detailsButton).setAttribute('aria-controls',details.id);
-    q(config.layersButton).onclick=()=>{const wasMap=config.isMap();if(!wasMap)config.showMap();layersOpen=wasMap?!layersOpen:true;detailsOpen=false;sync()};
-    q(config.detailsButton).onclick=()=>{const wasMap=config.isMap();if(!wasMap)config.showMap();detailsOpen=wasMap?!detailsOpen:true;layersOpen=false;sync()};
+    q(config.layersButton).onclick=()=>{const wasMap=config.isMap();if(!wasMap)config.showMap();if(small()){mobileLayers=wasMap?!mobileLayers:true;mobileDetails=false}else desktopLayers=wasMap?!desktopLayers:true;sync()};
+    q(config.detailsButton).onclick=()=>{const wasMap=config.isMap();if(!wasMap)config.showMap();if(small()){mobileDetails=wasMap?!mobileDetails:true;mobileLayers=false}else desktopDetails=wasMap?!desktopDetails:true;sync()};
     document.querySelectorAll('[data-close-workspace]').forEach(b=>b.onclick=closePanels);
-    const expand=document.createElement('button');expand.id='expandMap';expand.type='button';expand.textContent='Duża mapa';expand.setAttribute('aria-pressed','false');expand.title='Powiększ mapę, zachowując oś czasu poniżej obrazu';
-    function focusMap(on){if(on&&!config.isMap())config.showMap();document.body.classList.toggle('iw-map-focus',on);expand.textContent=on?'Przywróć układ':'Duża mapa';expand.setAttribute('aria-pressed',String(on));closePanels()}
-    expand.onclick=()=>focusMap(!document.body.classList.contains('iw-map-focus'));q('.panel-buttons').append(expand);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanels();if(document.body.classList.contains('iw-map-focus'))focusMap(false)}});
-    const identity=document.createElement('span');identity.className='workspace-identity';identity.textContent=document.body.classList.contains('iw-flood')?'Zalanie infrastruktury':document.body.classList.contains('iw-deformation')?'Deformacja terenu':'Roślinność przy liniach';q('.workspace-toolbar').prepend(identity);
-    document.querySelectorAll('.timeline>p,.timeline>.note').forEach(note=>{const fold=document.createElement('details');fold.className='timeline-source';const summary=document.createElement('summary');summary.textContent='Źródła i zakres danych';note.before(fold);fold.append(summary,note)});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
     document.querySelectorAll('.view-tabs').forEach(list=>list.addEventListener('keydown',e=>{
       if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
       const tabs=[...list.querySelectorAll('[role="tab"]')],current=tabs.indexOf(document.activeElement);if(current<0)return;
@@ -48,7 +44,7 @@ window.InfraWatchUI = (() => {
     function refresh(){
       const available=!config.available||config.available();container.hidden=!available;if(!available)toggle(false);
       const source=config.legend();panel.replaceChildren();
-      const title=document.createElement('h3');title.textContent=config.title||'Napięcie wg OSM';panel.append(title);
+      const title=document.createElement('h3');title.textContent='Napięcie wg OSM';panel.append(title);
       if(source)for(const child of source.children){if(child.tagName==='SUMMARY'||child.classList.contains('legend-title'))continue;const copy=child.cloneNode(true);copy.removeAttribute('id');panel.append(copy)}
     }
     function createLegend(){

@@ -11,9 +11,6 @@
 :is(.iw-monitoring,.iw-flood) .study-area-bar{flex-shrink:0;background:#16362f;border-top:1px solid #42745d;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 :is(.iw-monitoring,.iw-flood) .study-area-bar strong{font-size:11px;color:#c9f1dd;display:block;line-height:1.5}:is(.iw-monitoring,.iw-flood) .study-area-bar p{font-size:10px;color:#a8d0bd;line-height:1.5;margin:3px 0 0}
 :is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning{background:#382e20;border-color:#8b7447}:is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning strong,:is(.iw-monitoring,.iw-flood) .study-area-bar.coverage-warning p{color:#f0d2a2}
-:is(.iw-monitoring,.iw-flood) .study-area-coverage{font-size:10px;color:#b9d7c9;max-width:900px}
-:is(.iw-monitoring,.iw-flood) .study-area-coverage summary{cursor:pointer;width:fit-content}
-:is(.iw-monitoring,.iw-flood) .coverage-warning .study-area-coverage{color:#f0d2a2}
 :is(.iw-monitoring,.iw-flood) .study-area-bar .study-area-actions{flex-shrink:0;gap:5px;margin:0}:is(.iw-monitoring,.iw-flood) .study-area-bar button{padding:5px 7px;font-size:10px}
 :is(.iw-monitoring,.iw-flood) .study-area-instruction{position:absolute;z-index:1200;left:50%;top:12px;transform:translateX(-50%);width:min(410px,calc(100% - 30px));background:#11362ef5;border:1px solid #8de1bb;border-radius:5px;padding:10px 12px;color:#e3fff0;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 :is(.iw-monitoring,.iw-flood).iw-picking-area .leaflet-container{cursor:crosshair}

@@ -181,34 +181,3 @@ body.iw-monitoring{
   .iw-monitoring .imagery-label{font-size:10px;max-width:calc(100vw - 80px)}.iw-monitoring .imagery-label small,.iw-monitoring .resolution{display:none}.iw-monitoring .imagery-notice{font-size:9px}.iw-monitoring .map-status{font-size:8px}.iw-monitoring .leaflet-control-attribution{font-size:7px!important}
   .iw-monitoring .object-view,.iw-monitoring .analysis-view,.iw-monitoring .actions-view,.iw-monitoring .scroll-view{padding:14px}.iw-monitoring .dialog-head,.iw-monitoring .dialog-body{padding:17px}
 }
-/* The image owns the workspace; drawers share the same behaviour at every width. */
-.iw-monitoring .gis-app,.iw-monitoring .workspace-grid,.iw-monitoring .map-layout{display:flex!important;flex-direction:column;position:relative;min-height:0}
-.iw-monitoring .map-workspace,.iw-monitoring .map-column{flex:1;width:100%}
-.iw-monitoring .locations-panel,.iw-monitoring .layer-panel,.iw-monitoring .detail-panel{position:absolute;display:none!important;top:0;bottom:0;width:min(360px,92vw);height:auto;z-index:1100;box-shadow:0 6px 28px #0008;transform:none}
-.iw-monitoring .locations-panel,.iw-monitoring .layer-panel{left:0;right:auto}
-.iw-monitoring .detail-panel{right:0;left:auto;padding:46px 18px 18px}
-.iw-monitoring.iw-open-layers .locations-panel,.iw-monitoring.iw-open-layers .layer-panel{display:flex!important}
-.iw-monitoring.iw-open-details .detail-panel{display:block!important}
-.iw-monitoring .close-drawer{display:block}
-.iw-monitoring .sidebar-heading{min-height:0;padding:16px 44px 16px 18px}
-.iw-monitoring .sidebar-heading h1{font-size:17px}
-.iw-monitoring .workspace-identity{font-size:12px;font-weight:600;color:#c7e9df;white-space:nowrap}
-.iw-monitoring .workspace-toolbar{gap:14px;padding:0 14px}
-.iw-monitoring .view-tabs{margin-right:auto;height:auto}
-.iw-monitoring .timeline{padding:7px 14px 5px}
-.iw-monitoring .timeline-source{font-size:10px;color:var(--iw-muted);margin-top:3px}
-.iw-monitoring .timeline-source summary{cursor:pointer;width:fit-content}
-.iw-monitoring .timeline-source p{margin:5px 0;font-size:10px;line-height:1.5}
-.iw-monitoring.iw-map-focus[data-iw-view=map] .stats,.iw-monitoring.iw-map-focus[data-iw-view=map] .workspace-metrics,.iw-monitoring.iw-map-focus[data-iw-view=map] .map-status,.iw-monitoring.iw-map-focus[data-iw-view=map] .timeline-source{display:none}
-.iw-monitoring .timeline-source[open]{max-height:100px;overflow:auto}
-@media(max-width:1100px){.iw-monitoring .workspace-identity{display:none}}
-@media(max-width:650px){
- .iw-monitoring .workspace-toolbar{padding:0 8px;gap:0;display:grid;grid-template-columns:minmax(0,1fr)}.iw-monitoring .view-tabs{width:100%;flex:auto;height:auto}.iw-monitoring .workspace-toolbar .panel-buttons{width:100%;justify-content:space-between;padding:0 0 6px}.iw-monitoring .panel-buttons button{flex:1}
- .iw-monitoring .stats,.iw-monitoring .workspace-metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin:0;gap:0}
- .iw-monitoring .stat,.iw-monitoring .workspace-metrics>div{padding:6px;min-height:65px;border-bottom:0!important;gap:2px}
- .iw-monitoring .stat small,.iw-monitoring .workspace-metrics small{font-size:8px;line-height:1.3}
- .iw-monitoring .stat .value,.iw-monitoring .workspace-metrics strong{font-size:14px}
- .iw-monitoring .stat #period{font-size:11px;white-space:normal}
- .iw-monitoring .stat>small:last-child{display:none}.iw-monitoring .timeline{padding:6px 9px 4px}
- .iw-monitoring .timeline-source{font-size:9px}
-}
