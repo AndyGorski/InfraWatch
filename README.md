@@ -40,22 +40,24 @@ Dane obejmują m.in. Copernicus Sentinel‑1/2 (w tym przetworzenia Geomatrix SA
 
 ## Wspólny interfejs paneli monitoringu
 
-Aplikacje roślinności (`05`) i deformacji (`03`) korzystają ze wspólnego stylu i zachowania paneli w `shared/monitoring-workspace.css` oraz `shared/monitoring-workspace.js`. Adaptery `unified-workspace.js` zachowują logikę i zbiory danych każdej aplikacji.
+Aplikacje roślinności (`05`), deformacji (`03`) i zalania (`04`) korzystają ze wspólnego stylu i zachowania paneli w `shared/monitoring-workspace.css` oraz `shared/monitoring-workspace.js`. Adaptery `unified-workspace.js` i `04/workspace.js` zachowują logikę i zbiory danych każdej aplikacji.
 
 | Element | Wspólny wzorzec |
 | --- | --- |
 | Nawigacja | Mapa / Obiekt / Analiza; dodatkowy plan inspekcji w roślinności |
-| Układ | Wskaźniki u góry, GIS po lewej, mapa pośrodku, szczegóły po prawej |
-| Panele | Warstwy i Szczegóły można zwijać na komputerze; do 1000 px działają jako wzajemnie wykluczające się szuflady z przyciskiem zamknięcia i Escape |
+| Układ | Wskaźniki u góry, mapa na całą szerokość, czas pod obrazem; przycisk Duża mapa ukrywa wskaźniki i dodatkowe opisy |
+| Panele | Warstwy i Szczegóły są domyślnie zamknięte; na każdym ekranie działają jako wzajemnie wykluczające się szuflady z przyciskiem zamknięcia i Escape |
 | GIS | Zakładki Warstwy / Obiekty, wyszukiwanie linii, podpór i stacji, legenda napięć i karta źródłowa |
-| Obrazy | Sentinel-2 / NDVI / lotnicze, automatyczny GUGiK w zbliżeniu, przycisk Pokaż archiwum |
-| Czas | Jednakowy pasek lat i odtwarzanie pod mapą; niezależna dodatkowa oś epok InSAR w deformacjach |
-| Eksport | Okno wyboru danych i formatu; zakres właściwy dla aplikacji |
+| Obrazy | Sentinel-2 i lotnicze, automatyczny GUGiK w zbliżeniu; NDVI i archiwum w roślinności i deformacjach |
+| Czas | Suwak i odtwarzanie pod mapą; historia zobrazowań w roślinności i deformacjach, niezależna oś epok InSAR, scenariusz 0–72 h w zalaniu |
+| Eksport | Wspólne położenie przycisku; format i zakres właściwy dla aplikacji, w zalaniu raport JSON |
 | Dostępność | Strzałki oraz Home/End w głównej nawigacji, aktualne aria-selected/expanded/pressed, widoczne obramowanie fokusu |
 
 Zmiana obejmuje prezentację i sterowanie. Nie dodaje nowych pomiarów ani nie łączy dat GIS, zobrazowań i symulacji. Bufory oraz wyniki demonstracyjne zachowują dotychczasowe oznaczenia i ograniczenia.
 
-W obu panelach przycisk **Legenda GIS** na mapie włącza lub wyłącza opis kolorów napięć. Legenda boczna pozostaje dostępna. W scenariuszu roślinności, który zastępuje rzeczywisty GIS, przycisk jest ukryty. W lewym dolnym rogu obu map znajduje się wspólna metryczna **Skala odległości** (m / km), aktualizowana przy zmianie zbliżenia. Nie jest to informacja o wysokości terenu ani obiektu.
+We wszystkich trzech panelach przycisk **Legenda GIS** na mapie włącza lub wyłącza opis kolorów napięć. Zalanie dodaje legendę głębokości modelowej. W scenariuszu roślinności, który zastępuje rzeczywisty GIS, przycisk jest ukryty. W lewym dolnym rogu map 2D znajduje się wspólna metryczna **Skala odległości** (m / km), aktualizowana przy zmianie zbliżenia. Nie jest to informacja o wysokości terenu ani obiektu.
+
+Panel zalania ma te same zakładki i wybór obiektu. Zakładka Analiza zawiera krzywą scenariusza i listę ekspozycji słupów; ustawienia wezbrania oraz przełączenie 2D/3D są w Warstwach. Kliknięcie rzeczywistej linii otwiera kartę GIS, a kliknięcie słupa F401 — kartę modelu. Informacja o pokryciu danych pod mapą jest rozwijana; częściowy zasięg i brak archiwum pozostają widoczne w jej nagłówku. Powiększenie interfejsu nie rozszerza geograficznego zasięgu przygotowanych zobrazowań ani modeli.
 
 Przycisk **Wybierz obiekt** rozpoczyna analizę od elektrowni, elektrociepłowni, OZE lub stacji elektroenergetycznej. Menu wyszukuje po nazwie i ID OSM, pokazuje punkt referencyjny, źródło oraz listę pobliskich linii. Promień 1, 2, 5, 10, 20 lub 30 km filtruje rzeczywiste geometrie przecinające koło; sieć lokalną można włączyć osobno. Wybrany obiekt i koło są oznaczone na mapie. Przycisk **Pobliskie linie** pod mapą otwiera listę; wybór linii prowadzi do jej karty. Listy GIS w trybie obiektu są sortowane według odległości.
 
