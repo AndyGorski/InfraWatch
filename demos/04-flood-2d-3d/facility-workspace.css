@@ -1,0 +1,13 @@
+body.iw-flood{--iw-muted:#abc2c8;--iw-border:#304d56;--iw-text:#e4efef}
+.iw-flood .map-column{min-width:0}.iw-flood .mapShell{position:relative}
+.iw-flood .dialog-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 24px;border-bottom:1px solid #304d56}
+.iw-flood .dialog-head h2{font-size:22px;margin:5px 0}.iw-flood .dialog-body{padding:20px 24px}
+.iw-flood .close-dialog{font-size:22px;line-height:1;padding:5px 10px}
+.iw-flood .facility-body p{font-size:12px}.iw-flood .note{font-size:11px}
+.iw-flood .flood-model-coverage{padding:12px;border:1px solid #49665d;background:#17392f;color:#c3ead6;border-radius:6px;font-size:12px}
+.iw-flood .flood-model-coverage.unavailable{background:#382e20;border-color:#8b7447;color:#f0d2a2}
+.iw-flood .flood-gis-details{padding:12px;border:1px solid #3d5d67;border-radius:6px;font-size:12px}
+.iw-flood button:disabled,.iw-flood input:disabled{opacity:.4;cursor:not-allowed}
+.iw-flood .study-area-bar{border:1px solid #42745d;border-radius:6px;margin-top:12px}
+.iw-flood .facility-map-pin{border:0;background:none}
+@media(max-width:650px){.iw-flood .dialog-body{padding:15px}.iw-flood .dialog-head h2{font-size:19px}}

@@ -1,0 +1,22 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),calls=[];
+const sandbox={window:{},URL,document:{currentScript:{src:'https://example.test/InfraWatch/shared/regional-data.js'}},fetch:async url=>{calls.push(String(url));const relative=new URL(url).pathname.replace('/InfraWatch/','');return {ok:true,json:async()=>JSON.parse(fs.readFileSync(path.join(root,relative),'utf8'))}}};
+vm.runInNewContext(fs.readFileSync(__dirname+'/study-area.js','utf8'),sandbox);sandbox.InfraWatchArea=sandbox.window.InfraWatchArea;
+vm.runInNewContext(fs.readFileSync(__dirname+'/regional-data.js','utf8'),sandbox);
+(async()=>{
+ const data=sandbox.window.InfraWatchData,[s,k]=await data.all();
+ assert.equal(s.gis.features.length,18507);assert.equal(k.gis.features.length,9460);
+ assert(s.imagery.scenes.every(x=>x.id.includes('33UYR')&&x.rgbURL.includes('/05-electricity-vegetation/assets/')));
+ assert(k.imagery.scenes.every(x=>x.id.includes('34UEC')&&x.rgbURL.includes('/03-insar-multisensor-v2/assets/history/')));
+ assert.notEqual(s.imagery.scenes[3].rgbURL,k.imagery.scenes[3].rgbURL);
+ for(const source of [s,k])for(const scene of source.imagery.scenes)for(const key of ['rgbURL','ndviURL'])assert(fs.existsSync(path.join(root,new URL(scene[key]).pathname.replace('/InfraWatch/',''))),'All historical assets must exist at their source path');
+ await data.load('silesia');assert.equal(calls.length,6,'Datasets should be loaded once');
+ const catalog=JSON.parse(fs.readFileSync(__dirname+'/analysis-facilities.json','utf8')),plants=catalog.items.filter(x=>x.kind==='plant');assert.equal(plants.length,9);
+ const rybnik=plants.find(x=>x.id==='relation/12825526'),kozienice=plants.find(x=>x.id==='way/386883572');
+ assert(data.coverage(rybnik,5,'flood').includes('brak przygotowanego modelu'));
+ assert(data.coverage(kozienice,5,'flood').includes('w zasięgu modelu'));
+ assert(data.coverage(kozienice,30,'flood').includes('część otoczenia'));
+ assert(data.coverage(rybnik,5,'deformation').includes('wymaga importu'));
+ await assert.rejects(()=>data.load('unknown'));
+ console.log('PASS: both regional inventories, original image geography, nine plants, model coverage and dataset cache.');
+})().catch(error=>{console.error(error);process.exitCode=1});

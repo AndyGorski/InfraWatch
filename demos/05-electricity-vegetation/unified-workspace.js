@@ -13,7 +13,7 @@ function installUnifiedVegetation(){
   InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>state.view==='map',showMap:()=>switchView('map'),resize:()=>map?.invalidateSize({pan:false})});
   const mapTools=InfraWatchUI.installMapTools(map,{legend:()=>document.getElementById('realLegend'),available:()=>!demoMode});
   const oldMode=setGISMode;
-  setGISMode=function(demo){if(demo&&InfraWatchArea.getBox())InfraWatchArea.clear();oldMode(demo);if(demo)oldDemo.fit();updateSummary();mapTools.refresh()};
+  setGISMode=function(demo){if(demo&&activeRegion!=='silesia'){toast('Scenariusz zarastania jest przygotowany tylko dla Śląska.');return}if(demo&&InfraWatchArea.getBox())InfraWatchArea.clear();oldMode(demo);if(demo)oldDemo.fit();updateSummary();mapTools.refresh()};
   function updateSummary(){
     if(realPower)document.getElementById('realMinorCount').textContent=InfraWatchArea.countByPower(realPower.features).minor_line.toLocaleString('pl-PL');
     document.getElementById('workspaceBadge').textContent=demoMode?'Zobrazowania rzeczywiste · scenariusz symulowany':'Zobrazowania i GIS rzeczywiste';
@@ -31,14 +31,16 @@ function installUnifiedVegetation(){
   document.getElementById('mobileLayers').onclick=()=>document.getElementById('toggleLayers').click();
   document.getElementById('mobileDetail').onclick=()=>document.getElementById('toggleDetail').click();
   document.querySelectorAll('[data-side]').forEach(b=>{b.setAttribute('aria-controls',b.dataset.side==='layers'?'layersPanel':'locationsTab');b.setAttribute('aria-pressed',String(b.classList.contains('selected')));b.addEventListener('click',()=>document.querySelectorAll('[data-side]').forEach(x=>x.setAttribute('aria-pressed',String(x===b))))});
-  const allPower=realPower;
+  let allPower=realPower,activeRegion='silesia';const sources=new Map();
+  InfraWatchData.seed('silesia',realPower,realMeta);
+  const regionalReady=InfraWatchData.all().then(items=>{items.forEach(s=>{sources.set(s.region,s);s.gis.features.forEach(f=>realFeatureIndex.set(f.id,f))});if(state.view==='actions')renderRealActions()});
   function availability(){
     const unavailable=InfraWatchArea.coverage(InfraWatchArea.getBox(),data.bbox)==='none';
     document.querySelectorAll('[data-layer="rgb"],[data-layer="ndvi"],#showHistory,#playHistory,#timeSlider,#yearTrack button').forEach(b=>{b.disabled=unavailable;b.title=unavailable?'Brak przygotowanego archiwum dla wybranego obszaru':''});
     if(unavailable)document.getElementById('timelineNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Mapa pokazuje niezależną mozaikę lotniczą GUGiK.';
   }
   map.setMaxBounds(null);map.setMinZoom(6);aerialTiles.options.minZoom=6;
-  InfraWatchArea.install(map,{
+  const areaConfig={
     name:'Śląsk',imageryBox:data.bbox,gisBox:realMeta.aoi_bbox,showMap:()=>switchView('map'),stats:()=>({total:realPower.features.length,lines:realPower.features.filter(f=>f.properties.kind==='line').length}),
     onChange:b=>{
       stopHistory();if(b&&demoMode)setGISMode(false);
@@ -51,8 +53,17 @@ function installUnifiedVegetation(){
       availability();
     },setAvailability:availability,
     onNavigate:coverage=>{if(coverage!=='full'){stopHistory();state.layer='aerial';applyImageryPolicy(true)}}
-  });
-  InfraWatchFacility.install(map,{region:'silesia',name:'Śląsk',getFeatures:()=>allPower.features,
+  };InfraWatchArea.install(map,areaConfig);
+  InfraWatchFacility.install(map,{mode:'vegetation',region:'silesia',name:'Wszystkie regiony',ready:regionalReady,getFeatures:f=>sources.get(f.region).gis.features,
+    beforeApply:async f=>{
+      await regionalReady;const s=sources.get(f.region);stopHistory();if(demoMode)setGISMode(false);
+      activeRegion=s.region;allPower=s.gis;realMeta=s.meta;data=s.imagery;allPower.features.forEach(f=>realFeatureIndex.set(f.id,f));
+      areaConfig.name=s.name;areaConfig.imageryBox=data.bbox;areaConfig.gisBox=realMeta.aoi_bbox;
+      document.querySelector('#areaLocationPreset option[value=source]').textContent='Obszar danych: '+s.name;
+      document.querySelector('.sidebar-heading h1').textContent='Sieć energetyczna · '+s.name;
+      document.getElementById('demoMode').disabled=s.region!=='silesia';document.getElementById('demoMode').title=s.region!=='silesia'?'Scenariusz zarastania dostępny na Śląsku':'';
+      state.layer=state.layer==='ndvi'?'ndvi':'rgb';applyImageryPolicy(true);renderTimeline();renderRealAnalysis();
+    },
     prepareLayers:local=>{if(demoMode)setGISMode(false);document.getElementById('showRealLines').checked=true;realGroups.lines.addTo(map);document.getElementById('showRealMinor').checked=local;local?realGroups.minor.addTo(map):map.removeLayer(realGroups.minor)},
     showLines:()=>{document.getElementById('realSearch').value='';document.querySelector('[data-side="locations"]').click();renderRealList()},selectLine:id=>selectRealFeature(id,false)
   });
