@@ -5,6 +5,17 @@ window.InfraWatchSentinel=(()=>{
   const bbox=[14,49,24.3,55],years=[2020,2022,2024,2025],searches=new Map();
   const overviewRoot=new URL('national-sentinel/',document.currentScript.src).href;
   const overviewBounds=[[48.92249926375824,13.359375],[55.379110448010486,24.609375]];
+  const borderMaps=new WeakSet();let borderData;
+  function installBorder(map){
+    if(borderMaps.has(map))return;borderMaps.add(map);
+    map.createPane('polandBoundary');map.getPane('polandBoundary').style.zIndex=375;map.getPane('polandBoundary').style.pointerEvents='none';
+    if(!borderData)borderData=fetch(new URL('../poland-boundary.geojson',overviewRoot)).then(response=>{if(!response.ok)throw Error('Nie udało się wczytać granicy Polski.');return response.json()}).then(data=>{if(data.type!=='FeatureCollection'||data.features?.length!==1)throw Error('Niepoprawna geometria granicy Polski.');return data});
+    borderData.then(data=>{
+      const common={pane:'polandBoundary',interactive:false,fill:false,smoothFactor:.6,lineJoin:'round',lineCap:'round'};
+      L.geoJSON(data,{...common,style:{...common,color:'#10232c',weight:4.5,opacity:.9}}).addTo(map);
+      L.geoJSON(data,{...common,style:{...common,color:'#fff3ca',weight:2,opacity:1},attribution:'Granica Polski: <a href="https://www.geoportal.gov.pl/pl/dane/panstwowy-rejestr-granic-prg/" target="_blank" rel="noopener">GUGiK / PRG</a>'}).addTo(map);
+    }).catch(error=>{console.warn(error);const warning=L.control({position:'bottomleft'});warning.onAdd=()=>{const el=document.createElement('div');el.className='iw-boundary-warning';el.textContent='Nie wczytano granicy Polski. Odśwież stronę.';el.setAttribute('role','status');return el};warning.addTo(map)});
+  }
   let scope='national';try{scope=localStorage.getItem('iw-sentinel-scope-v1')==='regional'?'regional':'national'}catch(_){}
   function search(year){
     if(!years.includes(Number(year)))throw Error('Nieobsługiwany rok Sentinel-2.');
@@ -63,13 +74,14 @@ window.InfraWatchSentinel=(()=>{
   function report(year){return {provider:'Copernicus Sentinel-2 L2A / Microsoft Planetary Computer',scope:scope,bbox:bbox.slice(),period:search(year).datetime,selection:'First available scene, sorted by whole-scene cloud cover <10%, June-August. Different pixels can have different acquisition dates; not a single-day image.',ndvi:'(B08-B04)/(B08+B04), internal scale/offset applied. No SCL pixel cloud mask in the online layer. Residual clouds and seams may remain; not an alert or clearance measurement.',resolution:'B04/B08 source 10 m; display depends on zoom',gis_scope_unchanged:true}}
   function status(layer){const s=layer?.iwStatus;if(layer?.iwOverviewError)return 'Nie udało się wczytać podglądu Sentinel-2. Spróbuj ponownie.';if(!s)return 'Sentinel-2 · mozaika z czerwca–sierpnia.';return s.errors?'Nie pobrano części kafli Sentinel-2. Użyj „Ponów kafle”; braki są oznaczone.':s.loading?'Wczytywanie kafli Sentinel-2 dla widocznego obszaru…':'Sentinel-2 · mozaika letnia. Możliwe chmury i różne daty zdjęć.'}
   function install({container,map,onChange}){
+    installBorder(map);
     const root=document.createElement('div');root.className='national-sentinel-control';
     root.innerHTML='<label for="sentinelScope">Zasięg Sentinel-2</label><select id="sentinelScope"><option value="national">Cała Polska · mozaika letnia</option><option value="regional">Archiwum regionalne · konkretne daty</option></select><div><button type="button" id="sentinelPoland">Pokaż Polskę</button><button type="button" id="sentinelRetry">Ponów kafle</button></div><p>2020 · 2022 · 2024 · 2025. Mozaiki krajowe: czerwiec–sierpień, różne daty zdjęć.</p>';
     container.prepend(root);const select=root.querySelector('select');select.value=scope;
-    const change=extent=>{scope=select.value;try{localStorage.setItem('iw-sentinel-scope-v1',scope)}catch(_){}onChange(extent);document.dispatchEvent(new CustomEvent('iw:sentinel-scope-change'));if(extent)map.fitBounds([[bbox[1],bbox[0]],[bbox[3],bbox[2]]],{padding:[15,15],animate:false})};
+    const change=extent=>{scope=select.value;try{localStorage.setItem('iw-sentinel-scope-v1',scope)}catch(_){}onChange(extent);document.dispatchEvent(new CustomEvent('iw:sentinel-scope-change'));if(extent){map.setMinZoom(5);map.fitBounds([[bbox[1],bbox[0]],[bbox[3],bbox[2]]],{padding:[15,15],animate:false})}};
     select.onchange=()=>change(false);root.querySelector('#sentinelPoland').onclick=()=>{select.value='national';change(true)};root.querySelector('#sentinelRetry').onclick=()=>{searches.clear();onChange(false)};
     return root;
   }
-  function sourceHTML(){return '<h3>Sentinel-2 · cała Polska</h3><p>Copernicus Sentinel-2 L2A / Microsoft Planetary Computer. Kafle online dla Polski; lata 2020, 2022, 2024 i 2025. Każdy rok to mozaika z okresu 1 czerwca–31 sierpnia, z preferencją scen o zachmurzeniu poniżej 10%. Poszczególne piksele mogą pochodzić z różnych dni. Nie jest to jedno zdjęcie całego kraju.</p><p>NDVI: (B08 − B04) / (B08 + B04), ze skalą i offsetem pasm. Warstwa online nie stosuje maski chmur SCL na poziomie pikseli; możliwe chmury, szwy i braki danych. Służy kontekstowi, nie pomiarowi prześwitu ani ocenie bezpieczeństwa. Regionalne próbki i analizy pozostają odrębnymi danymi.</p><p><a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" target="_blank" rel="noopener">Katalog i warunki dostępu Sentinel-2 ↗</a> · <a href="https://planetarycomputer.microsoft.com/api/data/v1/docs" target="_blank" rel="noopener">Dokumentacja usługi kafli ↗</a></p>'}
+  function sourceHTML(){return '<h3>Granica Polski</h3><p>GUGiK / Państwowy Rejestr Granic, warstwa A00_Granice_panstwa, pobrano 14.11.2026. Obrys obejmuje także polskie morze terytorialne. Geometrię uproszczono do celów wizualizacji (około 25 m); nie zastępuje dokumentacji geodezyjnej.</p><h3>Sentinel-2 · cała Polska</h3><p>Copernicus Sentinel-2 L2A / Microsoft Planetary Computer. Kafle online dla Polski; lata 2020, 2022, 2024 i 2025. Każdy rok to mozaika z okresu 1 czerwca–31 sierpnia, z preferencją scen o zachmurzeniu poniżej 10%. Poszczególne piksele mogą pochodzić z różnych dni. Nie jest to jedno zdjęcie całego kraju.</p><p>NDVI: (B08 − B04) / (B08 + B04), ze skalą i offsetem pasm. Warstwa online nie stosuje maski chmur SCL na poziomie pikseli; możliwe chmury, szwy i braki danych. Służy kontekstowi, nie pomiarowi prześwitu ani ocenie bezpieczeństwa. Regionalne próbki i analizy pozostają odrębnymi danymi.</p><p><a href="https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a" target="_blank" rel="noopener">Katalog i warunki dostępu Sentinel-2 ↗</a> · <a href="https://planetarycomputer.microsoft.com/api/data/v1/docs" target="_blank" rel="noopener">Dokumentacja usługi kafli ↗</a></p>'}
   return {bbox,years,search,register,tileURL,createLayer,national,decorateLegend,report,status,install,sourceHTML};
 })();
