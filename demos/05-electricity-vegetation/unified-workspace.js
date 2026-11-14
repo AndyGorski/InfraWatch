@@ -70,7 +70,7 @@ function installUnifiedVegetation(){
   const oldPlayHistory=document.getElementById('playHistory').onclick;
   document.getElementById('playHistory').onclick=()=>{const b=InfraWatchArea.getBox();if(b&&!historyTimer&&(state.layer==='aerial'||isDetailView())){state.layer='rgb';map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{padding:[18,18],maxZoom:11,animate:false});updateLayer()}oldPlayHistory()};
   document.getElementById('fitMap').onclick=()=>{if(InfraWatchArea.getBox())InfraWatchArea.focus();else {if(state.layer==='aerial')state.layer='rgb';fit();updateLayer();renderTimeline()}};
-  InfraWatchSentinel.install({container:document.getElementById('layersPanel'),map,onChange:extent=>{stopHistory();nationalSentinelKey=null;if(extent)state.layer='rgb';areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:data.bbox;applyImageryPolicy(true);renderTimeline();InfraWatchArea.refresh();availability()}});
+  InfraWatchSentinel.install({container:document.getElementById('layersPanel'),map,onChange:extent=>{stopHistory();nationalSentinelKey=null;if(extent)state.layer='rgb';else if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),data.bbox)==='none')state.layer='aerial';areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:data.bbox;applyImageryPolicy(true);renderTimeline();InfraWatchArea.refresh();availability()}});
   areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:data.bbox;
   const oldSources=showSources;showSources=function(){oldSources();document.getElementById('sourceContent').insertAdjacentHTML('afterbegin',InfraWatchSentinel.sourceHTML())};
   ['sourcesButton','helpButton','aboutButton'].forEach(id=>document.getElementById(id).onclick=showSources);
