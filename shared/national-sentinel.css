@@ -5,3 +5,4 @@
 .national-sentinel-control button{background:#163943;color:#ddf4f0;border:1px solid #355b64;border-radius:6px;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
 .national-sentinel-control p{margin:0;font-size:11px;line-height:1.5;color:#a9c3c9}
 .national-sentinel-control select:focus-visible,.national-sentinel-control button:focus-visible{outline:2px solid #8aecd2;outline-offset:2px}
+.iw-boundary-warning{padding:7px 10px;background:#173039;color:#ffe1a2;font:12px/1.4 Arial,sans-serif;max-width:250px}
