@@ -87,7 +87,7 @@ function createInfraWatchImagery(map, byId) {
     setScene(sceneIndex);
   }
   async function load(){try{setDataset(await InfraWatchData.load('kozienice'))}catch(error){loadFailed=true;console.error(error);renderStatus()}}
-  InfraWatchSentinel.install({container:byId('deformLayers'),map,onChange:extent=>{stop();setScene(sceneIndex);if(extent)setMode('optical',true);InfraWatchArea.refresh()}});
+  InfraWatchSentinel.install({container:byId('deformLayers'),map,onChange:extent=>{stop();setScene(sceneIndex);if(extent)setMode('optical',true);else if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),meta?.bbox)==='none')setMode('ortho',true);InfraWatchArea.refresh()}});
   update();const ready=load();
   return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_national:InfraWatchSentinel.national()?InfraWatchSentinel.report(activeScene()?.year||2025):null,sentinel_history_scene:InfraWatchSentinel.national()?null:activeScene()||null,sentinel_history_bbox:InfraWatchSentinel.national()?InfraWatchSentinel.bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
 }
