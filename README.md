@@ -73,7 +73,7 @@ Wybór filtruje obiekty GIS przecinające prostokąt, liczniki, wyszukiwarkę i 
 
 W trybie obiektu `study_area` zawiera również `shape: circle`, dane wybranego obiektu, promień i ustawienie sieci lokalnej. Osobny eksport obszaru zapisuje koło jako przybliżenie wielokątem 128 odcinków. Filtr punktów i geometrii działa według odległości sferycznej; nie ogranicza się do kwadratu otaczającego koło. Testy obejmują linie przecinające koło przy obu końcach poza nim, narożniki bbox, końce odcinków i otwory poligonów. Żaden nowy rzeczywisty pomiar InSAR ani prześwitu nie został dodany.
 
-Wskazanie nowej lokalizacji nie pobiera automatycznie nowego GIS ani nie przetwarza nowych scen. Poza przygotowanym archiwum aplikacja przechodzi na usługę lotniczą GUGiK i blokuje niedostępną historię. Częściowe pokrycie archiwum jest oznaczone. Dane zachowują oryginalne współrzędne; nie przenosi się zdjęć ani pomiarów z obszaru demonstracyjnego. Wymiary są przybliżeniem sferycznym, nie pomiarem geodezyjnym. Testy granic geometrii i wymiarów: `node shared/study-area.test.cjs`.
+Wskazanie nowej lokalizacji nie pobiera automatycznie nowego GIS ani nie tworzy pomiarów. W trybie „Cała Polska” dostępne są ogólnopolskie mozaiki letnie Sentinel-2 i NDVI. W trybie „Archiwum regionalne” poza przygotowanym zbiorem dostępna pozostaje ortofotomapa GUGiK; niedostępna historia jest blokowana. Dane zachowują oryginalne współrzędne; nie przenosi się zdjęć ani pomiarów z obszaru demonstracyjnego. Wymiary są przybliżeniem sferycznym, nie pomiarem geodezyjnym. Testy granic geometrii i wymiarów: `node shared/study-area.test.cjs`.
 
 
 ## Większy geograficzny zasięg Sentinel-2
@@ -90,3 +90,15 @@ W każdym terminie połączono sąsiednie kafle MGRS z tego samego dnia, satelit
 Nowe bbox mieszczą promień 30 km wokół wszystkich dziewięciu elektrowni / elektrociepłowni / OZE z katalogu. Zbiory GIS, pojedynczy kadr SAR Sentinel-1 i modele InSAR / zalania zachowują własne, dotychczasowe zasięgi. Większe pokrycie Sentinel-2 nie dodaje infrastruktury GIS ani wyników pomiarów poza przygotowanymi zbiorami.
 
 Odtworzenie: `python shared/prepare_expanded_history.py --cache <katalog-cache>` (rasterio, numpy, Pillow; opcjonalnie `--geo-libs <katalog-bibliotek>`). Test geograficznego rozszerzenia i pochodzenia: `node shared/expanded-history.test.cjs`.
+
+## Sentinel-2 dla całej Polski
+
+Trzy aktualne panele udostępniają przełącznik „Cała Polska · mozaika letnia” / „Archiwum regionalne” i przycisk „Pokaż Polskę”. Domyślne pokrycie Sentinel-2 obejmuje Polskę (bbox 14–24,3°E / 49–55°N); GIS, SAR, InSAR i model zalania zachowują niezależne, regionalne zasięgi. Panel zalania udostępnia także wybór roku podkładu 2D; tekstura terenu 3D pozostaje oryginalnym obrazem lokalnym.
+
+Krajowe RGB i NDVI to mozaiki z okresu **1 czerwca–31 sierpnia** lat **2020, 2022, 2024, 2025**, z danych Copernicus Sentinel-2 L2A w Microsoft Planetary Computer. Sceny są sortowane rosnąco według zachmurzenia całej sceny (<10%); mozaika wybiera pierwszy ważny piksel. Daty mogą różnić się między pikselami. To nie są pojedyncze przeloty ani pomiary zmian w jednej dacie. Regionalne archiwum konkretnych terminów zachowano osobno.
+
+Widok całego kraju korzysta z lekkich podglądów WebP w `shared/national-sentinel/`. Ich położenie wynika z macierzy WebMercatorQuad, nie z rozciągania regionalnych obrazów. Od z9 szczegółowe kafle są pobierane online; od z12 jak dotąd automatycznie włącza się ortofotomapa GUGiK. Rejestracja wyszukania mozaiki następuje w przeglądarce, bez kluczy i zapisanych wygasających identyfikatorów. Błędy kafli są oznaczane; „Ponów kafle” odnawia wyszukanie. Usługa zewnętrzna może mieć przerwy i limity.
+
+NDVI online używa `(B08-B04)/(B08+B04)` po zastosowaniu wewnętrznej skali i offsetu. **Nie stosuje maski chmur SCL na poziomie pikseli**; mogą pozostać chmury, szwy lub braki. Nie zastępuje regionalnych, osobno obliczonych i maskowanych próbek ani walidowanej analizy roślinności.
+
+Odtworzenie podglądów: `python shared/prepare_national_sentinel.py` (Pillow, internet; wznawialny cache poza repozytorium). Metadane: `shared/national-sentinel/metadata.json`. Testy: `node shared/national-sentinel.test.cjs`. Dostawca: [Sentinel-2 L2A / Microsoft Planetary Computer](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a), [API](https://planetarycomputer.microsoft.com/api/data/v1/docs). Contains modified Copernicus Sentinel data.

@@ -92,7 +92,7 @@ window.InfraWatchArea = (() => {
       <div class="study-area-presets" aria-label="Szybki wybór rozmiaru"><button type="button" data-area-size="1,1">1 × 1 km</button><button type="button" data-area-size="10,10">10 × 10 km</button><button type="button" data-area-size="25,10">25 × 10 km</button><button type="button" data-area-size="50,20">50 × 20 km</button></div>
       <p id="areaDraftSummary" class="study-area-draft"></p><p id="areaFormError" role="alert"></p>
       <div class="study-area-actions"><button type="submit" id="applyStudyArea">Zastosuj obszar</button><button type="button" id="pickAreaCenter">Wskaż środek na mapie</button><button type="button" id="drawStudyArea">Wskaż dwa narożniki</button><button type="button" id="useVisibleArea">Użyj widocznego kadru</button><button type="button" id="clearStudyArea">Wyłącz wybór</button><button type="button" id="exportStudyArea">Pobierz obszar · GeoJSON</button></div>
-      <p class="note">Archiwum Sentinel-2 i GIS obejmuje przygotowane obszary Śląska i Kozienic. W nowej lokalizacji można przeglądać usługę lotniczą GUGiK; nie powstaje automatycznie nowa analiza ani historia satelitarna. Geometrie wybranych obiektów są zachowane w całości.</p></form>`;
+      <p class="note">Sentinel-2 i NDVI: mozaiki letnie online dla całej Polski. Archiwum konkretnych dat, GIS i modele analiz pozostają regionalne. Wybór obszaru nie tworzy nowej analizy bezpieczeństwa. Geometrie wybranych obiektów są zachowane w całości.</p></form>`;
     document.body.append(dialog);
     const bar=document.createElement('div');bar.className='study-area-bar';bar.id='studyAreaBar';bar.hidden=true;
     bar.innerHTML='<div><strong id="studyAreaSummary"></strong><p id="studyAreaCoverage"></p></div><div class="study-area-actions"><button type="button" id="editStudyArea">Zmień obszar</button><button type="button" id="fitStudyArea">Pokaż</button><button type="button" id="removeStudyArea" aria-label="Wyłącz wybór obszaru">×</button></div>';
@@ -111,10 +111,10 @@ window.InfraWatchArea = (() => {
     function show(){const c=map.getCenter();fill(box||boxFromDimensions(Math.min(55,Math.max(49,c.lat)),Math.min(24.5,Math.max(14,c.lng)),20,10));el('exportStudyArea').disabled=!box;el('areaLocationPreset').value='custom';dialog.showModal()}
     function refresh(){
       bar.hidden=!box;document.body.classList.toggle('iw-has-study-area',!!box);el('exportStudyArea').disabled=!box;if(!box)return;
-      const d=dimensions(box),s2=coverage(box,config.imageryBox),gis=coverage(box,config.gisBox),stats=config.stats?.();
+      const d=dimensions(box),s2=coverage(box,window.InfraWatchSentinel?.national()?window.InfraWatchSentinel.bbox:config.imageryBox),gis=coverage(box,config.gisBox),stats=config.stats?.();
       el('studyAreaSummary').textContent=facilitySelection?`${facilitySelection.facility.name} · promień ${fmt(facilitySelection.radius_km)} km`:`Obszar: ${fmt(d.width_km)} × ${fmt(d.height_km)} km · ${fmt(d.area_km2,2)} km² · ${d.lat.toFixed(4)}°N, ${d.lon.toFixed(4)}°E`;
       el('editStudyArea').textContent=facilitySelection?'Zmień obiekt':'Zmień obszar';
-      const s2Text=s2==='full'?'Sentinel-2: w zasięgu archiwum':s2==='partial'?'Sentinel-2: archiwum obejmuje część obszaru':'Sentinel-2: brak archiwum dla tego obszaru';
+      const s2Text=window.InfraWatchSentinel?.national()?'Sentinel-2: ogólnopolskie mozaiki letnie online':s2==='full'?'Sentinel-2: w zasięgu archiwum':s2==='partial'?'Sentinel-2: archiwum obejmuje część obszaru':'Sentinel-2: brak archiwum dla tego obszaru';
       el('studyAreaCoverage').textContent=(facilitySelection&&stats?.lines!==undefined?`Pobliskie linie: ${stats.lines} · `:'')+s2Text+' · '+(gis==='none'?'GIS: poza przygotowanym zbiorem':`${gis==='partial'?'GIS: częściowe pokrycie':'Wczytany GIS'} · ${stats?.total??'…'} obiektów przecina wybór`)+'. Lotnicze: usługa GUGiK online.';
       bar.classList.toggle('coverage-warning',s2!=='full'||gis!=='full');
       config.setAvailability?.({sentinel:s2,sar:config.sarBox?coverage(box,config.sarBox):'none'});
