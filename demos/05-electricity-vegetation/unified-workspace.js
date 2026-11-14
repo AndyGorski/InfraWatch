@@ -21,7 +21,7 @@ function installUnifiedVegetation(){
     document.getElementById('scenarioLength').textContent=routeLength.toLocaleString('pl-PL',{maximumFractionDigits:1})+' km';
   }
   const oldStatus=renderImageryStatus;
-  renderImageryStatus=function(){oldStatus();document.getElementById('showHistory').hidden=effectiveImagery!=='aerial';document.querySelector('.timeline-info .eyebrow').textContent='Historia zobrazowań Sentinel-2';updateSummary();availability();if(InfraWatchSentinel.national()&&effectiveImagery!=='aerial')document.getElementById('timelineNote').textContent='Mozaika czerwiec–sierpień; różne daty pikseli. NDVI online bez maski chmur SCL. GIS i analizy pozostają regionalne.'};
+  renderImageryStatus=function(){oldStatus();document.getElementById('showHistory').hidden=effectiveImagery!=='aerial';document.querySelector('.timeline-info .eyebrow').textContent='Historia zobrazowań Sentinel-2';updateSummary();availability();if(effectiveImagery==='aerial')document.getElementById('timelineNote').textContent='Lotnicze GUGiK; morze i luki: Sentinel-2 z wybranego roku. Daty nalotów są niezależne. GIS pozostaje regionalny.';else if(InfraWatchSentinel.national())document.getElementById('timelineNote').textContent='Mozaika czerwiec–sierpień; różne daty pikseli. NDVI online bez maski chmur SCL. GIS i analizy pozostają regionalne.'};
   document.getElementById('showHistory').onclick=()=>{
     if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),data.bbox)==='none')return;
     stopHistory();state.layer=state.layer==='ndvi'?'ndvi':'rgb';const b=InfraWatchArea.getBox()||data.bbox;
@@ -39,7 +39,7 @@ function installUnifiedVegetation(){
     document.querySelectorAll('[data-layer="rgb"],[data-layer="ndvi"],#showHistory,#playHistory,#timeSlider,#yearTrack button').forEach(b=>{b.disabled=unavailable;b.title=unavailable?'Brak przygotowanego archiwum dla wybranego obszaru':''});
     if(unavailable)document.getElementById('timelineNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Mapa pokazuje niezależną mozaikę lotniczą GUGiK.';
   }
-  map.setMaxBounds(null);map.setMinZoom(6);aerialTiles.options.minZoom=6;
+  map.setMaxBounds(null);map.setMinZoom(6);aerialTiles.options.minZoom=5;
   const areaConfig={
     name:'Śląsk',imageryBox:data.bbox,gisBox:realMeta.aoi_bbox,showMap:()=>switchView('map'),stats:()=>({total:realPower.features.length,lines:realPower.features.filter(f=>f.properties.kind==='line').length}),
     onChange:b=>{

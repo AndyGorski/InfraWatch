@@ -37,3 +37,7 @@ Interfejs korzysta ze wspólnego wzorca `shared/monitoring-workspace.*`: Mapa / 
 Menu **Wybierz obiekt** udostępnia wspólną listę 9 elektrowni / elektrociepłowni / OZE i 911 stacji ze Śląska oraz Kozienic. Obrazy i GIS przełączają się do rzeczywistego regionu obiektu. Odnośniki Roślinność / Deformacje / Zalanie zachowują wybrany obiekt, promień 1–30 km oraz ustawienie lokalnych linii; wybór można także udostępnić przez URL. Obszar ręczny pozostaje dostępny. Model zarastania z pierwotnego demo pozostaje na Śląsku, syntetyczne punkty InSAR i model zalania przy F401 koło Kozienic. Dla innych lokalizacji brakujące analizy nie są wypełniane fikcyjnymi pomiarami. Bliskość linii nie potwierdza połączenia z elektrownią. Szczegóły katalogu i eksportu znajdują się w głównym README.
 
 Rozszerzone obrazy Śląska obejmują bbox [17.8,49.75,19.6,50.75], około 128 × 111 km. Kozienice mają osobne rzeczywiste mozaiki w bbox [20.75,51.15,22.25,52.05], około 104 × 100 km. Wybór obiektu przełącza region. Każdy termin zapisuje listę źródłowych kafli, ich footprinty i udział pikseli. Szerszy obraz nie rozszerza snapshotu GIS ani scenariusza linii. Szczegóły i odtworzenie opisano w głównym README.
+
+### Wybrzeże i Bałtyk
+
+Podkład lotniczy używa teraz przezroczystego GUGiK WMS (PNG, Raster). Luki, morze i błędy kafli odsłaniają mozaikę Sentinel-2 z wybranego roku; podpis mapy wyraźnie rozróżnia oba źródła. Zasięg obrazów satelitarnych rozszerzono do 56,2°N (podgląd całych kafli: około 56,56°N). Daty nalotów pozostają niezależne od roku Sentinel.

@@ -11,7 +11,7 @@ Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`)
 | `demos/00-early-prototypes/` | Dwa pierwsze prototypy HTML: mapa SAR/GIS oraz porównanie SAR/GIS. |
 | `demos/01-sar-gis/` | Demo SAR Sentinel‑1 i geometrii linii energetycznej koło Kozienic. |
 | `demos/02-insar-v1/` | Pierwsza wersja InSAR: syntetyczne szeregi przemieszczeń, prognoza trendu i import CSV. |
-| `demos/03-insar-multisensor-v2/` | Mapa deformacji: historia Sentinel-2 / NDVI 2020–2025, szczegółowy GUGiK WMTS, osobna oś epok InSAR, regionalne warstwy OSM, karty obiektów, eksport GIS i import CSV. |
+| `demos/03-insar-multisensor-v2/` | Mapa deformacji: historia Sentinel-2 / NDVI 2020–2025, szczegółowy GUGiK WMS (PNG), osobna oś epok InSAR, regionalne warstwy OSM, karty obiektów, eksport GIS i import CSV. |
 | `demos/04-flood-2d-3d/` | Flood Lab: mapa 2D, model terenu 3D i scenariusze wezbrania 0–72 godzin. |
 | `demos/05-electricity-vegetation/` | Zestaw 2 / Energia: rzeczywiste GIS OSM na Śląsku, historia Sentinel-2 / NDVI, zbliżenia GUGiK oraz osobny scenariusz zarastania pasa linii. |
 
@@ -93,7 +93,7 @@ Odtworzenie: `python shared/prepare_expanded_history.py --cache <katalog-cache>`
 
 ## Sentinel-2 dla całej Polski
 
-Trzy aktualne panele udostępniają przełącznik „Cała Polska · mozaika letnia” / „Archiwum regionalne” i przycisk „Pokaż Polskę”. Domyślne pokrycie Sentinel-2 obejmuje Polskę (bbox 14–24,3°E / 49–55°N); GIS, SAR, InSAR i model zalania zachowują niezależne, regionalne zasięgi. Panel zalania udostępnia także wybór roku podkładu 2D; tekstura terenu 3D pozostaje oryginalnym obrazem lokalnym.
+Trzy aktualne panele udostępniają przełącznik „Cała Polska · mozaika letnia” / „Archiwum regionalne” i przycisk „Pokaż Polskę”. Domyślne pokrycie Sentinel-2 obejmuje Polskę (bbox 13–25°E / 48,9–56,2°N, z pasem Bałtyku); GIS, SAR, InSAR i model zalania zachowują niezależne, regionalne zasięgi. Panel zalania udostępnia także wybór roku podkładu 2D; tekstura terenu 3D pozostaje oryginalnym obrazem lokalnym.
 
 Na mapach trzech paneli znajduje się jasny obrys granicy Polski z ciemnym podbiciem. Źródło: publiczna usługa WFS GUGiK / PRG, warstwa `ms:A00_Granice_panstwa`, pobranie 14.11.2026, wersja źródłowa 28.07.2026. Granica obejmuje także morze terytorialne. Lokalny GeoJSON `shared/poland-boundary.geojson` zachowuje metadane i oryginalne położenie; geometrię uproszczono do około 25 m dla płynnego wyświetlania. Obrys pozostaje widoczny przy zmianie lat, RGB/NDVI i ortofotomapy, nie blokuje klikania obiektów GIS. Odtworzenie: `python shared/prepare_poland_boundary.py`.
 
@@ -104,3 +104,11 @@ Widok całego kraju korzysta z lekkich podglądów WebP w `shared/national-senti
 NDVI online używa `(B08-B04)/(B08+B04)` po zastosowaniu wewnętrznej skali i offsetu. **Nie stosuje maski chmur SCL na poziomie pikseli**; mogą pozostać chmury, szwy lub braki. Nie zastępuje regionalnych, osobno obliczonych i maskowanych próbek ani walidowanej analizy roślinności.
 
 Odtworzenie podglądów: `python shared/prepare_national_sentinel.py` (Pillow, internet; wznawialny cache poza repozytorium). Metadane: `shared/national-sentinel/metadata.json`. Testy: `node shared/national-sentinel.test.cjs`. Dostawca: [Sentinel-2 L2A / Microsoft Planetary Computer](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a), [API](https://planetarycomputer.microsoft.com/api/data/v1/docs). Contains modified Copernicus Sentinel data.
+
+## Uzupełnienie zdjęć nad Bałtykiem
+
+Mozaiki RGB i NDVI wszystkich czterech lat rozszerzono na pas Bałtyku; zapytanie obejmuje 13–25°E / 48,9–56,2°N. Georeferencjonowane podglądy mają 2304 × 2432 px i obejmują całe kafle WebMercatorQuad z9: 12,65625–25,3125°E / 48,45835–56,55948°N. To nowe dane źródłowe, nie rozciągnięcie starych obrazów.
+
+W trzech panelach podkład lotniczy korzysta z GUGiK WMS StandardResolution, warstwa Raster, PNG z przezroczystością. Nad morzem i w lukach ortofotomapy widoczny jest Sentinel-2 z wybranego roku, umieszczony pod kaflami lotniczymi. Identyfikacja źródeł jest jawna w podpisie mapy, opisie czasu i oknie danych. Daty nalotów GUGiK pozostają niezależne; satelitarne uzupełnienie nie jest fotografią lotniczą. Błędy usługi GUGiK odsłaniają uzupełnienie i są sygnalizowane.
+
+Wspólna fabryka warstwy `InfraWatchSentinel.createAerialLayer` utrzymuje kolejność podkładów, przełącza rok uzupełnienia oraz usuwa obie części przy zmianie warstwy. Model zalania i tekstury 3D zachowują własny zakres i źródła.

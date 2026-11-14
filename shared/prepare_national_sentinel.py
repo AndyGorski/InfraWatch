@@ -4,13 +4,14 @@ Run with the bundled Python (Pillow). No credentials required.
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
-import urllib.request, urllib.parse, urllib.error, json, math, io, time
+import urllib.request, urllib.parse, urllib.error, json, math, io, time, shutil
 
 ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'national-sentinel';OUT.mkdir(exist_ok=True)
-CACHE=ROOT.parents[2]/'tmp/national-sentinel/tiles';CACHE.mkdir(parents=True,exist_ok=True)
+CACHE=ROOT.parents[2]/'tmp/national-sentinel/baltic-v2-tiles';CACHE.mkdir(parents=True,exist_ok=True)
+OLD_CACHE=ROOT.parents[2]/'tmp/national-sentinel/tiles'
 API='https://planetarycomputer.microsoft.com/api/data/v1'
-BOX=[14,49,24.3,55];Z=9;N=2**Z;SIZE=128
+BOX=[13,48.9,25,56.2];Z=9;N=2**Z;SIZE=128
 def tile(lon,lat):return int((lon+180)/360*N),int((1-math.asinh(math.tan(math.radians(lat)))/math.pi)/2*N)
 X0,Y1=tile(BOX[0],BOX[1]);X1,Y0=tile(BOX[2],BOX[3])
 def lat(y):return math.degrees(math.atan(math.sinh(math.pi*(1-2*y/N))))
@@ -19,7 +20,9 @@ def request(url,data=None):
     req=urllib.request.Request(url,data=json.dumps(data).encode() if data else None,headers={'Content-Type':'application/json','User-Agent':'InfraWatch-national-overview'})
     with urllib.request.urlopen(req,timeout=50) as r:return r.read()
 manifest={'bbox':BOUNDS,'requested_bbox':BOX,'source_zoom':Z,'overview_tile_pixels':SIZE,'years':[],'provider':'Copernicus Sentinel-2 L2A / Microsoft Planetary Computer','selection':'June-August, whole-scene cloud cover <10%, ascending cloud cover, first valid pixel. Not single-date imagery.','ndvi':'Unscaled B08/B04 normalized index; no per-pixel SCL cloud mask.'}
-if (OUT/'metadata.json').exists():manifest['years']=json.loads((OUT/'metadata.json').read_text())['years']
+if (OUT/'metadata.json').exists():
+    previous=json.loads((OUT/'metadata.json').read_text())
+    if previous.get('requested_bbox')==BOX:manifest['years']=previous['years']
 print('Grid',X0,X1,Y0,Y1,'bounds',BOUNDS,flush=True)
 for year in [2025,2020,2022,2024]:
     if any(item['year']==year for item in manifest['years']) and all((OUT/f'{mode}-{year}.webp').stat().st_size>0 for mode in ['rgb','ndvi']):
@@ -29,6 +32,10 @@ for year in [2025,2020,2022,2024]:
     canvases={mode:Image.new('RGBA',((X1-X0+1)*SIZE,(Y1-Y0+1)*SIZE)) for mode in ['rgb','ndvi']}
     def download(job):
         mode,x,y=job;path=CACHE/f'{year}-{mode}-{x}-{y}.png'
+        # Reuse only tiles wholly inside the old search box. Its outer rows and
+        # columns are fetched again so new coastal source scenes can contribute.
+        old_path=OLD_CACHE/path.name
+        if not path.exists() and 276<=x<=289 and 162<=y<=174 and old_path.exists():shutil.copyfile(old_path,path)
         if path.exists():
             image=Image.open(path).convert('RGBA');return mode,x,y,image,image.getchannel('A').getbbox() is None
         params={'collection':'sentinel-2-l2a','nodata':0,'scan_limit':300,'items_limit':80,'pixel_selection':'first'}
