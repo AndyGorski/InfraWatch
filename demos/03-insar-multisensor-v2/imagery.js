@@ -1,10 +1,9 @@
 /* Real imagery history and live aerial detail; independent of InSAR epochs. */
 function createInfraWatchImagery(map, byId) {
   let area=[[51.48,21.24],[51.78,21.86]];const sarArea=[[51.57,21.32],[51.73,21.61]],detailZoom=12;
-  const wmts='https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTOFOTOMAPA&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=EPSG:3857&TILEMATRIX=EPSG:3857:{z}&TILEROW={y}&TILECOL={x}';
   map.createPane('historyImagery');map.getPane('historyImagery').style.zIndex=250;
   const sar=L.imageOverlay('assets/sar-after.png',sarArea,{opacity:1,pane:'historyImagery'});
-  const aerial=L.tileLayer(wmts,{minZoom:6,maxZoom:19,maxNativeZoom:19,tileSize:256,attribution:'© GUGiK / Geoportal · ortofotomapa WMTS'});
+  const aerial=InfraWatchSentinel.createAerialLayer(2025);
   let meta,sceneIndex=3,mode='optical',effective='optical',rgb,ndvi,timer=null,tileErrors=0,tileLoading=false,loadFailed=false;
   const date=value=>new Date(value).toLocaleDateString('pl-PL',{day:'2-digit',month:'long',year:'numeric'});
   const activeScene=()=>meta?.scenes[sceneIndex];
@@ -12,15 +11,16 @@ function createInfraWatchImagery(map, byId) {
   aerial.on('loading',()=>{tileLoading=true;tileErrors=0;renderStatus()});
   aerial.on('load',()=>{tileLoading=false;renderStatus()});
   aerial.on('tileerror',()=>{tileErrors++;renderStatus()});
+  aerial.on('iw:fallback-status',renderStatus);
   function renderStatus(){
     InfraWatchSentinel.decorateLegend(byId('ndviLegend'));
     const scene=activeScene(),isAerial=effective==='ortho';
-    byId('imageryLabel').textContent=isAerial?'Ortofotomapa GUGiK · szczegół':effective==='sar'?'Sentinel-1 · 13.07.2025':effective==='mix'?`SAR + Sentinel-2 · ${scene?.year||'…'}`:`${effective==='ndvi'?'NDVI':'Sentinel-2'} · ${scene?.year||'…'}`;
-    byId('imageryResolution').textContent=isAerial?'Mozaika lotnicza':effective==='sar'?'Jeden kadr radarowy':'Źródło 10 m · widok ogólny';
-    byId('imageryNotice').textContent=isAerial?(tileErrors?'Brakuje części kafli GUGiK. Zmień widok lub spróbuj ponownie. Braki nie są zastępowane powiększonym Sentinel.':tileLoading?'Wczytywanie szczegółowych kafli ortofotomapy…':'Bieżąca mozaika GUGiK. Data nalotu do weryfikacji.') :loadFailed?'Nie udało się wczytać archiwum Sentinel-2. Odśwież stronę.':effective==='sar'?'Amplituda SAR jest kontekstem obrazu, nie pomiarem przemieszczenia.':'Daty obrazów i epoki analizy InSAR są niezależne.';
+    byId('imageryLabel').textContent=isAerial?`Lotnicze GUGiK + Sentinel-2 · ${scene?.year||2025}`:effective==='sar'?'Sentinel-1 · 13.07.2025':effective==='mix'?`SAR + Sentinel-2 · ${scene?.year||'…'}`:`${effective==='ndvi'?'NDVI':'Sentinel-2'} · ${scene?.year||'…'}`;
+    byId('imageryResolution').textContent=isAerial?'lotnicze + uzupełnienie satelitarne':effective==='sar'?'Jeden kadr radarowy':'Źródło 10 m · widok ogólny';
+    byId('imageryNotice').textContent=isAerial?(tileErrors?'Część kafli GUGiK jest niedostępna. W tle widoczny jest Sentinel-2.':tileLoading?'Wczytywanie szczegółowych kafli ortofotomapy…':'GUGiK: zdjęcia lotnicze. Morze i luki: Sentinel-2 z wybranego roku; inne daty i rozdzielczość.') :loadFailed?'Nie udało się wczytać archiwum Sentinel-2. Odśwież stronę.':effective==='sar'?'Amplituda SAR jest kontekstem obrazu, nie pomiarem przemieszczenia.':'Daty obrazów i epoki analizy InSAR są niezależne.';
     byId('imageryNotice').classList.toggle('warning',!!tileErrors||loadFailed);
     byId('historyDate').textContent=scene?`${date(scene.date)} · ${scene.id.startsWith('S2A')?'S2A':scene.id.startsWith('S2B')?'S2B':'S2C'}`:loadFailed?'Archiwum niedostępne':'Wczytywanie archiwum…';
-    byId('historyNote').textContent=isAerial?'Mapa pokazuje niezależną mozaikę lotniczą. Wybrany rok dotyczy archiwum Sentinel-2. Użyj „Pokaż archiwum”, aby zobaczyć historyczny obraz na całym obszarze.':effective==='sar'?'Mapa pokazuje jeden obraz SAR z 13.07.2025. Oś lat wybiera archiwum Sentinel-2; nie zmienia daty radaru ani epoki InSAR.':effective==='mix'?'Fuzja wizualna pojedynczego SAR z wybraną sceną Sentinel-2. Różne daty i przezroczystość nie stanowią analizy detekcji zmian.':'Oś zmienia całe zobrazowanie Sentinel-2 lub NDVI. Sezonowość i różne daty ograniczają porównywalność. GIS i epoka InSAR pozostają niezależne.';
+    byId('historyNote').textContent=isAerial?'Ląd: mozaika lotnicza GUGiK. Morze i luki: Sentinel-2 z wybranego roku. Daty nalotów są niezależne od satelity.':effective==='sar'?'Mapa pokazuje jeden obraz SAR z 13.07.2025. Oś lat wybiera archiwum Sentinel-2; nie zmienia daty radaru ani epoki InSAR.':effective==='mix'?'Fuzja wizualna pojedynczego SAR z wybraną sceną Sentinel-2. Różne daty i przezroczystość nie stanowią analizy detekcji zmian.':'Oś zmienia całe zobrazowanie Sentinel-2 lub NDVI. Sezonowość i różne daty ograniczają porównywalność. GIS i epoka InSAR pozostają niezależne.';
     byId('showHistory').hidden=!isAerial&&effective!=='sar';
     byId('blendLabel').hidden=effective!=='mix';
     byId('ndviLegend').hidden=effective!=='ndvi';
@@ -40,7 +40,7 @@ function createInfraWatchImagery(map, byId) {
     const next=mode==='ortho'||map.getZoom()>=detailZoom?'ortho':mode;
     for(const layer of [sar,rgb,ndvi,aerial])if(layer&&map.hasLayer(layer))map.removeLayer(layer);
     effective=next;
-    if(next==='ortho')aerial.addTo(map);
+    if(next==='ortho'){aerial.setYear(activeScene()?.year||2025);aerial.addTo(map)}
     else if(next==='sar')sar.setOpacity(1).addTo(map);
     else if(next==='mix'){sar.setOpacity(1).addTo(map);if(rgb)rgb.setOpacity(+byId('blend').value/100).addTo(map)}
     else if(next==='ndvi'){if(rgb)rgb.setOpacity(.35).addTo(map);if(ndvi)ndvi.setOpacity(1).addTo(map)}
@@ -89,5 +89,5 @@ function createInfraWatchImagery(map, byId) {
   async function load(){try{setDataset(await InfraWatchData.load('kozienice'))}catch(error){loadFailed=true;console.error(error);renderStatus()}}
   InfraWatchSentinel.install({container:byId('deformLayers'),map,onChange:extent=>{stop();setScene(sceneIndex);if(extent)setMode('optical',true);else if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),meta?.bbox)==='none')setMode('ortho',true);InfraWatchArea.refresh()}});
   update();const ready=load();
-  return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_national:InfraWatchSentinel.national()?InfraWatchSentinel.report(activeScene()?.year||2025):null,sentinel_history_scene:InfraWatchSentinel.national()?null:activeScene()||null,sentinel_history_bbox:InfraWatchSentinel.national()?InfraWatchSentinel.bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
+  return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_national:InfraWatchSentinel.national()?InfraWatchSentinel.report(activeScene()?.year||2025):null,sentinel_history_scene:InfraWatchSentinel.national()?null:activeScene()||null,sentinel_history_bbox:InfraWatchSentinel.national()?InfraWatchSentinel.bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMS StandardResolution / PNG',supplement:'Sentinel-2 summer mosaic for sea and missing aerial coverage',supplement_year:activeScene()?.year||2025,acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
 }

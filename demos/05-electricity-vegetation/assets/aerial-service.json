@@ -1,15 +1,27 @@
 {
   "provider": "GUGiK / Geoportal",
-  "service": "WMTS StandardResolution",
-  "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution",
-  "layer": "ORTOFOTOMAPA",
+  "service": "WMS StandardResolution",
+  "url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution",
+  "layer": "Raster",
   "matrixSet": "EPSG:3857",
-  "format": "image/jpeg",
-  "verified": "2026-11-06",
+  "format": "image/png",
+  "verified": "2026-11-14",
   "autoDetailZoom": 12,
   "maxMatrixLevel": 19,
   "acquisitionDate": null,
   "nativeResolution": null,
   "history": "Live mosaic; independent of Sentinel observation year",
-  "documentation": "https://www.geoportal.gov.pl/pl/dane/ortofotomapa-orto/"
+  "documentation": "https://www.geoportal.gov.pl/pl/dane/ortofotomapa-orto/",
+  "transparent": true,
+  "supplement": {
+    "provider": "Copernicus Sentinel-2 L2A / Microsoft Planetary Computer",
+    "coverage_bbox": [
+      13,
+      48.9,
+      25,
+      56.2
+    ],
+    "period": "June-August of the selected Sentinel year",
+    "purpose": "Sea, aerial nodata and unavailable GUGiK tiles; satellite imagery, not aerial photography."
+  }
 }

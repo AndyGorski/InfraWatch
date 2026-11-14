@@ -1,15 +1,15 @@
 {
   "bbox": [
-    13.359375,
-    48.92249926375824,
-    24.609375,
-    55.379110448010486
+    12.65625,
+    48.45835188280865,
+    25.3125,
+    56.55948248376224
   ],
   "requested_bbox": [
-    14,
-    49,
-    24.3,
-    55
+    13,
+    48.9,
+    25,
+    56.2
   ],
   "source_zoom": 9,
   "overview_tile_pixels": 128,
@@ -17,60 +17,37 @@
     {
       "year": 2025,
       "period": "2025-06-01T00:00:00Z/2025-08-31T23:59:59Z",
-      "tiles": 240,
+      "tiles": 342,
       "rgb": "rgb-2025.webp",
-      "ndvi": "ndvi-2025.webp"
+      "ndvi": "ndvi-2025.webp",
+      "empty_tiles": []
     },
     {
       "year": 2020,
       "period": "2020-06-01T00:00:00Z/2020-08-31T23:59:59Z",
-      "tiles": 240,
+      "tiles": 342,
       "rgb": "rgb-2020.webp",
-      "ndvi": "ndvi-2020.webp"
+      "ndvi": "ndvi-2020.webp",
+      "empty_tiles": []
     },
     {
       "year": 2022,
       "period": "2022-06-01T00:00:00Z/2022-08-31T23:59:59Z",
-      "tiles": 240,
+      "tiles": 342,
       "rgb": "rgb-2022.webp",
       "ndvi": "ndvi-2022.webp",
-      "empty_tiles": [
-        {
-          "mode": "rgb",
-          "x": 275,
-          "y": 171,
-          "z": 9
-        },
-        {
-          "mode": "ndvi",
-          "x": 275,
-          "y": 171,
-          "z": 9
-        }
-      ]
+      "empty_tiles": []
     },
     {
       "year": 2024,
       "period": "2024-06-01T00:00:00Z/2024-08-31T23:59:59Z",
-      "tiles": 240,
+      "tiles": 342,
       "rgb": "rgb-2024.webp",
       "ndvi": "ndvi-2024.webp",
       "empty_tiles": [
         {
           "mode": "rgb",
-          "x": 275,
-          "y": 173,
-          "z": 9
-        },
-        {
-          "mode": "rgb",
           "x": 276,
-          "y": 173,
-          "z": 9
-        },
-        {
-          "mode": "ndvi",
-          "x": 275,
           "y": 173,
           "z": 9
         },
