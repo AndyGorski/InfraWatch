@@ -13,6 +13,7 @@ function createInfraWatchImagery(map, byId) {
   aerial.on('load',()=>{tileLoading=false;renderStatus()});
   aerial.on('tileerror',()=>{tileErrors++;renderStatus()});
   function renderStatus(){
+    InfraWatchSentinel.decorateLegend(byId('ndviLegend'));
     const scene=activeScene(),isAerial=effective==='ortho';
     byId('imageryLabel').textContent=isAerial?'Ortofotomapa GUGiK · szczegół':effective==='sar'?'Sentinel-1 · 13.07.2025':effective==='mix'?`SAR + Sentinel-2 · ${scene?.year||'…'}`:`${effective==='ndvi'?'NDVI':'Sentinel-2'} · ${scene?.year||'…'}`;
     byId('imageryResolution').textContent=isAerial?'Mozaika lotnicza':effective==='sar'?'Jeden kadr radarowy':'Źródło 10 m · widok ogólny';
@@ -27,7 +28,13 @@ function createInfraWatchImagery(map, byId) {
     if(scene)byId('historySlider').setAttribute('aria-valuetext',date(scene.date));
     for(const button of byId('historyYears').querySelectorAll('button'))button.setAttribute('aria-pressed',String(+button.dataset.index===sceneIndex));
     for(const [id,key] of [['optBtn','optical'],['ndviBtn','ndvi'],['sarBtn','sar'],['mixBtn','mix'],['orthoBtn','ortho']])byId(id).setAttribute('aria-pressed',String(effective===key));
-    if(InfraWatchArea.coverage(InfraWatchArea.getBox(),meta?.bbox||[21.24,51.48,21.86,51.78])==='none')byId('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
+    if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),meta?.bbox||[21.24,51.48,21.86,51.78])==='none')byId('historyNote').textContent='Dla tego obszaru nie przygotowano historii Sentinel-2. Dostępna jest niezależna mozaika lotnicza GUGiK.';
+    if(InfraWatchSentinel.national()&&scene){
+      byId('historyDate').textContent=`Czerwiec–sierpień ${scene.year} · mozaika Polski`;
+      byId('historySlider').setAttribute('aria-valuetext',`Mozaika letnia ${scene.year}`);
+      byId('historyYears').querySelectorAll('button').forEach(b=>b.title=`Czerwiec–sierpień ${meta.scenes[+b.dataset.index].year} · różne daty zdjęć`);
+      if(!isAerial&&effective!=='sar'){byId('imageryNotice').textContent=InfraWatchSentinel.status(effective==='ndvi'?ndvi:rgb);byId('imageryNotice').classList.toggle('warning',!!(effective==='ndvi'?ndvi:rgb)?.iwStatus?.errors);byId('historyNote').textContent='Sentinel-2 dla całej Polski: mozaika czerwiec–sierpień, różne daty pikseli. NDVI online bez maski chmur SCL. SAR i InSAR mają osobny zasięg.'}
+    }
   }
   function update(){
     const next=mode==='ortho'||map.getZoom()>=detailZoom?'ortho':mode;
@@ -43,7 +50,7 @@ function createInfraWatchImagery(map, byId) {
   function setMode(next,keepView=false){
     stop();mode=next;
     if(!keepView&&next==='ortho'&&map.getZoom()<detailZoom)map.setZoom(13);
-    else if(!keepView&&next!=='ortho'&&map.getZoom()>=detailZoom){const b=InfraWatchArea.getBox();map.fitBounds(b?[[b[1],b[0]],[b[3],b[2]]]:area,{padding:[18,18],maxZoom:11})}
+    else if(!keepView&&next!=='ortho'&&map.getZoom()>=detailZoom){const b=InfraWatchArea.getBox();if(InfraWatchSentinel.national()&&!b)map.setZoom(11);else map.fitBounds(b?[[b[1],b[0]],[b[3],b[2]]]:area,{padding:[18,18],maxZoom:11})}
     update();
   }
   function setScene(index){
@@ -51,8 +58,9 @@ function createInfraWatchImagery(map, byId) {
     sceneIndex=Math.max(0,Math.min(meta.scenes.length-1,Number(index)));
     const scene=activeScene();
     if(rgb)map.removeLayer(rgb);if(ndvi)map.removeLayer(ndvi);
-    rgb=L.imageOverlay(scene.rgbURL,area,{opacity:1,pane:'historyImagery'});
-    ndvi=L.imageOverlay(scene.ndviURL,area,{opacity:1,pane:'historyImagery'});
+    rgb=InfraWatchSentinel.national()?InfraWatchSentinel.createLayer(scene.year,'rgb',{pane:'historyImagery'}):L.imageOverlay(scene.rgbURL,area,{opacity:1,pane:'historyImagery'});
+    ndvi=InfraWatchSentinel.national()?InfraWatchSentinel.createLayer(scene.year,'ndvi',{pane:'historyImagery'}):L.imageOverlay(scene.ndviURL,area,{opacity:1,pane:'historyImagery'});
+    for(const layer of [rgb,ndvi])layer.on('iw:status',renderStatus);
     byId('historySlider').value=String(sceneIndex);update();
   }
   function stop(){if(timer)clearInterval(timer);timer=null;byId('playHistory').textContent='▷';byId('playHistory').setAttribute('aria-pressed','false');byId('playHistory').setAttribute('aria-label','Odtwórz historię zobrazowań')}
@@ -75,9 +83,11 @@ function createInfraWatchImagery(map, byId) {
     byId('historySlider').disabled=false;byId('playHistory').disabled=false;byId('imagerySources').replaceChildren();
     const intro=document.createElement('p');intro.textContent=source.name+' · Sentinel-2 L2A / Earth Search / Element 84. Mozaiki sąsiednich kafli z tego samego dnia i przelotu. Pasma B04/B08: natywnie 10 m; widok ogólny około '+meta.approx_ground_pixel_m+' m/px. Bbox: '+b.join(', ')+'.';byId('imagerySources').append(intro);
     meta.scenes.forEach(scene=>{const heading=document.createElement('h3');heading.textContent=scene.year+' · '+date(scene.date)+' · '+(scene.sources||[scene]).length+' kafli';byId('imagerySources').append(heading);for(const tile of scene.sources||[scene]){const p=document.createElement('p'),a=document.createElement('a');a.href=tile.url;a.target='_blank';a.rel='noopener';a.textContent=tile.id+' ↗';p.append(a,document.createTextNode(' · chmury kafla '+Number(tile.cloud_scene_percent??tile.cloud).toLocaleString('pl-PL',{maximumFractionDigits:3})+'%'));byId('imagerySources').append(p)}});
+    byId('imagerySources').insertAdjacentHTML('afterbegin',InfraWatchSentinel.sourceHTML());
     setScene(sceneIndex);
   }
   async function load(){try{setDataset(await InfraWatchData.load('kozienice'))}catch(error){loadFailed=true;console.error(error);renderStatus()}}
+  InfraWatchSentinel.install({container:byId('deformLayers'),map,onChange:extent=>{stop();setScene(sceneIndex);if(extent)setMode('optical',true);InfraWatchArea.refresh()}});
   update();const ready=load();
-  return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_history_scene:activeScene()||null,sentinel_history_bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
+  return {setMode,setDataset,ready,refresh:update,getReport:()=>({requested_mode:mode,effective_mode:effective,sentinel_national:InfraWatchSentinel.national()?InfraWatchSentinel.report(activeScene()?.year||2025):null,sentinel_history_scene:InfraWatchSentinel.national()?null:activeScene()||null,sentinel_history_bbox:InfraWatchSentinel.national()?InfraWatchSentinel.bbox:meta?.bbox||null,sar:{id:'Sentinel-1C IW GRDH VV',date:'2025-07-13',history_available:false},orthophoto:{provider:'GUGiK',service:'WMTS StandardResolution',acquisition_date:null,date_independent_of_timeline:true,automatic_detail_zoom:detailZoom},insar_epochs_independent:true})};
 }

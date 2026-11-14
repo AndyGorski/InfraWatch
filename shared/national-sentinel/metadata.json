@@ -1,0 +1,89 @@
+{
+  "bbox": [
+    13.359375,
+    48.92249926375824,
+    24.609375,
+    55.379110448010486
+  ],
+  "requested_bbox": [
+    14,
+    49,
+    24.3,
+    55
+  ],
+  "source_zoom": 9,
+  "overview_tile_pixels": 128,
+  "years": [
+    {
+      "year": 2025,
+      "period": "2025-06-01T00:00:00Z/2025-08-31T23:59:59Z",
+      "tiles": 240,
+      "rgb": "rgb-2025.webp",
+      "ndvi": "ndvi-2025.webp"
+    },
+    {
+      "year": 2020,
+      "period": "2020-06-01T00:00:00Z/2020-08-31T23:59:59Z",
+      "tiles": 240,
+      "rgb": "rgb-2020.webp",
+      "ndvi": "ndvi-2020.webp"
+    },
+    {
+      "year": 2022,
+      "period": "2022-06-01T00:00:00Z/2022-08-31T23:59:59Z",
+      "tiles": 240,
+      "rgb": "rgb-2022.webp",
+      "ndvi": "ndvi-2022.webp",
+      "empty_tiles": [
+        {
+          "mode": "rgb",
+          "x": 275,
+          "y": 171,
+          "z": 9
+        },
+        {
+          "mode": "ndvi",
+          "x": 275,
+          "y": 171,
+          "z": 9
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "period": "2024-06-01T00:00:00Z/2024-08-31T23:59:59Z",
+      "tiles": 240,
+      "rgb": "rgb-2024.webp",
+      "ndvi": "ndvi-2024.webp",
+      "empty_tiles": [
+        {
+          "mode": "rgb",
+          "x": 275,
+          "y": 173,
+          "z": 9
+        },
+        {
+          "mode": "rgb",
+          "x": 276,
+          "y": 173,
+          "z": 9
+        },
+        {
+          "mode": "ndvi",
+          "x": 275,
+          "y": 173,
+          "z": 9
+        },
+        {
+          "mode": "ndvi",
+          "x": 276,
+          "y": 173,
+          "z": 9
+        }
+      ]
+    }
+  ],
+  "provider": "Copernicus Sentinel-2 L2A / Microsoft Planetary Computer",
+  "selection": "June-August, whole-scene cloud cover <10%, ascending cloud cover, first valid pixel. Not single-date imagery.",
+  "ndvi": "Unscaled B08/B04 normalized index; no per-pixel SCL cloud mask."
+}

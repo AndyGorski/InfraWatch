@@ -148,7 +148,7 @@ function stopHistory(){if(historyTimer)clearInterval(historyTimer);historyTimer=
 
 const AERIAL_DETAIL_ZOOM=12;
 const AERIAL_WMTS='https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTOFOTOMAPA&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=EPSG:3857&TILEMATRIX=EPSG:3857:{z}&TILEROW={y}&TILECOL={x}';
-let aerialTiles,effectiveImagery=null,imageryYear=null,visibleAerialTiles=new Map(),imageryStatusFrame;
+let aerialTiles,effectiveImagery=null,imageryYear=null,visibleAerialTiles=new Map(),imageryStatusFrame,nationalSentinelLayer=null,nationalSentinelKey=null;
 function isDetailView(){return map.getZoom()>=AERIAL_DETAIL_ZOOM}
 function imageryMode(){return state.layer==='aerial'||isDetailView()?'aerial':state.layer}
 function installAerialImagery(){
@@ -169,12 +169,19 @@ function applyImageryPolicy(force=false){
  const mode=imageryMode();
  if(!force&&mode===effectiveImagery&&imageryYear===state.year){renderImageryStatus();return}
  const changed=mode!==effectiveImagery;effectiveImagery=mode;imageryYear=state.year;
+ if(nationalSentinelLayer)map.removeLayer(nationalSentinelLayer);
  if(ndviOverlay){map.removeLayer(ndviOverlay);ndviOverlay=null}
  if(aerialOverlay){map.removeLayer(aerialOverlay);aerialOverlay=null}
  if(mode==='aerial'){
 
   if(map.hasLayer(baseOverlay))map.removeLayer(baseOverlay);
   if(!map.hasLayer(aerialTiles))aerialTiles.addTo(map);
+ }else if(InfraWatchSentinel.national()){
+  if(map.hasLayer(aerialTiles))map.removeLayer(aerialTiles);
+  if(map.hasLayer(baseOverlay))map.removeLayer(baseOverlay);
+  const key=state.year+':'+mode;
+  if(nationalSentinelKey!==key){nationalSentinelLayer=InfraWatchSentinel.createLayer(state.year,mode,{pane:'imagery'});nationalSentinelKey=key;nationalSentinelLayer.on('iw:status',queueImageryStatus)}
+  nationalSentinelLayer.addTo(map);
  }else{
   if(map.hasLayer(aerialTiles))map.removeLayer(aerialTiles);
   const b=data.bbox;baseOverlay.setBounds([[b[1],b[0]],[b[3],b[2]]]);baseOverlay.setUrl(currentScene().rgbURL||(currentScene().rgb?`assets/${currentScene().rgb}`:`assets/sentinel-${state.year}.jpg`));if(!map.hasLayer(baseOverlay))baseOverlay.addTo(map);
@@ -191,6 +198,7 @@ function currentAerialStatus(){
 }
 function renderImageryStatus(){
  if(!data||!map||!$('#imageryNotice'))return;
+ InfraWatchSentinel.decorateLegend($('#ndviLegend'));
  const aerial=effectiveImagery==='aerial',notice=$('#imageryNotice');notice.hidden=!aerial;
  $('.timeline-info .eyebrow').textContent=aerial?'ROK SCENARIUSZA / HISTORIA SENTINEL':'HISTORIA OBRAZOWANIA';
  if(aerial){
@@ -204,5 +212,11 @@ function renderImageryStatus(){
  }else{
   $('#imageryLabel').textContent=`${effectiveImagery==='ndvi'?'NDVI':'Sentinel-2'} · ${state.year}`;$('#resolution').textContent='źródło 10 m/px';
   $('#timelineNote').textContent='Zbliżenia automatycznie pobierają zdjęcia lotnicze. Sceny Sentinel służą analizie ogólnej i historycznej.';
+ }
+ if(InfraWatchSentinel.national()){
+  $('#currentDate').textContent=`Czerwiec–sierpień ${state.year} · mozaika Polski`;
+  $('#timeSlider').setAttribute('aria-valuetext',`Mozaika letnia ${state.year}`);
+  $$('#yearTrack button').forEach(b=>b.title=`Czerwiec–sierpień ${b.dataset.year} · różne daty zdjęć`);
+  if(!aerial){notice.hidden=false;$('#imageryLabel').textContent=`${effectiveImagery==='ndvi'?'NDVI':'Sentinel-2'} · Polska · ${state.year}`;$('#imageryNoticeText').textContent=InfraWatchSentinel.status(nationalSentinelLayer);$('#retryAerial').hidden=true;notice.classList.toggle('imagery-error',!!nationalSentinelLayer?.iwStatus.errors);$('#timelineNote').textContent='Mozaika z czerwca–sierpnia; różne daty pikseli. NDVI online bez maski chmur SCL. GIS i pomiary pozostają regionalne.'}
  }
 }

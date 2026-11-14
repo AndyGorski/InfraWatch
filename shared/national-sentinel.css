@@ -1,0 +1,7 @@
+.national-sentinel-control{display:grid;gap:8px;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid #28444e;color:#dcecef;font:inherit}
+.national-sentinel-control label{font-size:12px;font-weight:600}
+.national-sentinel-control select{width:100%;min-width:0;background:#122b35;color:#e6f2f4;border:1px solid #38545e;border-radius:6px;padding:9px;font:inherit;font-size:12px}
+.national-sentinel-control>div{display:flex;gap:8px;flex-wrap:wrap}
+.national-sentinel-control button{background:#163943;color:#ddf4f0;border:1px solid #355b64;border-radius:6px;padding:8px 10px;font:inherit;font-size:12px;cursor:pointer}
+.national-sentinel-control p{margin:0;font-size:11px;line-height:1.5;color:#a9c3c9}
+.national-sentinel-control select:focus-visible,.national-sentinel-control button:focus-visible{outline:2px solid #8aecd2;outline-offset:2px}
