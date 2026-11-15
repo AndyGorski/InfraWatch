@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const box={window:{}};vm.runInNewContext(fs.readFileSync(__dirname+'/terrain3d.js','utf8'),box);const {buildMesh,waterData,camera,fitDistance,project}=box.window.InfraWatchTerrain3D;
+const dem=JSON.parse(fs.readFileSync(__dirname+'/assets/terrain.json','utf8')),before=JSON.stringify(dem),mesh=buildMesh(dem);
+assert.equal(mesh.positions.length/3,240*180);assert.equal(mesh.indices.length/3,2*239*179);assert.equal(mesh.indices.reduce((a,b)=>Math.max(a,b),0),dem.data.length-1,'Include the last source row/column');assert.equal(mesh.uv.at(-2),1);assert.equal(mesh.uv.at(-1),1);
+assert(Math.abs(mesh.width-20000)<1000);assert(Math.abs(mesh.height-17811)<100);assert.equal(mesh.base,95.9);assert.equal(mesh.top,167.2);
+for(let i=0;i<mesh.normals.length;i+=3){assert(Math.abs(Math.hypot(...mesh.normals.slice(i,i+3))-1)<1e-5);assert(mesh.normals[i+1]>0)}
+assert(mesh.walls.positions.every(Number.isFinite));assert(mesh.walls.indices.every(i=>i<mesh.walls.positions.length/3));
+const depths=new Float32Array(dem.data.length);depths[0]=.02;depths[1]=2;depths[2]=5;const wet=waterData(mesh,depths);
+assert.equal(wet.pixels[3],255);assert.equal(wet.pixels[7],255);assert.equal(wet.pixels[11],255);assert.equal(wet.pixels[15],0);assert.equal(wet.pixels[4],27);assert.equal(wet.pixels[8],35);
+assert(Math.abs((wet.positions[4]-mesh.positions[4])*mesh.width-2)<.0001,'Water surface = unchanged DEM + modeled depth');assert.equal(wet.positions[9+1],mesh.positions[9+1],'Dry terrain must not be raised by water');assert.equal(depths[1],2);assert.equal(JSON.stringify(dem),before,'Never mutate the DEM for visual exaggeration');
+const view=camera(-.22,.87,1,1.6,.02),center=project(view.matrix,[0,.02,0],960,600);assert(center.visible);assert(Math.abs(center.x-480)<.001);assert(Math.abs(center.y-300)<.001);assert(view.matrix.every(Number.isFinite));
+const normal=camera(0,.9,1,1.6),east=project(normal.matrix,[.3,0,0],960,600),west=project(normal.matrix,[-.3,0,0],960,600);assert(east.x>west.x,'Keep east/right orientation when looking north');
+assert.throws(()=>waterData(mesh,new Float32Array(2)));assert.throws(()=>buildMesh({...dem,data:[NaN]}));
+for(const aspect of [.75,1.5,2.5])for(const yaw of [-.22,1,2.5])for(const elevation of [.35,.87,1.25])for(const vertical of [1,12,30]){const h=(mesh.top-mesh.base)/mesh.width*vertical*.35,fit=fitDistance(yaw,elevation,aspect,mesh,vertical),view=camera(yaw,elevation,1,aspect,h,fit);for(const x of [-.5,.5])for(const z of [-mesh.height/mesh.width/2,mesh.height/mesh.width/2])for(const y of [-25/mesh.width*vertical,(mesh.top-mesh.base)/mesh.width*vertical])assert(project(view.matrix,[x,y,z],aspect*600,600).visible,'Default camera must fit the complete terrain at every aspect/rotation')}
+const inputs=[{disabled:false},{disabled:false}],status={textContent:''},element=()=>({hidden:false,setAttribute(){},before(){},remove(){},getContext:()=>null,querySelectorAll:()=>inputs});box.document={createElement:element,querySelector:element,getElementById:()=>status};
+assert.equal(box.window.InfraWatchTerrain3D.create(element(),dem,{},{}),null);assert(inputs.every(i=>i.disabled));assert(status.textContent.includes('Tryb uproszczony'));assert.equal(box.window.InfraWatchTerrain3D.report().engine,'simplified_canvas');
+console.log('PASS: full DEM topology/edges, metric aspect, unit normals, separate wet/dry surfaces, depth classes, source preservation and camera projection.');
