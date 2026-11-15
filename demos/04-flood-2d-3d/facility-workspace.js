@@ -65,7 +65,7 @@ async function installFloodFacilityWorkspace(){
     if(!points.includes(state.selected))state.selected=points[0]||null;
     window.floodSelectionMask=new Uint8Array(dem.width*dem.height);
     for(let y=0;y<dem.height;y++)for(let x=0;x<dem.width;x++)window.floodSelectionMask[y*dem.width+x]=Number(InfraWatchArea.contains(bbox[3]-(bbox[3]-bbox[1])*y/(dem.height-1),bbox[0]+(bbox[2]-bbox[0])*x/(dem.width-1)));
-    towerLayer.clearLayers();for(const p of points)L.marker([p.lat,p.lon],{icon:L.divIcon({className:'towerIcon',html:'◇',iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip('Słup F401 · OSM '+p.id).on('click',()=>select(p)).addTo(towerLayer);
+    towerLayer.clearLayers();for(const p of points){const wet=depths[indexPoint(p)]>0;L.marker([p.lat,p.lon],{icon:L.divIcon({className:'towerIcon '+(wet?'towerIcon-wet':''),html:wet?'◆':'◇',iconSize:[24,24],iconAnchor:[12,12]})}).bindTooltip((wet?'Słup F401 · ZALANY · ':'Słup F401 · ')+p.id).on('click',()=>select(p)).addTo(towerLayer)}
     line.setLatLngs(selection?infra.way.nodes.map(id=>points.find(p=>p.id===id)).filter(Boolean).map(p=>[p.lat,p.lon]):legacyCoords);
     const focusVisible=modelAvailable&&InfraWatchFilters.matchesLine({properties:{power:'line',voltage:'400000'}});
     focusVisible?line.addTo(map):map.removeLayer(line);
