@@ -21,6 +21,26 @@ Każdy obiekt GIS ma identyfikator, dostępne atrybuty, datę edycji i link do o
 
 Tryb rzeczywistego GIS jest domyślny. Przełącznik „Scenariusz symulowany” zastępuje go osobnym scenariuszem: około 47,7 km modelowej linii 110 kV, pięć lokalizacji, bufor ±30 m, symulowane korony, prześwity i priorytety zmieniające się z rokiem. Geometrie i alarmy tego scenariusza nie opisują rzeczywistej infrastruktury.
 
+### Przykład roślinności — prezentacja jak dla punktów InSAR
+
+Przycisk **Przykład roślinności** w nagłówku otwiera opis i wybór punktu początkowego. Można uruchomić rok 2025 lub prześledzić historię od 2020. Na stronie startowej odnośnik **Uruchom scenariusz roślinności** prowadzi bezpośrednio do P-01 w 2025: `?scenario=vegetation&point=1&year=2025`. Dozwolone punkty to 1–5, lata 2020/2022/2024/2025. Nieznane wartości są zastępowane P-01 i ostatnim rokiem.
+
+Pasek scenariusza umożliwia wybór punktu i roku, zbliżenie, otwarcie analizy i powrót do rzeczywistego GIS. Przykład korzysta z modelowego korytarza na Śląsku, bez powiązania pomiarów z wybraną linią OSM. Nie zmienia zapisanych filtrów ani rzeczywistego planu weryfikacji GIS. Wejście wyłącza ręczny obszar/otoczenie obiektu; wyjście przywraca poprzedni podkład, rok i kadr zapisane przy uruchomieniu w tej sesji. Przebieg i korony pozostają symulowane, nawet gdy w tle widać rzeczywiste zdjęcie.
+
+| Punkt | Historia przykładowa |
+| --- | --- |
+| P-01 · Skraj lasu · północ | Narastające zbliżenie koron: pokrycie modelowego pasa 12 → 38%, odstęp do osi 7,8 → 2,4 m. |
+| P-02 · Zadrzewienie · zachód | Weryfikacja drzew poza pasem i możliwości upadku; brak pomiarów wysokości lub kondycji. |
+| P-03 · Samosiewy · polana | Stopniowe zarastanie otwartej części modelowego pasa. |
+| P-04 · Brzeg lasu · południe | Boczny przyrost koron i przykład inspekcji planowej. |
+| P-05 · Przecinka · Rudy | Symulowana pielęgnacja w 2022: udział spada 22 → 8%, potem rośnie do 16% w 2025. Historia prac nie jest potwierdzona. |
+
+Zakładka **Analiza** zawiera stan wybranego punktu, zmianę względem 2020, trzy wykresy i tabelę historii tylko do aktywnego roku. Pokrycie pasa, odstęp do osi i priorytet są danymi DEMO. Trzeci wykres pokazuje niezależne, rzeczywiste regionalne próbki Sentinel-2 NDVI z metadanych scen, wraz z datami i liczbą ważnych pikseli. Mogą różnić się od dat wyświetlanej mozaiki ogólnopolskiej. Braki NDVI nie są zastępowane zerami, a NDVI nie generuje priorytetu ani pomiaru prześwitu.
+
+Z karty punktu można otworzyć analizę; z analizy można dodać lub usunąć lokalizację z lokalnego planu inspekcji oraz pobrać **Raport scenariusza JSON**. Raport zapisuje rok, punkt, założenia, status symulacji, plan i historię do wybranego roku, a także źródła próbek optycznych. Plan przykładu (`infrawatch-inspections-v1`) jest odrębny od planu rzeczywistego GIS. Priorytety w planie i eksportach CSV/HTML odpowiadają aktywnemu rokowi scenariusza.
+
+Test modelu i raportu: `node demos/05-electricity-vegetation/vegetation-scenario.test.cjs`.
+
 Dla rzeczywistych obiektów nie wyznaczono kolizji, prześwitu ani wysokości drzew. Brak modelu przewodów, LiDAR i przetworzonych scen SAR. NDVI nie jest automatyczną oceną zagrożenia. Eksport zachowuje rozróżnienie danych rzeczywistych i symulacji.
 
 ## Pochodzenie i odtworzenie
