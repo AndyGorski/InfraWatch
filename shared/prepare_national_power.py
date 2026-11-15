@@ -117,7 +117,7 @@ for row in RAW.open(encoding='utf8'):
         for y in range(y0,y1+1):
             # Bounding-box indexing is conservative: crossing lines are not lost.
             tiles[f'{group}/10/{x}/{y}.json.gz'].append(f)
-    if p['power']=='line' or p['power']=='substation' and max([float(v) for v in p.get('voltage','').split(';') if v.isdigit()]+[0])>=110000:
+    if p['power']=='line' or p['power'] in ['substation','cable'] and max([float(v) for v in p.get('voltage','').split(';') if v.strip().isdigit()]+[0])>=110000:
         simplified={**f,'properties':{k:v for k,v in p.items() if k!='node_ids'},'geometry':normalize(g.simplify(.0005,preserve_topology=True))}
         simplified['properties']['generalized']=True
         simplified['properties']['detail_tile']=f'network/10/{x0}/{y0}.json.gz'
@@ -131,7 +131,7 @@ for i,(name,features) in enumerate(sorted(tiles.items())):
     if i%500==0:print('Packed',i,'/',len(tiles),'partitions',flush=True)
 overview_info=write_gzip(OUT/'overview.json.gz',{'type':'FeatureCollection','features':overview})
 facilities_info=write_gzip(OUT/'facilities.json.gz',{'items':facilities,'snapshot':source_meta['snapshot']})
-meta={**source_meta,'aoi_bbox':list(country.bounds),'counts':counts,'feature_count':len(seen),'excluded':excluded,'deduplicated':dict(dedup),'powers':POWERS,
+meta={**source_meta,'aoi_bbox':list(country.bounds),'counts':counts,'feature_count':len(seen),'excluded':excluded,'deduplicated':dict(dedup),'powers':POWERS,'overview_includes_hv_cables':True,'overview_cable_count':sum(f['properties']['power']=='cable' for f in overview),
       'partition_zoom':10,'detail_min_zoom':11,'supports_min_zoom':14,'poles_min_zoom':16,'overview':overview_info,'overview_count':len(overview),'facilities':facilities_info,'tiles':index,
       'geometry_processing':'Original OSM geometries intersecting Poland PRG boundary; full geometries retained at borders. All coordinates remain in EPSG:4326. Overview is simplified by 0.0005 degrees; detail partitions preserve source coordinates.',
       'completeness':'Nationwide coverage of the selected public OSM tags, not a complete or operator-verified inventory. Unknown voltage/operator are left unknown. power=line includes transmission and distribution; voltage alone does not establish operator responsibility.',

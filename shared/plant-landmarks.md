@@ -2,6 +2,8 @@
 
 Wspólna warstwa dla trzech paneli: `plant-landmarks.js`, `plant-landmarks.css`, katalog `power-plants.json.gz` (około 277 kB). Snapshot OSM / Geofabrik: **14.11.2026 21:20:41 UTC**, **4 653 identyfikatory OSM** `power=plant` przecinające granicę Polski PRG. Katalog zawiera punkty oraz obiekty obszarowe i zespoły instalacji zapisane jako relacje site. Dziewięć wcześniej wyróżnionych nazw pozostaje dostępnych w wyszukiwarce, z aktualnymi atrybutami źródłowymi.
 
+Bieżący widok jest ograniczany [filtrami mapy](map-filters.md). Początkowo wybrane są duże elektrownie cieplne/wodne od 500 MW; pozostałe typy i mniejsze instalacje można włączyć w sekcji „Typy elektrowni”. Poniższe reguły grupowania dotyczą obiektów dopuszczonych przez filtry. Wyłączony typ wybranego obiektu analizy może pozostać neutralnym punktem referencyjnym.
+
 ## Widoczność i obsługa
 
 - W widoku kraju obiekty z podaną mocą elektryczną >=500 MW mają osobne symbole. Mniejsze są grupowane w stałej siatce ekranu. Liczba przy grupie to liczba identyfikatorów OSM, nie potwierdzonych odrębnych elektrowni. Kliknięcie grupy przybliża jej obszar.

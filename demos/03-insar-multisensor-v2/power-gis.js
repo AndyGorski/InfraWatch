@@ -9,7 +9,7 @@ function createInfraWatchPowerGIS(map, byId, options) {
   const groups={lines:L.layerGroup(),minor:L.layerGroup(),supports:L.layerGroup(),stations:L.layerGroup(),cables:L.layerGroup(),devices:L.layerGroup(),selection:L.layerGroup()};
   const controls=[['showGISLines','lines'],['showGISMinor','minor'],['showGISSupports','supports'],['showGISStations','stations'],['showGISCables','cables'],['showGISDevices','devices']];
   for(const [id,label,key] of [['showGISCables','Kable energetyczne','cable'],['showGISDevices','Transformatory i urządzenia','device']]){const row=document.createElement('label');row.className='gis-layer-row';row.innerHTML=`<input type="checkbox" id="${id}" checked><i style="background:#c7b2e4"></i><span>${label}<small>Szczegóły od z11</small></span>`;byId('showGISStations').closest('label').after(row)}
-  byId('showGISMinor').checked=true;
+  InfraWatchFilters.syncLegacyControls();byId('showFocusGIS').checked=false;byId('showCorridor').checked=false;
   const voltage=p=>(p.voltage||'').split(';').map(Number).filter(v=>Number.isFinite(v)&&v>0);
   const color=p=>{const v=Math.max(0,...voltage(p));return v>=300000?'#c69aee':v>=200000?'#ef9c73':v>=100000?'#e0cf7b':v>0?'#91bb7d':'#a2b2a3'};
   const voltageLabel=p=>voltage(p).length?voltage(p).map(v=>(v/1000).toLocaleString('pl-PL')+' kV').join(' / '):'Brak w OSM';
@@ -47,15 +47,17 @@ function createInfraWatchPowerGIS(map, byId, options) {
     groups.supports.clearLayers();if(!data||!byId('showGISSupports').checked||map.getZoom()<14)return;
     const bounds=map.getBounds().pad(.1);
     for(const f of visibleFeatures()){const p=f.properties;if(p.kind!=='support'||(p.power==='pole'&&map.getZoom()<16)||(byId('showFocusGIS').checked&&focusNodes.has(p.osm_id)))continue;
+      if(f.geometry.type!=='Point'){if(InfraWatchArea.geometryIntersectsBox(f.geometry,[bounds.getWest(),bounds.getSouth(),bounds.getEast(),bounds.getNorth()]))L.geoJSON(f,{renderer:supportsRenderer,pane:'networkSupports',style:{color:'#f3e3ba',weight:2,fillOpacity:.25},onEachFeature:bind}).addTo(groups.supports);continue}
       const ll=L.latLng(f.geometry.coordinates[1],f.geometry.coordinates[0]);if(!bounds.contains(ll))continue;
       const layer=L.circleMarker(ll,{renderer:supportsRenderer,pane:'networkSupports',radius:p.power==='tower'?3.5:2.5,color:'#f3e3ba',weight:1.3,fillColor:'#726846',fillOpacity:.95});bind(f,layer);layer.addTo(groups.supports);
     }
   }
   function sync(){
     for(const [id,key] of controls)byId(id).checked?groups[key].addTo(map):map.removeLayer(groups[key]);
-    const routeVisible=!focusLine||InfraWatchArea.intersectsFeature(focusLine.toGeoJSON());
+    const routeVisible=(!focusLine||InfraWatchArea.intersectsFeature(focusLine.toGeoJSON()))&&InfraWatchFilters.matchesLine({properties:{power:'line',voltage:'400000'}});
     if(focusTowers){focusTowers.clearLayers();for(const marker of focusMarkers){const p=marker.getLatLng();if(InfraWatchArea.contains(p.lat,p.lng))marker.addTo(focusTowers)}}
-    for(const layer of [focusLine,focusTowers])if(layer)byId('showFocusGIS').checked&&routeVisible?layer.addTo(map):map.removeLayer(layer);
+    if(focusLine)byId('showFocusGIS').checked&&routeVisible?focusLine.addTo(map):map.removeLayer(focusLine);
+    if(focusTowers)byId('showFocusGIS').checked&&routeVisible&&InfraWatchFilters.get().details.includes('supports')?focusTowers.addTo(map):map.removeLayer(focusTowers);
     byId('showCorridor').checked&&routeVisible?corridor.addTo(map):map.removeLayer(corridor);
     if(selectedFeature){const p=selectedFeature.properties,id=p.kind==='line'?(p.power==='cable'?'showGISCables':p.power==='minor_line'?'showGISMinor':'showGISLines'):p.kind==='support'?'showGISSupports':p.kind==='device'?'showGISDevices':'showGISStations';if(!byId(id).checked)clearSelection()}
     renderSupports();
@@ -90,7 +92,7 @@ function createInfraWatchPowerGIS(map, byId, options) {
     for(const [key,power] of [['lines','line'],['minor','minor_line'],['cables','cable']])L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.power===power,style:f=>({...style(f),...(power==='cable'?{dashArray:'5 4'}:{})}),onEachFeature:bind}).addTo(groups[key]);
     L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.kind==='substation',style:{color:'#89cdd1',weight:1.4,fillColor:'#89cdd1',fillOpacity:.18},pointToLayer:(_,ll)=>L.circleMarker(ll,{radius:4,color:'#b6eef1',fillColor:'#3b8f96',weight:1.3,fillOpacity:.8,renderer,pane:'networkGIS'}),onEachFeature:bind}).addTo(groups.stations);
     L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.kind==='device',style:{color:'#c7b2e4',weight:1.4,fillOpacity:.18},pointToLayer:(_,ll)=>L.circleMarker(ll,{radius:3,color:'#c7b2e4',weight:1,fillOpacity:.8,renderer,pane:'networkGIS'}),onEachFeature:bind}).addTo(groups.devices);
-    if(selectedFeature&&!InfraWatchArea.intersectsFeature(selectedFeature))clearSelection();
+    if(selectedFeature&&(!InfraWatchArea.intersectsFeature(selectedFeature)||!activeData.features.some(f=>f.id===selectedFeature.id)))clearSelection();
     const c=InfraWatchArea.countByPower(activeData.features),fmt=n=>Number(n||0).toLocaleString('pl-PL');
     for(const [id,value] of [['gisLineCount',c.line],['gisMinorCount',c.minor_line],['gisSupportCount',c.tower+c.pole],['gisStationCount',c.substation]])byId(id).textContent=fmt(value);
     renderSearch();sync();

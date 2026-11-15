@@ -43,7 +43,7 @@ window.InfraWatchFacility=(()=>{
       byId('applyFacility').disabled=true;byId('facilityNearbyCount').textContent='Wczytywanie pobliskiej sieci…';byId('facilityNearbyList').replaceChildren();
       let nearby;try{nearby=await config.getFeatures(fChosen,radius)}catch(error){if(generation===previewGeneration)byId('facilityNearbyCount').textContent='Nie udało się pobrać pobliskiej sieci. Wybierz obiekt ponownie.';return}
       if(generation!==previewGeneration)return;
-      lines=nearby.filter(f=>f.properties.power==='line'||local&&['minor_line','cable'].includes(f.properties.power)).map(f=>{
+      lines=nearby.filter(f=>(f.properties.power==='line'||local&&['minor_line','cable'].includes(f.properties.power))&&(!window.InfraWatchFilters||InfraWatchFilters.matchesLine(f))).map(f=>{
         if(!distances.has(f.id))distances.set(f.id,InfraWatchArea.distanceToGeometry(f.geometry,chosen.lat,chosen.lon));return {feature:f,distance:distances.get(f.id)};
       }).filter(x=>x.distance<=radius*1000+1e-6).sort((a,b)=>a.distance-b.distance||a.feature.id.localeCompare(b.feature.id));
       const main=lines.filter(x=>x.feature.properties.power==='line').length;
@@ -52,7 +52,7 @@ window.InfraWatchFacility=(()=>{
       for(const {feature:f,distance} of lines.slice(0,6)){
         const b=make('button');b.type='button';b.dataset.nearbyId=f.id;b.append(make('strong',name(f)),make('small',`${f.id} · ${number(distance/1000,2)} km od punktu obiektu`));b.onclick=async()=>{if(await apply())config.selectLine(f.id,f)};root.append(b);
       }
-      if(!lines.length)root.append(make('p','Brak linii w przygotowanym zbiorze dla tego promienia. Zwiększ promień lub wybierz inny obiekt.','note'));
+      if(!lines.length)root.append(make('p','Brak linii dla tego promienia i aktywnych filtrów mapy. Zmień filtry lub zwiększ promień.','note'));
       else if(lines.length>6)root.append(make('p','Pierwsze 6 wg odległości. Pozostałe są dostępne po zastosowaniu wyboru w zakładce Obiekty.','note'));
       byId('applyFacility').disabled=loading||busy;
     }
@@ -68,7 +68,7 @@ window.InfraWatchFacility=(()=>{
     }
     function sync(){
       const active=InfraWatchArea.getReport();nearbyButton.hidden=!active?.facility;
-      if(active?.facility){const f=active.facility,ring=f.kind==='plant'&&plantController?.isVisible();marker.setIcon(L.divIcon({className:'facility-map-pin'+(ring?' facility-plant-ring':''),html:ring?'<span aria-hidden="true"></span>':'<span aria-hidden="true">⚡</span>',iconSize:ring?[40,40]:[30,30],iconAnchor:ring?[20,20]:[15,15]}));marker.setLatLng([f.lat,f.lon]);const text=make('span',f.name+' · punkt obiektu analizy');marker.unbindTooltip().bindTooltip(text,{direction:'top'}).addTo(map);open.title='Zmień obiekt: '+f.name}
+      if(active?.facility){const f=active.facility,ring=f.kind==='plant'&&plantController?.isVisible(f);marker.setIcon(L.divIcon({className:'facility-map-pin'+(ring?' facility-plant-ring':''),html:ring?'<span aria-hidden="true"></span>':'<span aria-hidden="true">⚡</span>',iconSize:ring?[40,40]:[30,30],iconAnchor:ring?[20,20]:[15,15]}));marker.setLatLng([f.lat,f.lon]);const text=make('span',f.name+' · punkt obiektu analizy');marker.unbindTooltip().bindTooltip(text,{direction:'top'}).addTo(map);open.title='Zmień obiekt: '+f.name}
       else {map.removeLayer(marker);open.removeAttribute('title')}
       const u=new URL(location.href);for(const key of ['facility','radius','local'])u.searchParams.delete(key);
       if(active?.facility){u.searchParams.set('facility',active.facility.id);u.searchParams.set('radius',active.radius_km);u.searchParams.set('local',active.include_local_lines?'1':'0')}history.replaceState(null,'',u);
@@ -96,7 +96,7 @@ window.InfraWatchFacility=(()=>{
     }
     open.onclick=show;nearbyButton.onclick=show;byId('closeFacilityDialog').onclick=()=>dialog.close();byId('applyFacility').onclick=apply;byId('facilityRetry').onclick=load;
     byId('facilitySearch').oninput=renderResults;byId('facilityType').onchange=renderResults;byId('facilityRegion').onchange=renderResults;byId('facilityRadius').onchange=renderPreview;byId('facilityIncludeMinor').onchange=renderPreview;
-    document.addEventListener('iw:study-area-change',sync);document.addEventListener('iw:plant-layer-change',sync);await load();return {show};
+    document.addEventListener('iw:study-area-change',sync);document.addEventListener('iw:plant-layer-change',sync);document.addEventListener('iw:map-filters-change',()=>{if(dialog.open&&chosen)renderPreview()});await load();return {show};
   }
   return {install};
 })();

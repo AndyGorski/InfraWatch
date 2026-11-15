@@ -8,13 +8,13 @@ Geometrie zachowują współrzędne źródłowe EPSG:4326 i identyfikatory OSM. 
 
 ## Ładowanie
 
-- `overview.json.gz`: uproszczone linie główne oraz stacje z podanym napięciem >=110 kV, tolerancja 0,0005 stopnia. Geometria przeglądowa ma `generalized: true` i odnośnik do pełnych szczegółów.
+- `overview.json.gz`: uproszczone linie główne oraz kable i stacje z podanym napięciem >=110 kV, tolerancja 0,0005 stopnia. Geometria przeglądowa ma `generalized: true` i odnośnik do pełnych szczegółów.
 - `network/10/x/y.json.gz`: pełne linie, kable, stacje i urządzenia. Pobierane od z11.
 - `supports/10/x/y.json.gz`: pełne podpory. Pobierane od z14; lokalne słupy wyświetlane od z16.
-- Wybór obszaru badania pobiera wszystkie kategorie niezależnie od zoomu. Liczniki, wyszukiwarka i eksport dotyczą wczytanego kadru/wyboru, a nie całego krajowego zbioru. `loading_scope` w GeoJSON opisuje zakres i poziom szczegółowości.
+- Wybór obszaru badania udostępnia wszystkie kategorie niezależnie od zoomu; podpory są pobierane dopiero po ich włączeniu. Liczniki, wyszukiwarka i eksport uwzględniają aktywne filtry i dotyczą wczytanego kadru/wyboru, a nie całego krajowego zbioru. `loading_scope` w GeoJSON opisuje zakres i poziom szczegółowości.
 - Przecięcia granic partycji nie obcinają linii. Ten sam obiekt może wystąpić w kilku plikach; klient usuwa duplikaty według pełnego ID OSM. Równoległość pobierania wynosi maksymalnie 6 na zapytanie, a cache mieści 96 partycji. Nieaktualne zapytania nie nadpisują nowszego widoku.
 - Pliki `.json.gz` są jawnie rozpakowywane w aktualnych przeglądarkach przez `DecompressionStream`; hosting nie musi nadawać `Content-Encoding: gzip` ani uruchamiać backendu GIS.
-- `facilities.json.gz` zawiera stacje z całej Polski oraz punkty referencyjne wewnątrz ich geometrii. Nie dowodzi połączenia pobliskich linii z daną stacją. W aplikacji zachowano osobny katalog dziewięciu wybranych elektrowni/elektrociepłowni/OZE.
+- `facilities.json.gz` zawiera stacje z całej Polski oraz punkty referencyjne wewnątrz ich geometrii. Nie dowodzi połączenia pobliskich linii z daną stacją. Katalog elektrowni i obiektów wytwarzania znajduje się osobno w `../power-plants.json.gz`.
 
 Daty GIS, zdjęć Sentinel-2, nalotów GUGiK, danych InSAR i modeli są niezależne. Ogólnopolska geometria nie rozszerza zasięgu demonstracyjnego zalania ani syntetycznych pomiarów i nie stanowi oceny zagrożeń.
 
