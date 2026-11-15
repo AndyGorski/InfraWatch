@@ -41,3 +41,13 @@ Rozszerzone obrazy Śląska obejmują bbox [17.8,49.75,19.6,50.75], około 128 �
 ### Wybrzeże i Bałtyk
 
 Podkład lotniczy używa teraz przezroczystego GUGiK WMS (PNG, Raster). Luki, morze i błędy kafli odsłaniają mozaikę Sentinel-2 z wybranego roku; podpis mapy wyraźnie rozróżnia oba źródła. Zasięg obrazów satelitarnych rozszerzono do 56,2°N (podgląd całych kafli: około 56,56°N). Daty nalotów pozostają niezależne od roku Sentinel.
+
+### Wybór linii do analizy
+
+Przycisk **Wybierz linię** włącza wskazywanie widocznego odcinka na mapie. Linie mają szerszy obszar trafienia kursorem. Kliknięcie pobiera pełną geometrię i wyróżnia ją miętowym obrysem; ten sam wybór jest dostępny w karcie obiektu przez **Analizuj tę linię**. Pasek wyboru pozwala pokazać cały przebieg, otworzyć zakładkę Analiza lub usunąć wybór. Esc anuluje wskazywanie i zachowuje wcześniejszy cel.
+
+Cel obejmuje jeden obiekt OSM `way` (linia napowietrzna, sieć lokalna lub kabel), który może być częścią dłuższej linii. Wybór zastępuje obszar ręczny lub otoczenie elektrowni; późniejsze filtry, kadrowanie, podkład i rok Sentinel nie usuwają celu. Wybrana geometria pozostaje wyróżniona także po wyłączeniu jej kategorii w filtrach, co jest opisane w pasku. Ostatni wybór jest zapisywany lokalnie w przeglądarce (`iw-analysis-line-v1`) i odtwarzany tylko dla tego samego snapshotu GIS.
+
+Zakładka Analiza pokazuje atrybuty wybranego odcinka i udostępnia jego GeoJSON. Zwykły eksport GeoJSON dodatkowo zawiera `analysis_target` z pełną geometrią, datą wyboru i kontekstem zobrazowania. `assessment_status: not_computed` oznacza brak wykonanej oceny zagrożeń; wybór nie generuje pomiarów prześwitu ani nie przenosi scenariusza demonstracyjnego na rzeczywistą linię. Nowy snapshot danych unieważnia zapisany cel. Błąd pobierania zachowuje wcześniejszy wybór, a spóźniona odpowiedź nie nadpisuje nowszego kliknięcia. Wybór nowego obszaru lub otoczenia elektrowni usuwa wcześniejszy cel liniowy, aby nie mieszać zakresów. Wybór linii dotyczy modułu roślinności / sieci energetycznej.
+
+Sprawdzenie: `node demos/05-electricity-vegetation/line-analysis.test.cjs`.

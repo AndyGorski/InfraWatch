@@ -1,6 +1,7 @@
 function installUnifiedVegetation(){
   const oldSwitch=switchView;
   switchView=function(view){
+    if(view!=='map')window.InfraWatchLineAnalysis?.cancel();
     oldSwitch(view);document.getElementById('assetView').hidden=view!=='asset';
     InfraWatchUI.closePanels();
   };
@@ -10,7 +11,7 @@ function installUnifiedVegetation(){
     target.querySelectorAll('[id]').forEach(n=>{const original=n.id;n.id='asset-'+original;if(n.tagName==='BUTTON')n.onclick=()=>{if(original==='realObjectFit')switchView('map');document.getElementById(original)?.click()}});
   }
   new MutationObserver(mirrorObject).observe(document.getElementById('detailPanel'),{childList:true,subtree:true,characterData:true});mirrorObject();
-  InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>state.view==='map',showMap:()=>switchView('map'),resize:()=>map?.invalidateSize({pan:false})});
+  InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>state.view==='map',showMap:()=>switchView('map'),resize:()=>{if(state.view==='map')map?.invalidateSize({pan:false})}});
   const mapTools=InfraWatchUI.installMapTools(map,{legend:()=>document.getElementById('realLegend'),available:()=>!demoMode});
   const oldMode=setGISMode;
   setGISMode=function(demo){if(demo&&InfraWatchArea.getBox())InfraWatchArea.clear();if(demo&&sources.has('silesia')){data=sources.get('silesia').imagery;activeRegion='silesia';areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:data.bbox}oldMode(demo);if(demo)oldDemo.fit();else nationalGIS?.refresh();updateSummary();mapTools.refresh()};
@@ -21,7 +22,7 @@ function installUnifiedVegetation(){
     document.getElementById('scenarioLength').textContent=routeLength.toLocaleString('pl-PL',{maximumFractionDigits:1})+' km';
   }
   const oldStatus=renderImageryStatus;
-  renderImageryStatus=function(){oldStatus();document.getElementById('showHistory').hidden=effectiveImagery!=='aerial';document.querySelector('.timeline-info .eyebrow').textContent='Historia zobrazowań Sentinel-2';updateSummary();availability();if(effectiveImagery==='aerial')document.getElementById('timelineNote').textContent='Lotnicze GUGiK; morze i luki: Sentinel-2 z wybranego roku. Daty nalotów są niezależne od snapshotu ogólnopolskiego GIS.';else if(InfraWatchSentinel.national())document.getElementById('timelineNote').textContent='Mozaika czerwiec–sierpień; różne daty pikseli. NDVI online bez maski chmur SCL. Ogólnopolski GIS nie zawiera pomiarów zagrożeń.'};
+  renderImageryStatus=function(){oldStatus();if(!demoMode)renderRealAnalysis();document.getElementById('showHistory').hidden=effectiveImagery!=='aerial';document.querySelector('.timeline-info .eyebrow').textContent='Historia zobrazowań Sentinel-2';updateSummary();availability();if(effectiveImagery==='aerial')document.getElementById('timelineNote').textContent='Lotnicze GUGiK; morze i luki: Sentinel-2 z wybranego roku. Daty nalotów są niezależne od snapshotu ogólnopolskiego GIS.';else if(InfraWatchSentinel.national())document.getElementById('timelineNote').textContent='Mozaika czerwiec–sierpień; różne daty pikseli. NDVI online bez maski chmur SCL. Ogólnopolski GIS nie zawiera pomiarów zagrożeń.'};
   document.getElementById('showHistory').onclick=()=>{
     if(!InfraWatchSentinel.national()&&InfraWatchArea.coverage(InfraWatchArea.getBox(),data.bbox)==='none')return;
     stopHistory();state.layer=state.layer==='ndvi'?'ndvi':'rgb';const b=InfraWatchArea.getBox()||data.bbox;
@@ -66,6 +67,10 @@ function installUnifiedVegetation(){
     },
     prepareLayers:local=>{if(demoMode)setGISMode(false);document.getElementById('showRealLines').checked=true;realGroups.lines.addTo(map);document.getElementById('showRealMinor').checked=local;local?realGroups.minor.addTo(map):map.removeLayer(realGroups.minor)},
     showLines:()=>{document.getElementById('realSearch').value='';document.querySelector('[data-side="locations"]').click();renderRealList()},selectLine:async(id,f)=>{if(f)realFeatureIndex.set(f.id,f);await selectRealFeature(id,false)}
+  });
+  InfraWatchLineAnalysis.install(map,{snapshot:realMeta.snapshot,available:()=>!demoMode,name:realName,voltage:realVoltageLabel,
+    showMap:()=>{if(demoMode)setGISMode(false);switchView('map');InfraWatchUI.closePanels()},showAnalysis:()=>{renderRealAnalysis();switchView('analysis')},
+    onPicking:()=>highlightRealSelection(),onChange:record=>{if(record){realFeatureIndex.set(record.feature.id,record.feature);realSelected=record.feature.id}renderRealDetail();highlightRealSelection();renderRealAnalysis()}
   });
   const oldPlayHistory=document.getElementById('playHistory').onclick;
   document.getElementById('playHistory').onclick=()=>{const b=InfraWatchArea.getBox();if(b&&!historyTimer&&(state.layer==='aerial'||isDetailView())){state.layer='rgb';map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{padding:[18,18],maxZoom:11,animate:false});updateLayer()}oldPlayHistory()};
