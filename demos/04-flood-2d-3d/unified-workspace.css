@@ -18,7 +18,6 @@ body.iw-flood.iw-monitoring{--iw-header:64px}
 .iw-flood.iw-monitoring .mapShell{flex:1;height:auto;min-height:180px;border-radius:0}
 .iw-flood.iw-monitoring .terrain3d-stage .mapShell{height:100%;min-height:0;flex:none}
 .iw-flood.iw-monitoring:not([data-flood-view="3d"]) .terrain3d-selected-label{display:none}
-.iw-flood.iw-monitoring .map-column>.legend{padding:5px 10px;margin:0;font-size:9px;gap:5px 8px;flex-shrink:0}
 .iw-flood.iw-monitoring .map-column>.mapWarning{margin:0;padding:3px 10px 6px;font-size:9px;flex-shrink:0}
 .iw-flood.iw-monitoring .mapnote{font-size:10px;max-width:calc(100% - 24px);bottom:22px}
 .iw-flood.iw-monitoring .timeline h2{font-size:12px}
@@ -50,8 +49,10 @@ body.iw-flood.iw-monitoring{--iw-header:64px}
 @media(max-width:1000px){.iw-flood.iw-monitoring .flood-analysis-grid{grid-template-columns:1fr}}
 @media(max-width:650px){body.iw-flood.iw-monitoring{--iw-header:52px}.iw-flood.iw-monitoring .workspace-toolbar{padding-inline:8px}.iw-flood.iw-monitoring .map-column>.titleRow{flex-wrap:wrap;gap:5px}.iw-flood.iw-monitoring .flood-metric strong{font-size:16px}.iw-flood.iw-monitoring .flood-metric{min-height:64px}}
 
-.iw-flood .towerIcon-wet{color:#fff1a8;text-shadow:0 0 3px #ff5d32,0 0 8px #ef542c,0 0 14px #de311f;font-size:22px;font-weight:900;transform:scale(1.08)}
+.iw-flood .towerIcon-wet{color:#ff4d4f;text-shadow:0 0 2px #fff,0 0 7px #ff342e,0 0 14px #e11d1d;font-size:22px;font-weight:900;transform:scale(1.08)}
 .iw-flood .towerIcon:not(.towerIcon-wet){color:#ffdc8f}
+.iw-flood.iw-monitoring .riskrow button.tower-wet{color:#ff7770;border-color:#a53c3c;background:#3a2025}
+.iw-flood.iw-monitoring .chip.wet{background:#57252a;color:#ffd0ce;border:1px solid #a64141}
 .iw-flood.iw-monitoring #detailPanel{overflow:auto}
 .iw-flood.iw-monitoring .flood-object-source{display:none!important}
 .iw-flood.iw-monitoring .flood-scenario-card{margin:0;padding:14px;border:0;border-radius:0}
