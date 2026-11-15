@@ -24,6 +24,9 @@
   const summary=document.createElement('section');summary.className='analysis-card';summary.innerHTML='<h3>Jak czytać wynik?</h3><p>Wybierz „Do kulminacji” na osi czasu, a następnie słup na mapie lub na liście „Obiekty F401”. Karta pokazuje modelową głębokość w komórce terenu.</p><p>Tryb 3D oferuje detal wybranego słupa, warstwice, zmianę skali pionowej i duży widok. Te ustawienia służą wizualizacji i nie zmieniają obliczeń.</p><p>Model obejmuje rejon Kozienic. W innych lokalizacjach dostępne są zdjęcia i infrastruktura GIS; symulacja pozostaje wyłączona.</p><p>Scenariusz nie jest prognozą ani oceną uszkodzeń. Nie uwzględnia przepływu i wałów.</p><a href="../04-flood-2d-3d-v2/">Otwórz archiwalne menu v2 →</a>';shell.querySelector('.flood-analysis-grid').append(summary);
   stats.className='workspace-metrics flood-metrics';stats.querySelectorAll('.stat').forEach(n=>n.className='flood-metric');
   main.replaceChildren(toolbar,stats,shell);
+  toolbar.setAttribute('aria-busy','true');
+  const loading=document.createElement('span');loading.id='floodWorkspaceLoading';loading.setAttribute('role','status');loading.textContent='Wczytywanie danych…';toolbar.append(loading);
+  document.querySelectorAll('[data-workspace],#toggleLayers,#toggleDetail,#configureFlood,#export').forEach(b=>{b.disabled=true;b.dataset.floodPending='true'});
   foot.className='flood-source-foot';q('#modal').insertBefore(foot,q('#close'));
 })();
 
@@ -63,4 +66,6 @@ function installUnifiedFloodWorkspace(){
   InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>workspace==='map',showMap:()=>show('map'),resize});
   const oldView=setView;setView=function(view){if(workspace!=='map')show('map');oldView(view);InfraWatchUI.sync()};
   mirror();resize();
+  document.querySelectorAll('[data-flood-pending]').forEach(b=>{b.disabled=false;delete b.dataset.floodPending});
+  q('.workspace-toolbar').setAttribute('aria-busy','false');q('#floodWorkspaceLoading').hidden=true;
 }

@@ -9,13 +9,15 @@ class Element{
 const elements=new Map(),q=s=>{if(s==='#detailSubjectTitle')return q('#detailPanel h2');if(!elements.has(s))elements.set(s,new Element());return elements.get(s)};
 q('#floodGISDetails').hidden=true;q('#asset').childNodes=[Object.assign(new Element(),{textContent:'tower card'})];
 const tabs=['map','asset','analysis'].map(view=>Object.assign(new Element(),{dataset:{workspace:view}})),sides=['layers','locations'].map(side=>Object.assign(new Element(),{dataset:{side}}));
+tabs.forEach(b=>{b.disabled=true;b.dataset.floodPending='true'});
 let settings,closedStage=0,draws=0,resizes=0,stopped=0,visible;
-const ctx={document:{querySelector:q,querySelectorAll:s=>s==='[data-workspace]'?tabs:s==='[data-side]'?sides:[]},MutationObserver:class{observe(){}},requestAnimationFrame:fn=>fn(),state:{view:'3d',selected:{lat:51.6,lon:21.5}},timer:null,
+const ctx={document:{querySelector:q,querySelectorAll:s=>s==='[data-workspace]'||s==='[data-flood-pending]'?tabs:s==='[data-side]'?sides:[]},MutationObserver:class{observe(){}},requestAnimationFrame:fn=>fn(),state:{view:'3d',selected:{lat:51.6,lon:21.5}},timer:null,
   terrainRenderer:{closeStage(){closedStage++}},map:{invalidateSize(){resizes++},setView(ll,z){ctx.focus=[ll,z]}},draw3d(){draws++},select(p){ctx.state.selected=p},setView(v){ctx.state.view=v},
   InfraWatchTerrain3D:{setVisible(v){visible=v}},InfraWatchUI:{install(config){settings=config},closePanels(){},sync(){},openDetails(){if(!settings.isMap())settings.showMap()}}};ctx.window=ctx;q('#play').click=()=>{stopped++;ctx.timer=null};
 vm.createContext(ctx);
 const code=fs.readFileSync(path.join(__dirname,'unified-workspace.js'),'utf8');vm.runInContext(code.slice(code.indexOf('function installUnifiedFloodWorkspace()')),ctx);ctx.installUnifiedFloodWorkspace();
 assert.equal(settings.isMap(),true);assert.ok(resizes&&draws);
+assert.ok(tabs.every(b=>!b.disabled&&!b.dataset.floodPending));assert.equal(q('.workspace-toolbar').attrs['aria-busy'],'false');assert.equal(q('#floodWorkspaceLoading').hidden,true);
 ctx.timer=1;tabs[2].onclick();assert.equal(q('#analysisView').hidden,false);assert.equal(q('#mapView').hidden,true);assert.equal(ctx.state.view,'3d');assert.equal(stopped,1);assert.equal(visible,false);
 tabs[1].onclick();assert.equal(q('#assetView').hidden,false);assert.equal(ctx.state.view,'3d');
 tabs[0].onclick();assert.equal(visible,true);assert.equal(settings.isMap(),true);
