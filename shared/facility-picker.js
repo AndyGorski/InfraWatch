@@ -13,7 +13,7 @@ window.InfraWatchFacility=(()=>{
     document.body.append(dialog);manual.textContent='Obszar ręcznie';byId('facilityManualSlot').append(manual);
     const oldManual=manual.onclick;manual.onclick=()=>{dialog.close();oldManual()};
     const nearbyButton=make('button','Pobliskie linie');nearbyButton.type='button';nearbyButton.id='facilityNearbyButton';nearbyButton.hidden=true;byId('studyAreaBar').querySelector('.study-area-actions').prepend(nearbyButton);
-    let items=[],chosen=null,lines=[],distances=new Map(),catalog=null,loading=true,busy=false,previewGeneration=0;
+    let items=[],chosen=null,lines=[],distances=new Map(),catalog=null,loading=true,busy=false,previewGeneration=0,plantController;
     const cases={vegetation:['Roślinność','05-electricity-vegetation'],deformation:['Deformacje','03-insar-multisensor-v2'],flood:['Zalanie','04-flood-2d-3d']};
     function caseURL(mode,f,r,local){const u=new URL(`demos/${cases[mode][1]}/`,InfraWatchData.root);if(f){u.searchParams.set('facility',f.id);u.searchParams.set('radius',r);u.searchParams.set('local',local?'1':'0')}return u.href}
     const marker=L.marker([0,0],{icon:L.divIcon({className:'facility-map-pin',html:'<span aria-hidden="true">⚡</span>',iconSize:[30,30],iconAnchor:[15,15]}),keyboard:true,title:'Obiekt analizy'});
@@ -68,7 +68,7 @@ window.InfraWatchFacility=(()=>{
     }
     function sync(){
       const active=InfraWatchArea.getReport();nearbyButton.hidden=!active?.facility;
-      if(active?.facility){const f=active.facility;marker.setLatLng([f.lat,f.lon]);const text=make('span',f.name+' · punkt obiektu analizy');marker.unbindTooltip().bindTooltip(text,{direction:'top'}).addTo(map);open.title='Zmień obiekt: '+f.name}
+      if(active?.facility){const f=active.facility,ring=f.kind==='plant'&&plantController?.isVisible();marker.setIcon(L.divIcon({className:'facility-map-pin'+(ring?' facility-plant-ring':''),html:ring?'<span aria-hidden="true"></span>':'<span aria-hidden="true">⚡</span>',iconSize:ring?[40,40]:[30,30],iconAnchor:ring?[20,20]:[15,15]}));marker.setLatLng([f.lat,f.lon]);const text=make('span',f.name+' · punkt obiektu analizy');marker.unbindTooltip().bindTooltip(text,{direction:'top'}).addTo(map);open.title='Zmień obiekt: '+f.name}
       else {map.removeLayer(marker);open.removeAttribute('title')}
       const u=new URL(location.href);for(const key of ['facility','radius','local'])u.searchParams.delete(key);
       if(active?.facility){u.searchParams.set('facility',active.facility.id);u.searchParams.set('radius',active.radius_km);u.searchParams.set('local',active.include_local_lines?'1':'0')}history.replaceState(null,'',u);
@@ -79,10 +79,16 @@ window.InfraWatchFacility=(()=>{
       loading=true;byId('facilityRetry').hidden=true;byId('facilityCatalogStatus').textContent='Wczytywanie katalogu obiektów i sieci…';
       try{
         const [response]=await Promise.all([fetch(catalogURL),config.ready||Promise.resolve()]);if(!response.ok)throw Error('Brak katalogu');catalog=await response.json();
-        if(window.InfraWatchNationalPower){const national=await InfraWatchNationalPower.facilities();catalog.items=[...catalog.items.filter(f=>f.kind==='plant'),...national.items];if(!byId('facilityRegion').querySelector('[value="poland"]')){const option=make('option','Cała Polska · stacje');option.value='poland';byId('facilityRegion').append(option)}}
+        if(window.InfraWatchNationalPower){const national=await InfraWatchNationalPower.facilities();catalog.items=[...catalog.items.filter(f=>f.kind==='plant'),...national.items];if(!byId('facilityRegion').querySelector('[value="poland"]')){const option=make('option','Cała Polska · OSM');option.value='poland';byId('facilityRegion').append(option)}}
+        if(window.InfraWatchPlants){
+          const nationalPlants=await InfraWatchPlants.catalog(),merged=new Map(nationalPlants.items.map(f=>[f.id,f]));
+          for(const legacy of catalog.items.filter(f=>f.kind==='plant')){const current=merged.get(legacy.id);merged.set(legacy.id,current?{...current,name:legacy.name,region:legacy.region}:{...legacy,named:true,tags:{}})}
+          catalog.items=[...merged.values(),...catalog.items.filter(f=>f.kind!=='plant')];
+        }
         const priority={'relation/12825526':0,'way/386883572':0,'way/85146997':1};
         const voltage=f=>Math.max(0,...String(f.voltage||'').split(';').map(Number).filter(Number.isFinite));
         items=catalog.items.sort((a,b)=>(a.kind==='plant'?0:1)-(b.kind==='plant'?0:1)||(priority[a.id]??10)-(priority[b.id]??10)||Number(!!b.named)-Number(!!a.named)||voltage(b)-voltage(a)||a.name.localeCompare(b.name,'pl'));
+        if(window.InfraWatchPlants){const plants=items.filter(f=>f.kind==='plant');if(plantController)plantController.setPlants(plants);else plantController=InfraWatchPlants.install(map,{plants,container:byId('layersPanel')||byId('deformLayers')||document.querySelector('.mapbuttons').parentElement,onChoose:f=>{chosen=f;distances.clear();byId('facilityType').value='plant';byId('facilityRegion').value='all';byId('facilitySearch').value=f.name;renderResults();renderPreview();dialog.showModal()}})}
         loading=false;chosen=items.find(f=>f.kind==='plant'&&f.region===config.region)||items[0]||null;renderResults();await renderPreview();
         const params=new URL(location.href).searchParams,f=items.find(f=>f.id===params.get('facility'));
         if(f){chosen=f;const r=Number(params.get('radius'));byId('facilityRadius').value=String([1,2,5,10,20,30].includes(r)?r:10);byId('facilityIncludeMinor').checked=params.get('local')!=='0';renderResults();await renderPreview();await apply()}
@@ -90,7 +96,7 @@ window.InfraWatchFacility=(()=>{
     }
     open.onclick=show;nearbyButton.onclick=show;byId('closeFacilityDialog').onclick=()=>dialog.close();byId('applyFacility').onclick=apply;byId('facilityRetry').onclick=load;
     byId('facilitySearch').oninput=renderResults;byId('facilityType').onchange=renderResults;byId('facilityRegion').onchange=renderResults;byId('facilityRadius').onchange=renderPreview;byId('facilityIncludeMinor').onchange=renderPreview;
-    document.addEventListener('iw:study-area-change',sync);await load();return {show};
+    document.addEventListener('iw:study-area-change',sync);document.addEventListener('iw:plant-layer-change',sync);await load();return {show};
   }
   return {install};
 })();
