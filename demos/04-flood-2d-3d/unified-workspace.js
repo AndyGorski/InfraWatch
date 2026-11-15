@@ -21,6 +21,7 @@
   objectCard.className='detail-panel';objectCard.id='detailPanel';objectCard.prepend(Object.assign(document.createElement('button'),{className:'close-drawer',textContent:'×'}));objectCard.firstChild.setAttribute('data-close-workspace','');objectCard.firstChild.setAttribute('aria-label','Zamknij szczegóły');
   shell.querySelector('#mapView').append(oldMap,objectCard);
   config.className='analysis-card';shell.querySelector('.flood-analysis-grid').append(config);
+  objectCard.append(config);
   const summary=document.createElement('section');summary.className='analysis-card';summary.innerHTML='<h3>Jak czytać wynik?</h3><p>Wybierz „Do kulminacji” na osi czasu, a następnie słup na mapie lub na liście „Obiekty F401”. Karta pokazuje modelową głębokość w komórce terenu.</p><p>Tryb 3D oferuje detal wybranego słupa, warstwice, zmianę skali pionowej i duży widok. Te ustawienia służą wizualizacji i nie zmieniają obliczeń.</p><p>Model obejmuje rejon Kozienic. W innych lokalizacjach dostępne są zdjęcia i infrastruktura GIS; symulacja pozostaje wyłączona.</p><p>Scenariusz nie jest prognozą ani oceną uszkodzeń. Nie uwzględnia przepływu i wałów.</p><a href="../04-flood-2d-3d-v2/">Otwórz archiwalne menu v2 →</a>';shell.querySelector('.flood-analysis-grid').append(summary);
   stats.className='workspace-metrics flood-metrics';stats.querySelectorAll('.stat').forEach(n=>n.className='flood-metric');
   main.replaceChildren(toolbar,stats,shell);

@@ -49,3 +49,8 @@ body.iw-flood.iw-monitoring{--iw-header:64px}
 .iw-flood.iw-monitoring .flood-source-foot{color:var(--iw-muted);font-size:10px;margin:16px 0}
 @media(max-width:1000px){.iw-flood.iw-monitoring .flood-analysis-grid{grid-template-columns:1fr}}
 @media(max-width:650px){body.iw-flood.iw-monitoring{--iw-header:52px}.iw-flood.iw-monitoring .workspace-toolbar{padding-inline:8px}.iw-flood.iw-monitoring .map-column>.titleRow{flex-wrap:wrap;gap:5px}.iw-flood.iw-monitoring .flood-metric strong{font-size:16px}.iw-flood.iw-monitoring .flood-metric{min-height:64px}}
+
+.iw-flood .towerIcon-wet{color:#fff1a8;text-shadow:0 0 3px #ff5d32,0 0 8px #ef542c,0 0 14px #de311f;font-size:22px;font-weight:900;transform:scale(1.08)}
+.iw-flood .towerIcon:not(.towerIcon-wet){color:#ffdc8f}
+.iw-flood.iw-monitoring .detail-panel>.analysis-card{margin-top:18px;border-top:1px solid var(--iw-border)}
+.iw-flood.iw-monitoring #detailPanel{overflow:auto}
