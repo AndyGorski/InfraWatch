@@ -44,7 +44,7 @@ window.InfraWatchUI = (() => {
     function refresh(){
       const available=!config.available||config.available();container.hidden=!available;if(!available)toggle(false);
       const source=config.legend();panel.replaceChildren();
-      const title=document.createElement('h3');title.textContent='Napięcie wg OSM';panel.append(title);
+      const title=document.createElement('h3');title.textContent=config.legendTitle||'Napięcie wg OSM';panel.append(title);
       if(source)for(const child of source.children){if(child.tagName==='SUMMARY'||child.classList.contains('legend-title'))continue;const copy=child.cloneNode(true);copy.removeAttribute('id');panel.append(copy)}
     }
     function createLegend(){

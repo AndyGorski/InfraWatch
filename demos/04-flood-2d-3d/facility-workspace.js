@@ -3,7 +3,6 @@ async function installFloodFacilityWorkspace(){
   let source=await InfraWatchData.loadImagery('kozienice'),allSources=new Map(),activeGIS=[],nationalData={type:'FeatureCollection',features:[]},nationalMeta=await InfraWatchNationalPower.metadata(),nationalGIS,modelAvailable=true;
   const modelPoints=infra.elements.slice(),legacyCoords=line.getLatLngs(),legacyBox=[...bbox];let selectedGIS=null;
   const voltageColor=properties=>{const values=String(properties.voltage||'').split(';').map(Number).filter(Number.isFinite),v=Math.max(0,...values);return v>=300000?'#c69aee':v>=200000?'#ef9c73':v>=100000?'#e0cf7b':v>0?'#91bb7d':'#a2b2a3'};
-  const legend=document.querySelector('.map-column>.legend');for(const [color,label]of [['#c69aee','400 kV+'],['#ef9c73','220 kV'],['#e0cf7b','110 kV'],['#91bb7d','niższe']]){const item=document.createElement('span'),swatch=document.createElement('i');swatch.className='swatch';swatch.style.background=color;item.append(swatch,document.createTextNode(' '+label));legend.append(item)}
   const ready=InfraWatchData.allImagery().then(items=>items.forEach(s=>allSources.set(s.region,s)));
   const modelGeometry={type:'Polygon',coordinates:[[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]],[bbox[0],bbox[1]]]]};
   const status=document.createElement('p');status.id='floodModelCoverage';status.className='flood-model-coverage';
@@ -43,9 +42,9 @@ async function installFloodFacilityWorkspace(){
   window.refreshFloodAvailability=()=>{
     for(const id of modelControls){$(id).disabled=!modelAvailable;$(id).title=modelAvailable?'':'Brak przygotowanego modelu zalania dla tego obszaru'}
     if(!modelAvailable&&state.view==='3d')setView('2d');
-    document.querySelector('.map-column .legend').hidden=!modelAvailable;document.querySelector('.mapWarning').hidden=!modelAvailable;
+    document.querySelector('.mapWarning').hidden=!modelAvailable;
     $('viewTitle').textContent=modelAvailable?(state.view==='3d'?'Model terenu · 3D':'Mapa scenariusza · 2D'):'GIS i zobrazowania · brak modelu zalania';
-    $('mapNote').textContent=modelAvailable?(state.view==='3d'?'Przeciągnij: obrót · kółko: zbliżenie · symbole F401 / woda: scenariusz':'◇ słup F401 · niebieski: symulowana woda'):'Rzeczywisty GIS i obrazy · brak symulacji zalania dla tego obszaru';
+    $('mapNote').textContent=modelAvailable?(state.view==='3d'?'Przeciągnij: obrót · kółko: zbliżenie · czerwony: zalany słup':'Czerwony ◆: zalany słup F401 · odcienie niebieskiego: modelowana woda'):'Rzeczywisty GIS i obrazy · brak symulacji zalania dla tego obszaru';
     $('floodScenarioBadge').textContent=modelAvailable?'SYNTETYCZNY':'BRAK MODELU';
     $('floodScenarioIntro').textContent=modelAvailable?'Dobierz wysokość i czas kulminacji, a następnie prześledź zmiany w 2D lub 3D.':'Dla tego obszaru nie przygotowano modelu zalania. Dostępny jest GIS i podkład obrazowy. Model demonstracyjny możesz zobaczyć w otoczeniu Elektrowni Kozienice.';
   };
