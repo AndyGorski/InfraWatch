@@ -8,7 +8,7 @@ async function installFloodFacilityWorkspace(){
   const modelGeometry={type:'Polygon',coordinates:[[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]],[bbox[0],bbox[1]]]]};
   const status=document.createElement('p');status.id='floodModelCoverage';status.className='flood-model-coverage';
   const detail=document.createElement('section');detail.id='floodGISDetails';detail.className='flood-gis-details';detail.hidden=true;
-  document.getElementById('layersPanel').append(status);document.getElementById('detailPanel').insertBefore(detail,document.getElementById('asset'));
+  document.getElementById('layersPanel').append(status);document.querySelector('.flood-detail-object').insertBefore(detail,document.getElementById('asset'));
   map.setMinZoom(6);map.setMaxZoom(19);map.createPane('floodRegionalGIS');map.getPane('floodRegionalGIS').style.zIndex=460;
   const network=L.layerGroup().addTo(map),renderer=L.canvas({pane:'floodRegionalGIS'});
   const oldSetBase=setBase;let requestedBase='optical',sentinelYear=2025,nationalLayer=null;const regionalOptical=baseLayers.optical;map.removeLayer(baseLayers.ortho);
