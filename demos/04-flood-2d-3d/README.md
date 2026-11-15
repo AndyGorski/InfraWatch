@@ -23,3 +23,17 @@ Skala pionowa **×1–×30** (domyślnie ×12) zmienia wyłącznie wygląd. Opcj
 Sterowanie: przeciąganie obraca i pochyla teren, kółko lub przyciski ＋/− zmieniają zbliżenie. Po ustawieniu fokusu na widoku działają strzałki, +/− i Home. Przycisk „Cały obszar” przywraca kamerę; automatyczne kadrowanie uwzględnia rozmiar okna, kąt i skalę pionową. Parametr `?view=3d` otwiera ten widok, jeśli wybrany obszar ma przygotowany model. Przy braku WebGL 2 pozostaje oznaczony widok uproszczony. Przy utracie kontekstu grafiki jest on używany do czasu przywrócenia zasobów.
 
 Raport zapisuje `rendering_3d`: sposób renderowania, źródłową siatkę, teksturę i skalę pionową, z `changes_hydrology: false`. Testy: `node demos/04-flood-2d-3d/terrain3d.test.cjs` (geometria, krawędzie, proporcje metryczne, normalne, powierzchnia wody, zachowanie źródeł, kadrowanie i tryb bez WebGL).
+
+## Szczegółowy detal obiektów i duży widok
+
+**Detal wybranego słupa** ustawia kamerę na wybranym punkcie F401 i przełącza na ortofotomapę. Kamera może teraz zbliżać do ×12; w trybie detalu podąża za wyborem kolejnego słupa. „Cały obszar” lub Home przywraca ujęcie całego modelu. **Duży widok 3D** otwiera powiększony obszar roboczy z obsługą klawiatury i fokusem w oknie; Escape lub przycisk zamknięcia wraca do panelu. Obroty, zbliżenie, wybrany słup i wyliczenia są zachowane.
+
+Wejście `?view=3d&focus=1812270053` otwiera detal tego istniejącego punktu F401. Parametr jest uwzględniany tylko dla słupa w aktualnym wyborze i przy dostępności lokalnego modelu; nieznane ID jest pomijane.
+
+Przygotowano **30 lokalnych kadrów GUGiK**: każdy 2048 × 2048 px dla obszaru około 1,5 × 1,5 km (próbkowanie eksportu około 0,73 m/px). Nie jest to potwierdzenie natywnej rozdzielczości, dokładności ani daty nalotu. Daty pozostają nieustalone i mogą różnić się od podkładu ogólnego. Detal jest nakładany w rzeczywistym zasięgu współrzędnych, z łagodnym przejściem na brzegach; nie rozciąga starego zdjęcia. Pliki w `assets/detail-ortho/` mają około 14,7 MiB łącznie, ale aplikacja pobiera dopiero wybrany kadr (zwykle około 0,5 MiB) i indeks. W pamięci utrzymywane są najwyżej trzy zdekodowane kadry oraz jedna aktywna tekstura szczegółowa GPU. Anulowane/spóźnione pobranie nie zastępuje aktualnie wybranego obiektu. Przy błędzie pozostaje podkład ogólny i komunikat umożliwiający ponowienie.
+
+`assets/detail-ortho/index.json` zapisuje identyfikator OSM, bbox EPSG:4326, wymiary, przybliżone próbkowanie, oryginalne zapytanie WMS, rozmiar i SHA-256 każdego kadru. Odtworzenie: `python demos/04-flood-2d-3d/prepare_detail_imagery.py` (Pillow; dane infrastruktury z lokalnego pliku). Źródło: GUGiK / Geoportal, WMS Ortofotomapa StandardResolution.
+
+Przebieg GIS jest zagęszczany wizualnie co najwyżej co 20 m i układany na trójkątach źródłowego DEM, co usuwa przerwy w linii przy zmianach nachylenia. Woda korzysta z interpolowanej maski i antyaliasingu brzegu oraz subtelnego odbicia światła. To zmiany renderowania: DEM 240 × 180, maska i głębokości komórek, obszar zalania, liczniki i scenariusz pozostają niezmienione. Wygładzony brzeg nie jest dokładniejszym wynikiem hydraulicznym. Raport opisuje interpolację oraz aktywny kadr detalu z jego źródłem.
+
+Testy detalu: `node demos/04-flood-2d-3d/terrain-detail.test.cjs` (30 plików, sumy kontrolne, rejestracja współrzędnych, wybór, anulowanie, limit pamięci, ponowienie i brakujący obraz).
