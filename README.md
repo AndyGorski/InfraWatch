@@ -1,12 +1,14 @@
 # InfraWatch — demonstratory
 
-Centrum demonstracyjne projektu InfraWatch. Strona główna prezentuje trzy aktualne zastosowania: roślinność przy liniach energetycznych, deformacje terenu i infrastruktury oraz zalanie infrastruktury. Każda aplikacja znajduje się w osobnym katalogu.
+Centrum demonstracyjne projektu InfraWatch. Strona główna prowadzi od mapy Polski do wyboru konkretnej linii lub obiektu. Oddzielnie prezentuje dostępne funkcje mapy, trzy działające demonstratory analiz (roślinność, deformacje, zalanie) oraz planowane rozszerzenia. Każda aplikacja znajduje się w osobnym katalogu.
 
 Aktualna warstwa GIS w trzech panelach obejmuje całą Polskę: **1 119 942 obiekty**, snapshot **14.11.2026 21:20:41 UTC**. Zawiera 17 162 odcinki główne, 90 894 lokalne, 26 174 kable, 942 048 podpór, 32 594 stacje i 10 424 transformatory oraz pozostałe urządzenia OSM. Szczegóły są pobierane przestrzennie; skompresowane partycje zajmują 52,6 MB, przegląd 1,5 MB, katalog stacji 1,1 MB. Dawne regionalne pliki GIS pozostają w repozytorium jako źródła archiwalne i do migracji istniejących planów. Ich zasięg nie ogranicza bieżącej mapy. Modele analiz i archiwum obrazów zachowują własne, odrębne zasięgi.
 
 Wspólna nawigacja prowadzi do katalogu aplikacji, [danych i metodologii](dane-i-metodologia.html), [archiwum](archiwum.html) i repozytorium. Nagłówki aktualnych aplikacji oraz wersji SAR/GIS i InSAR v1 korzystają z komponentu `shared/infrawatch-shell.js` i stylów `shared/infrawatch-shell.css`. W nagłówku aplikacji można przełączyć demonstrator lub wrócić do katalogu. Oryginalne wczesne prototypy zachowano jako migawki w archiwum.
 
-Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`). Karty oddzielnie opisują pochodzenie podkładów/GIS i charakter wyników analizy. Gaz, transport i woda są oznaczone jako planowane moduły drugiego zestawu.
+Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`); strona startowa ma dodatkowy, odrębny styl `shared/homepage.css`. Pokazuje sześć dostępnych funkcji: wybór linii do analizy, zbliżenie na obiekt, ogólnopolski GIS, filtry typów i napięć, historię zdjęć oraz wybór zakresu i eksport. Główny przycisk otwiera moduł energetyczny z parametrem `start=line`, który włącza wskazywanie linii po inicjalizacji mapy. Samo wejście nie zmienia wcześniejszego celu analizy ani zapisanych filtrów. Podgląd SVG na stronie pochodzi z rzeczywistych, uproszczonych geometrii PRG/OSM; nie jest mapą interaktywną.
+
+Karty demonstratorów oddzielnie opisują pochodzenie podkładów/GIS i charakter wyników analizy. Pomiary prześwitu, przetwarzanie rzeczywistych scen InSAR i rozszerzanie modeli zalania opisano jako kierunki dalszego rozwoju, z wymaganymi danymi i walidacją; bez deklaracji terminów lub gotowych wyników. Gaz, transport i woda pozostają planowanymi modułami kolejnych sektorów.
 
 | Katalog | Zawartość |
 | --- | --- |

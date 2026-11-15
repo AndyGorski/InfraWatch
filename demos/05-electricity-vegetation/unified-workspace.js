@@ -82,5 +82,5 @@ function installUnifiedVegetation(){
   document.querySelectorAll('[data-layer]').forEach(button=>{button.onclick=()=>{state.layer=button.dataset.layer;if(state.layer==='aerial'){if(!isDetailView())map.setZoom(13)}else if(isDetailView()){if(InfraWatchSentinel.national())map.setZoom(11);else fit()}updateLayer();renderTimeline()}});
   document.querySelector('#studyAreaDialog .note').textContent='GIS: cała Polska, szczegóły pobierane dla wybranego obszaru. Sentinel-2 i NDVI: ogólnopolskie mozaiki letnie. Archiwum konkretnych dat i scenariusz roślinności pozostają regionalne. Wybór nie tworzy analizy bezpieczeństwa.';
   updateSummary();renderImageryStatus();
-  requestAnimationFrame(()=>{map.invalidateSize({pan:false});if(!InfraWatchArea.getBox()&&!new URL(location.href).searchParams.has('facility'))fit()});
+  requestAnimationFrame(()=>{map.invalidateSize({pan:false});const entry=new URL(location.href).searchParams;if(!InfraWatchArea.getBox()&&!entry.has('facility'))fit();if(entry.get('start')==='line')InfraWatchLineAnalysis.start()});
 }
