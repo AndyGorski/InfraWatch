@@ -6,12 +6,14 @@ function createInfraWatchPowerGIS(map, byId, options) {
   map.createPane('networkGIS');map.getPane('networkGIS').style.zIndex=380;
   map.createPane('networkSupports');map.getPane('networkSupports').style.zIndex=420;
   const renderer=L.canvas({pane:'networkGIS',padding:.2}),supportsRenderer=L.canvas({pane:'networkSupports',padding:.2});
-  const groups={lines:L.layerGroup(),minor:L.layerGroup(),supports:L.layerGroup(),stations:L.layerGroup(),selection:L.layerGroup()};
-  const controls=[['showGISLines','lines'],['showGISMinor','minor'],['showGISSupports','supports'],['showGISStations','stations']];
+  const groups={lines:L.layerGroup(),minor:L.layerGroup(),supports:L.layerGroup(),stations:L.layerGroup(),cables:L.layerGroup(),devices:L.layerGroup(),selection:L.layerGroup()};
+  const controls=[['showGISLines','lines'],['showGISMinor','minor'],['showGISSupports','supports'],['showGISStations','stations'],['showGISCables','cables'],['showGISDevices','devices']];
+  for(const [id,label,key] of [['showGISCables','Kable energetyczne','cable'],['showGISDevices','Transformatory i urządzenia','device']]){const row=document.createElement('label');row.className='gis-layer-row';row.innerHTML=`<input type="checkbox" id="${id}" checked><i style="background:#c7b2e4"></i><span>${label}<small>Szczegóły od z11</small></span>`;byId('showGISStations').closest('label').after(row)}
+  byId('showGISMinor').checked=true;
   const voltage=p=>(p.voltage||'').split(';').map(Number).filter(v=>Number.isFinite(v)&&v>0);
   const color=p=>{const v=Math.max(0,...voltage(p));return v>=300000?'#c69aee':v>=200000?'#ef9c73':v>=100000?'#e0cf7b':v>0?'#91bb7d':'#a2b2a3'};
   const voltageLabel=p=>voltage(p).length?voltage(p).map(v=>(v/1000).toLocaleString('pl-PL')+' kV').join(' / '):'Brak w OSM';
-  const kind=p=>p.kind==='line'?(p.power==='minor_line'?'Sieć lokalna':'Linia napowietrzna'):p.kind==='support'?(p.power==='tower'?'Słup kratowy / wieża':'Słup'):'Stacja elektroenergetyczna';
+  const kind=p=>({line:'Linia napowietrzna',minor_line:'Sieć lokalna',cable:'Kabel energetyczny',tower:'Słup kratowy / wieża',pole:'Słup',substation:'Stacja elektroenergetyczna',transformer:'Transformator',switch:'Łącznik',compensator:'Kompensator',converter:'Przekształtnik'})[p.power]||p.power;
   const name=f=>f.properties.name||f.properties.ref||kind(f.properties)+' · OSM '+f.properties.osm_id;
   const date=value=>value?new Date(value).toLocaleString('pl-PL'):'Brak w OSM';
   const style=f=>({color:color(f.properties),weight:f.id===selectedFeature?.id?3.5:1.8,opacity:f.id===selectedFeature?.id?1:.75});
@@ -25,13 +27,14 @@ function createInfraWatchPowerGIS(map, byId, options) {
   }
   function bind(f,layer){layer.bindTooltip(()=>{const e=document.createElement('span');e.textContent=name(f);return e},{sticky:true});layer.on('click',()=>select(f))}
   function clearSelection(){selectedFeature=null;groups.selection.clearLayers();byId('gisDetails').hidden=true;byId('analysisDetails').hidden=false;byId('regionalAsset').hidden=true;byId('assetView').querySelector('.assetPanel').hidden=false;for(const key of ['lines','minor'])groups[key].eachLayer(g=>g.setStyle(style))}
-  function select(f){
+  async function select(f){
+    try{f=await InfraWatchNationalPower.detail(f)}catch(error){byId('gisDataStatus').textContent='Błąd pobrania szczegółowej geometrii. Wybierz obiekt ponownie.';return}
     selectedFeature=f;groups.selection.clearLayers();for(const key of ['lines','minor'])groups[key].eachLayer(g=>g.setStyle(style));
     L.geoJSON(f,{pane:'networkSupports',style:{color:'#9af1dd',weight:3,fillOpacity:.12},pointToLayer:(_,ll)=>L.circleMarker(ll,{radius:9,color:'#9af1dd',weight:3,fillOpacity:.1,pane:'networkSupports'})}).addTo(groups.selection);
     const root=byId('gisAttributes');root.replaceChildren();const p=f.properties;
     byId('gisObjectTitle').textContent=name(f);
     const fields=[['Rodzaj',kind(p)],['Identyfikator',f.id],['Napięcie wg OSM',voltageLabel(p)],['Operator wg OSM',p.operator||'Brak w OSM'],['Numer / ref',p.ref||'Brak w OSM'],['Ostatnia edycja OSM',date(p.osm_last_edit)],['Snapshot bazy',date(meta.snapshot)]];
-    if(p.kind==='line')fields.push(['Długość w obszarze danych',p.length_km_in_aoi.toLocaleString('pl-PL')+' km']);
+    if(p.kind==='line')fields.push(['Długość geometrii źródłowej',p.length_km_in_aoi.toLocaleString('pl-PL')+' km']);
     for(const [label,value] of fields){const row=document.createElement('div'),small=document.createElement('small'),strong=document.createElement('strong');small.textContent=label;strong.textContent=value;row.append(small,strong);root.append(row)}
     byId('regionalAssetTitle').textContent=name(f);byId('regionalAssetAttributes').replaceChildren(...Array.from(root.children,n=>n.cloneNode(true)));
     byId('regionalAssetSourceLink').href=p.source_url;byId('regionalAsset').hidden=false;byId('assetView').querySelector('.assetPanel').hidden=true;
@@ -41,7 +44,7 @@ function createInfraWatchPowerGIS(map, byId, options) {
     options.onSelect();
   }
   function renderSupports(){
-    groups.supports.clearLayers();if(!data||!byId('showGISSupports').checked||map.getZoom()<13)return;
+    groups.supports.clearLayers();if(!data||!byId('showGISSupports').checked||map.getZoom()<14)return;
     const bounds=map.getBounds().pad(.1);
     for(const f of visibleFeatures()){const p=f.properties;if(p.kind!=='support'||(p.power==='pole'&&map.getZoom()<16)||(byId('showFocusGIS').checked&&focusNodes.has(p.osm_id)))continue;
       const ll=L.latLng(f.geometry.coordinates[1],f.geometry.coordinates[0]);if(!bounds.contains(ll))continue;
@@ -54,7 +57,7 @@ function createInfraWatchPowerGIS(map, byId, options) {
     if(focusTowers){focusTowers.clearLayers();for(const marker of focusMarkers){const p=marker.getLatLng();if(InfraWatchArea.contains(p.lat,p.lng))marker.addTo(focusTowers)}}
     for(const layer of [focusLine,focusTowers])if(layer)byId('showFocusGIS').checked&&routeVisible?layer.addTo(map):map.removeLayer(layer);
     byId('showCorridor').checked&&routeVisible?corridor.addTo(map):map.removeLayer(corridor);
-    if(selectedFeature){const p=selectedFeature.properties,id=p.kind==='line'?(p.power==='minor_line'?'showGISMinor':'showGISLines'):p.kind==='support'?'showGISSupports':'showGISStations';if(!byId(id).checked)clearSelection()}
+    if(selectedFeature){const p=selectedFeature.properties,id=p.kind==='line'?(p.power==='cable'?'showGISCables':p.power==='minor_line'?'showGISMinor':'showGISLines'):p.kind==='support'?'showGISSupports':p.kind==='device'?'showGISDevices':'showGISStations';if(!byId(id).checked)clearSelection()}
     renderSupports();
   }
   for(const [id] of controls)byId(id).onchange=sync;
@@ -64,18 +67,11 @@ function createInfraWatchPowerGIS(map, byId, options) {
   byId('fitGIS').onclick=()=>{if(meta){const b=meta.aoi_bbox;map.fitBounds([[b[1],b[0]],[b[3],b[2]]],{padding:[15,15],maxZoom:11})}};
   byId('exportGIS').onclick=()=>{if(!data)return;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify({...activeData,metadata:meta,study_area:InfraWatchArea.getReport()})],{type:'application/geo+json'}));a.href=url;a.download='InfraWatch_GIS_OSM.geojson';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
   map.on('moveend zoomend',renderSupports);groups.selection.addTo(map);sync();
-  async function load(){
-    try{
-      const source=await InfraWatchData.load('kozienice');[data,meta]=[source.gis,source.meta];if(data.type!=='FeatureCollection'||!data.features.length)throw Error('Niepoprawny zbiór GIS');
-      data.features.forEach(f=>features.set(f.id,f));
-      const c=meta.counts,fmt=n=>Number(n||0).toLocaleString('pl-PL');
-      for(const [id,value] of [['gisLineCount',c.line],['gisMinorCount',c.minor_line],['gisSupportCount',(c.tower||0)+(c.pole||0)],['gisStationCount',c.substation]])byId(id).textContent=fmt(value);
-      byId('gisSnapshot').textContent='OSM · snapshot '+date(meta.snapshot);
-      byId('gisDataStatus').textContent='Rzeczywiste geometrie · kliknij obiekt na mapie. Podpory pojawiają się po zbliżeniu, lokalne słupy po dalszym powiększeniu.';
-      byId('gisSourceSummary').textContent=`Regionalny GIS: ${fmt(c.line)} odcinków power=line, ${fmt(c.minor_line)} power=minor_line, ${fmt(c.tower)} tower, ${fmt(c.pole)} pole, ${fmt(c.substation)} stacji. Snapshot bazy: ${date(meta.snapshot)}. Obszar: ${meta.aoi_bbox.join(', ')}. Linie przycięto do obszaru. Pominięte geometrie: ${JSON.stringify(meta.excluded)}. Publiczne dane OpenStreetMap / ODbL 1.0, niepotwierdzone przez operatora. Edycja OSM nie jest datą pomiaru. Regionalne obiekty nie mają przypisanych pomiarów InSAR. Odrębna warstwa F401 zachowuje snapshot 26.10.2026 powiązany ze scenariuszem.`;
-      byId('exportGIS').disabled=false;refreshStudyArea();InfraWatchArea.refresh();
-    }catch(error){console.error(error);byId('gisDataStatus').textContent='Nie udało się wczytać regionalnego GIS. Odśwież stronę; warstwa F401 pozostaje dostępna.'}
-  }
+  const national=InfraWatchNationalPower.install(map,{container:byId('deformLayers'),onStatus:text=>{byId('gisDataStatus').textContent=text},onData:(fc,m)=>{
+    data=fc;if(m)meta=m;features.clear();fc.features.forEach(f=>features.set(f.id,f));
+    if(meta){byId('gisSnapshot').textContent='Polska · OSM '+date(meta.snapshot);byId('gisSourceSummary').innerHTML=InfraWatchNationalPower.sourceHTML(meta)}
+    byId('exportGIS').disabled=false;refreshStudyArea();
+  }});
   function setFocusLayers(line,towers,infra){
     focusLine=line;focusTowers=towers;focusMarkers=towers.getLayers();focusInfra=infra;focusNodes.clear();infra.elements.forEach(n=>focusNodes.add(String(n.id)));corridor.clearLayers();
     const nodes=new Map(infra.elements.map(n=>[n.id,n])),coords=infra.way.nodes.map(id=>nodes.get(id)).filter(Boolean);
@@ -90,15 +86,15 @@ function createInfraWatchPowerGIS(map, byId, options) {
   }
   function refreshStudyArea(){
     if(!data)return;activeData={...data,features:data.features.filter(InfraWatchArea.intersectsFeature)};
-    for(const key of ['lines','minor','stations'])groups[key].clearLayers();
-    for(const [key,power] of [['lines','line'],['minor','minor_line']])L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.power===power,style,onEachFeature:bind}).addTo(groups[key]);
+    for(const key of ['lines','minor','stations','cables','devices'])groups[key].clearLayers();
+    for(const [key,power] of [['lines','line'],['minor','minor_line'],['cables','cable']])L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.power===power,style:f=>({...style(f),...(power==='cable'?{dashArray:'5 4'}:{})}),onEachFeature:bind}).addTo(groups[key]);
     L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.kind==='substation',style:{color:'#89cdd1',weight:1.4,fillColor:'#89cdd1',fillOpacity:.18},pointToLayer:(_,ll)=>L.circleMarker(ll,{radius:4,color:'#b6eef1',fillColor:'#3b8f96',weight:1.3,fillOpacity:.8,renderer,pane:'networkGIS'}),onEachFeature:bind}).addTo(groups.stations);
+    L.geoJSON(activeData,{pane:'networkGIS',renderer,filter:f=>f.properties.kind==='device',style:{color:'#c7b2e4',weight:1.4,fillOpacity:.18},pointToLayer:(_,ll)=>L.circleMarker(ll,{radius:3,color:'#c7b2e4',weight:1,fillOpacity:.8,renderer,pane:'networkGIS'}),onEachFeature:bind}).addTo(groups.devices);
     if(selectedFeature&&!InfraWatchArea.intersectsFeature(selectedFeature))clearSelection();
     const c=InfraWatchArea.countByPower(activeData.features),fmt=n=>Number(n||0).toLocaleString('pl-PL');
     for(const [id,value] of [['gisLineCount',c.line],['gisMinorCount',c.minor_line],['gisSupportCount',c.tower+c.pole],['gisStationCount',c.substation]])byId(id).textContent=fmt(value);
     renderSearch();sync();
   }
-  function setDataset(source){clearSelection();data=source.gis;meta=source.meta;features.clear();data.features.forEach(f=>features.set(f.id,f));byId('gisSnapshot').textContent=source.name+' · OSM '+date(meta.snapshot);byId('gisSourceSummary').textContent=source.name+' · publiczny GIS OSM / ODbL 1.0 · snapshot '+date(meta.snapshot)+'. Bbox: '+meta.aoi_bbox.join(', ')+'. Linie przycięto do obszaru danych; regionalny GIS nie ma przypisanych pomiarów InSAR.';refreshStudyArea()}
-  const ready=load();
-  return {ready,setDataset,setFocusLayers,clearSelection,refreshStudyArea,getSourceFeatures:()=>data?.features||[],selectFeature:id=>{const f=features.get(id);if(f&&InfraWatchArea.intersectsFeature(f))select(f)},getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'Regional GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
+  const ready=national.ready;
+  return {ready,refreshNational:national.refresh,setFocusLayers,clearSelection,refreshStudyArea,getSourceFeatures:()=>data?.features||[],selectFeature:(id,feature)=>{const f=feature||features.get(id);if(f&&InfraWatchArea.intersectsFeature(f))select(f)},getReport:()=>({source:meta?.source||null,snapshot:meta?.snapshot||null,license:'ODbL 1.0',aoi_bbox:meta?.aoi_bbox||null,counts:activeData?InfraWatchArea.countByPower(activeData.features):meta?.counts||null,source_counts:meta?.counts||null,loading_scope:activeData?.loading_scope||null,study_area:InfraWatchArea.getReport(),selected_osm_feature:selectedFeature?.id||null,visible_layers:Object.fromEntries([...controls.map(([id,key])=>[key,byId(id).checked]),['focus_F401',byId('showFocusGIS').checked],['modelled_buffer_30m',byId('showCorridor').checked]]),focus_snapshot:focusInfra?.downloaded_at||null,insar_association:'National GIS has no assigned InSAR measurement. F401 nearby point associations are illustrative synthetic demo only.'})};
 }

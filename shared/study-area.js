@@ -74,11 +74,11 @@ window.InfraWatchArea = (() => {
   function contains(lat,lon){if(!box)return true;return facilitySelection?pointDistance([lon,lat],[facilitySelection.facility.lon,facilitySelection.facility.lat])<=facilitySelection.radius_km*1000+1e-6:inside([lon,lat],box)}
   function intersectsFeature(f){
     if(!box)return true;if(!facilitySelection)return geometryIntersectsBox(f.geometry,box);
-    if(f.properties?.power==='minor_line'&&!facilitySelection.include_local_lines)return false;
+    if(['minor_line','cable'].includes(f.properties?.power)&&!facilitySelection.include_local_lines)return false;
     return distanceToGeometry(f.geometry,facilitySelection.facility.lat,facilitySelection.facility.lon)<=facilitySelection.radius_km*1000+1e-6;
   }
   function sortNearby(features){if(!facilitySelection)return features;const c=facilitySelection.facility;return features.map(f=>({f,d:distanceToGeometry(f.geometry,c.lat,c.lon)})).sort((a,b)=>a.d-b.d||String(a.f.id).localeCompare(String(b.f.id))).map(x=>x.f)}
-  function counts(features){const result={line:0,minor_line:0,tower:0,pole:0,substation:0};for(const f of features)if(f.properties.power in result)result[f.properties.power]++;return result}
+  function counts(features){const result={line:0,minor_line:0,cable:0,tower:0,pole:0,substation:0,transformer:0,switch:0,compensator:0,converter:0};for(const f of features)if(f.properties.power in result)result[f.properties.power]++;return result}
   function report(){return box?{bbox:box.slice(),...dimensions(box),shape:facilitySelection?'circle':'rectangle',...(facilitySelection?{...facilitySelection,area_km2:2*Math.PI*R*R*(1-Math.cos(facilitySelection.radius_km*1000/R))/1e6}:{}),selection_rule:facilitySelection?'Source features within geodesic radius of reference point; full geometries retained. Spatial proximity does not establish an electrical connection. Source lengths refer to original dataset AOI.':'Features intersecting the rectangle; full source geometries retained. Source lengths refer to original dataset AOI.',imagery_note:'Study area does not create new historical imagery or displacement measurements.'}:null}
   function install(map,config){
     const el=id=>document.getElementById(id),fmt=(v,n=1)=>v.toLocaleString('pl-PL',{maximumFractionDigits:n});
@@ -92,7 +92,7 @@ window.InfraWatchArea = (() => {
       <div class="study-area-presets" aria-label="Szybki wybór rozmiaru"><button type="button" data-area-size="1,1">1 × 1 km</button><button type="button" data-area-size="10,10">10 × 10 km</button><button type="button" data-area-size="25,10">25 × 10 km</button><button type="button" data-area-size="50,20">50 × 20 km</button></div>
       <p id="areaDraftSummary" class="study-area-draft"></p><p id="areaFormError" role="alert"></p>
       <div class="study-area-actions"><button type="submit" id="applyStudyArea">Zastosuj obszar</button><button type="button" id="pickAreaCenter">Wskaż środek na mapie</button><button type="button" id="drawStudyArea">Wskaż dwa narożniki</button><button type="button" id="useVisibleArea">Użyj widocznego kadru</button><button type="button" id="clearStudyArea">Wyłącz wybór</button><button type="button" id="exportStudyArea">Pobierz obszar · GeoJSON</button></div>
-      <p class="note">Sentinel-2 i NDVI: mozaiki letnie online dla całej Polski. Archiwum konkretnych dat, GIS i modele analiz pozostają regionalne. Wybór obszaru nie tworzy nowej analizy bezpieczeństwa. Geometrie wybranych obiektów są zachowane w całości.</p></form>`;
+      <p class="note">Sentinel-2 i NDVI: mozaiki letnie online dla całej Polski. GIS ma zasięg ogólnopolski. Archiwum konkretnych dat i modele analiz pozostają regionalne. Wybór obszaru nie tworzy nowej analizy bezpieczeństwa. Geometrie wybranych obiektów są zachowane w całości.</p></form>`;
     document.body.append(dialog);
     const bar=document.createElement('div');bar.className='study-area-bar';bar.id='studyAreaBar';bar.hidden=true;
     bar.innerHTML='<div><strong id="studyAreaSummary"></strong><p id="studyAreaCoverage"></p></div><div class="study-area-actions"><button type="button" id="editStudyArea">Zmień obszar</button><button type="button" id="fitStudyArea">Pokaż</button><button type="button" id="removeStudyArea" aria-label="Wyłącz wybór obszaru">×</button></div>';
