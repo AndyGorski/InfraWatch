@@ -53,6 +53,7 @@ function setGISMode(demo){
  $('.map-risk-legend').hidden=!demo||!$('#showRisk').checked;$('#realLegend').hidden=demo;
  $('.map-status').innerHTML=demo?'<i></i> Scenariusz demonstracyjny · linia i zagrożenia symulowane':'<i></i> Ogólnopolski GIS © OpenStreetMap contributors · dane publiczne, niepotwierdzone przez operatora';
  renderList();renderDetail();renderActions();renderAnalysis();renderImageryStatus();if(!demo)highlightRealSelection();
+ document.dispatchEvent(new CustomEvent('iw:gis-mode-change'));
 }
 async function selectRealFeature(id,zoom=true){
  let f=realFeatureIndex.get(id);if(!f)return;const generation=++realSelectionGeneration;
