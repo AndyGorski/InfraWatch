@@ -1,0 +1,822 @@
+{
+  "name": "F401 / local aerial detail",
+  "prepared_at": "2026-11-15T16:30:17.080868+00:00",
+  "source": "GUGiK / Geoportal",
+  "source_page": "https://www.geoportal.gov.pl/pl/dane/ortofotomapa-orto/",
+  "service": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution",
+  "crs": "EPSG:4326",
+  "acquisition_dates_verified": false,
+  "scope": "Existing OSM F401 point locations; image texture only; DEM and flood calculations unchanged.",
+  "items": [
+    {
+      "osm_id": "1789967415",
+      "file": "1789967415.jpg",
+      "bbox": [
+        21.59487355862133,
+        51.56457536618757,
+        21.616553041378673,
+        51.57805003381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.6057133,
+        51.5713127
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.594873559%2C51.564575366%2C21.616553041%2C51.578050034&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "b2f4fd90ea5a179f4f5c0d5d6d0aa958a09287dec688395487c2df38f3fe01c4",
+      "bytes": 521409
+    },
+    {
+      "osm_id": "1789967462",
+      "file": "1789967462.jpg",
+      "bbox": [
+        21.59159252119033,
+        51.56766766618757,
+        21.613273478809674,
+        51.58114233381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.602433,
+        51.574405
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.591592521%2C51.567667666%2C21.613273479%2C51.581142334&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "a2ea441ef2286be1ae1fc0c6118e80792b99362bd3d5495b32d10d8d9b439949",
+      "bytes": 525370
+    },
+    {
+      "osm_id": "1789988131",
+      "file": "1789988131.jpg",
+      "bbox": [
+        21.573225381314433,
+        51.57663776618757,
+        21.594910618685564,
+        51.59011243381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.584068,
+        51.5833751
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.573225381%2C51.576637766%2C21.594910619%2C51.590112434&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "639e9a5eb61bc4ccc157f1d1835cf31c64c64c112e23e1224652d3f6a745f103",
+      "bytes": 485423
+    },
+    {
+      "osm_id": "1789988133",
+      "file": "1789988133.jpg",
+      "bbox": [
+        21.578135054340645,
+        51.57423616618757,
+        21.599819145659357,
+        51.58771083381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5889771,
+        51.5809735
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.578135054%2C51.574236166%2C21.599819146%2C51.587710834&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "15a126a5044e38fb64eea2df228886eb04c2d7faefaded4009ebfdd49cf13677",
+      "bytes": 481085
+    },
+    {
+      "osm_id": "1789988162",
+      "file": "1789988162.jpg",
+      "bbox": [
+        21.554730125024296,
+        51.58567196618757,
+        21.576419674975707,
+        51.59914663381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5655749,
+        51.5924093
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.554730125%2C51.585671966%2C21.576419675%2C51.599146634&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "851657d40d43ade0400ca33f3799f7efccd94f9267e73c91d6cae432afcb69be",
+      "bytes": 475083
+    },
+    {
+      "osm_id": "1789988177",
+      "file": "1789988177.jpg",
+      "bbox": [
+        21.559512483741038,
+        51.58333156618757,
+        21.581200916258965,
+        51.59680623381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5703567,
+        51.5900689
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.559512484%2C51.583331566%2C21.581200916%2C51.596806234&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "15c1653c67774e0daebe44156ca8f6d234372b4338320087d7bdb46ab5f33195",
+      "bytes": 470446
+    },
+    {
+      "osm_id": "1789988202",
+      "file": "1789988202.jpg",
+      "bbox": [
+        21.56848532570172,
+        51.57896606618757,
+        21.59017167429828,
+        51.59244073381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5793285,
+        51.5857034
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.568485326%2C51.578966066%2C21.590171674%2C51.592440734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "c242ad3d0433ab76a61dc81a3df55a0bd5697b496d5b7d3d9820bb63575bef44",
+      "bytes": 495409
+    },
+    {
+      "osm_id": "1812270034",
+      "file": "1812270034.jpg",
+      "bbox": [
+        21.58305282416221,
+        51.571847666187566,
+        21.60473577583779,
+        51.58532233381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5938943,
+        51.578585
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.583052824%2C51.571847666%2C21.604735776%2C51.585322334&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "e5d9a3933419e5c72e58de4a71befc4b90e2fb501b4b1971ee90a92cf5d55062",
+      "bytes": 547044
+    },
+    {
+      "osm_id": "1812270036",
+      "file": "1812270036.jpg",
+      "bbox": [
+        21.56387490259422,
+        51.58115786618757,
+        21.585562297405783,
+        51.59463253381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5747186,
+        51.5878952
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.563874903%2C51.581157866%2C21.585562297%2C51.594632534&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "f74232dcf58e291e863853b2170269625f2b73ab28eb5e7eab152c91a35e51cb",
+      "bytes": 486536
+    },
+    {
+      "osm_id": "1812270039",
+      "file": "1812270039.jpg",
+      "bbox": [
+        21.549625030869073,
+        51.58816046618757,
+        21.571315769130926,
+        51.60163513381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5604704,
+        51.5948978
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.549625031%2C51.588160466%2C21.571315769%2C51.601635134&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "edae27d1e341d533aac70694e4227efc1581475bfe8c754e4fa6299d20c88d46",
+      "bytes": 451972
+    },
+    {
+      "osm_id": "1812270042",
+      "file": "1812270042.jpg",
+      "bbox": [
+        21.544719358813854,
+        51.59055606618757,
+        21.56641124118615,
+        51.60403073381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5555653,
+        51.5972934
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.544719359%2C51.590556066%2C21.566411241%2C51.604030734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "58c7aa74881fcebc916e60a933f961786edeba76028e3f5459cd5abf039eb10c",
+      "bytes": 416532
+    },
+    {
+      "osm_id": "1812270046",
+      "file": "1812270046.jpg",
+      "bbox": [
+        21.539483749753902,
+        51.59310626618757,
+        21.561176850246095,
+        51.60658093381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5503303,
+        51.5998436
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.539483750%2C51.593106266%2C21.561176850%2C51.606580934&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "3da441bccf7a39eab927728eb3d9c293cf9071f544c60e472355f6a3ce1792a4",
+      "bytes": 459691
+    },
+    {
+      "osm_id": "1812270049",
+      "file": "1812270049.jpg",
+      "bbox": [
+        21.534854615444853,
+        51.59534316618757,
+        21.556548784555144,
+        51.60881783381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5457017,
+        51.6020805
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.534854615%2C51.595343166%2C21.556548785%2C51.608817834&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "a81a6abb179d0eec9c65de9ab59f746d4f9b6c368b467c8ff339e2dc13b6ea89",
+      "bytes": 494046
+    },
+    {
+      "osm_id": "1812270053",
+      "file": "1812270053.jpg",
+      "bbox": [
+        21.530516318383853,
+        51.59742386618757,
+        21.552211481616148,
+        51.61089853381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5413639,
+        51.6041612
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.530516318%2C51.597423866%2C21.552211482%2C51.610898534&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "c2f9bdcaa96c26a5d5e2f4f30dcf0f5da7fa8869710d17d47aefc01df4c94545",
+      "bytes": 531284
+    },
+    {
+      "osm_id": "1812270057",
+      "file": "1812270057.jpg",
+      "bbox": [
+        21.52537472807752,
+        51.599894566187565,
+        21.547071071922478,
+        51.61336923381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5362229,
+        51.6066319
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.525374728%2C51.599894566%2C21.547071072%2C51.613369234&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "d2d0a8350a33316c0f627cf34372fd79e7dcd705898e0702941b8ebbaaba3c56",
+      "bytes": 581804
+    },
+    {
+      "osm_id": "1812270063",
+      "file": "1812270063.jpg",
+      "bbox": [
+        21.521011884420336,
+        51.60384346618757,
+        21.542710115579663,
+        51.61731813381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.531861,
+        51.6105808
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.521011884%2C51.603843466%2C21.542710116%2C51.617318134&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "4f2c6dd88a3869bfd0e9f4e01a09ecc2f6a91a324a15f7eea8ac37f290ce5946",
+      "bytes": 564920
+    },
+    {
+      "osm_id": "1812270072",
+      "file": "1812270072.jpg",
+      "bbox": [
+        21.518032051610238,
+        51.606491066187566,
+        21.539731548389764,
+        51.61996573381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5288818,
+        51.6132284
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.518032052%2C51.606491066%2C21.539731548%2C51.619965734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "c156f8ee4c0f9baf20467b922f45b764a1cad7ffb14724ac1c5ed0fc1b8c03bd",
+      "bytes": 551200
+    },
+    {
+      "osm_id": "1812270077",
+      "file": "1812270077.jpg",
+      "bbox": [
+        21.514765579304598,
+        51.60930346618757,
+        21.5364664206954,
+        51.62277813381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.525616,
+        51.6160408
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.514765579%2C51.609303466%2C21.536466421%2C51.622778134&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "c66dd4fdd17cedc527a686bc9ad2ec553773b066244d88fa0e34b135ee768e89",
+      "bytes": 536609
+    },
+    {
+      "osm_id": "1812270088",
+      "file": "1812270088.jpg",
+      "bbox": [
+        21.511581729700413,
+        51.612020466187566,
+        21.533283870299588,
+        51.62549513381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5224328,
+        51.6187578
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.511581730%2C51.612020466%2C21.533283870%2C51.625495134&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "d4959ea6a9d169e1243e961211c1b7eb7880a11fc4d9ce3ed6385f2bfbcf907d",
+      "bytes": 510634
+    },
+    {
+      "osm_id": "1812270100",
+      "file": "1812270100.jpg",
+      "bbox": [
+        21.50733455961587,
+        51.61565896618757,
+        21.529038440384127,
+        51.62913363381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5181865,
+        51.6223963
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.507334560%2C51.615658966%2C21.529038440%2C51.629133634&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "9fad86c95f96c45ce0e52b6bba22a746a7a59bc7dd7b2310ce29b777929f5180",
+      "bytes": 496355
+    },
+    {
+      "osm_id": "1812270109",
+      "file": "1812270109.jpg",
+      "bbox": [
+        21.504282835103343,
+        51.61827006618757,
+        21.525987964896654,
+        51.63174473381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5151354,
+        51.6250074
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.504282835%2C51.618270066%2C21.525987965%2C51.631744734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "633cb391a40a19c467585f7ff586a37bec451287d71c3a295db727a5181960cc",
+      "bytes": 489684
+    },
+    {
+      "osm_id": "1812270118",
+      "file": "1812270118.jpg",
+      "bbox": [
+        21.500618485161752,
+        51.62140506618757,
+        21.522325114838246,
+        51.63487973381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5114718,
+        51.6281424
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.500618485%2C51.621405066%2C21.522325115%2C51.634879734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "c54f6f24846029e350e6e6428a72c9c0c936fd5c894b0abefcfcc17b08d0c0d8",
+      "bytes": 455920
+    },
+    {
+      "osm_id": "1812270151",
+      "file": "1812270151.jpg",
+      "bbox": [
+        21.496958939558564,
+        51.624521366187565,
+        21.518667060441434,
+        51.63799603381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.507813,
+        51.6312587
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.496958940%2C51.624521366%2C21.518667060%2C51.637996034&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "8b403a868c8523cbfbb68d1a9659cfbbcb9474cd811756db039a151ad9e6c189",
+      "bytes": 437199
+    },
+    {
+      "osm_id": "1812270159",
+      "file": "1812270159.jpg",
+      "bbox": [
+        21.493561841493854,
+        51.62743846618757,
+        21.515271358506144,
+        51.64091313381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5044166,
+        51.6341758
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.493561841%2C51.627438466%2C21.515271359%2C51.640913134&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "8284e51d8124c16ac02db67d8f67946995810e2411750a80885d8e028fa7b75f",
+      "bytes": 489115
+    },
+    {
+      "osm_id": "1812270172",
+      "file": "1812270172.jpg",
+      "bbox": [
+        21.490570478802763,
+        51.63062506618757,
+        21.512281521197234,
+        51.64409973381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.501426,
+        51.6373624
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.490570479%2C51.630625066%2C21.512281521%2C51.644099734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "d06f4a65689d55363160cfbd811a936b63ed779ccf5431c7fec7a8b75e1833ac",
+      "bytes": 556075
+    },
+    {
+      "osm_id": "1812270180",
+      "file": "1812270180.jpg",
+      "bbox": [
+        21.487614820112686,
+        51.633794366187566,
+        21.509327379887313,
+        51.64726903381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.4984711,
+        51.6405317
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.487614820%2C51.633794366%2C21.509327380%2C51.647269034&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "1e9e9dc68661aed5db0d52235615f05ca550ac748856168e14577c0e60e21b31",
+      "bytes": 574228
+    },
+    {
+      "osm_id": "1813773810",
+      "file": "1813773810.jpg",
+      "bbox": [
+        21.58733222475771,
+        51.56974906618757,
+        21.609014175242294,
+        51.58322373381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.5981732,
+        51.5764864
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.587332225%2C51.569749066%2C21.609014175%2C51.583223734&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "9291eb692868982a4052ad338273baac9eb586ce97c14a735951662da3301c34",
+      "bytes": 546819
+    },
+    {
+      "osm_id": "1816612920",
+      "file": "1816612920.jpg",
+      "bbox": [
+        21.48204609638807,
+        51.63974016618757,
+        21.50376150361193,
+        51.653214833812434
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.4929038,
+        51.6464775
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.482046096%2C51.639740166%2C21.503761504%2C51.653214834&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "e25d4e93935795b116f775d7b64dc27df682b2d5dda524cdfd470dc5fc1d179c",
+      "bytes": 598186
+    },
+    {
+      "osm_id": "1816612936",
+      "file": "1816612936.jpg",
+      "bbox": [
+        21.47793363267997,
+        51.64125876618757,
+        21.49964976732003,
+        51.65473343381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.4887917,
+        51.6479961
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.477933633%2C51.641258766%2C21.499649767%2C51.654733434&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "960e3ac2e4607ea581b53b97ec132e40d6a466721d6b3bca1087712dca4cb2a2",
+      "bytes": 630846
+    },
+    {
+      "osm_id": "11388376305",
+      "file": "11388376305.jpg",
+      "bbox": [
+        21.48486211638114,
+        51.636733566187566,
+        21.506576083618857,
+        51.65020823381243
+      ],
+      "crs": "EPSG:4326",
+      "center": [
+        21.4957191,
+        51.6434709
+      ],
+      "width": 2048,
+      "height": 2048,
+      "footprint_approx_m": [
+        1500,
+        1500
+      ],
+      "sampling_approx_m": 0.732421875,
+      "acquisition_date": null,
+      "source_url": "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&SRS=EPSG%3A4326&LAYERS=Raster&STYLES=&FORMAT=image%2Fjpeg&BBOX=21.484862116%2C51.636733566%2C21.506576084%2C51.650208234&WIDTH=2048&HEIGHT=2048",
+      "source": "GUGiK / Geoportal · Ortofotomapa StandardResolution",
+      "sha256": "bec85dbe2e84ba57d887622ebaec158cc46a3efbd1dab6be4d673341f1453150",
+      "bytes": 593491
+    }
+  ]
+}

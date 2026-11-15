@@ -1,12 +1,12 @@
 /* Shared facility selection, with the existing flood model restricted to its real extent. */
 async function installFloodFacilityWorkspace(){
   let source=await InfraWatchData.loadImagery('kozienice'),allSources=new Map(),activeGIS=[],nationalData={type:'FeatureCollection',features:[]},nationalMeta=await InfraWatchNationalPower.metadata(),nationalGIS,modelAvailable=true;
-  const modelPoints=infra.elements.slice(),legacyCoords=line.getLatLngs(),legacyBox=[...bbox];
+  const modelPoints=infra.elements.slice(),legacyCoords=line.getLatLngs(),legacyBox=[...bbox];let selectedGIS=null;
   const ready=InfraWatchData.allImagery().then(items=>items.forEach(s=>allSources.set(s.region,s)));
   const modelGeometry={type:'Polygon',coordinates:[[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]],[bbox[0],bbox[1]]]]};
   const status=document.createElement('p');status.id='floodModelCoverage';status.className='flood-model-coverage';
   const detail=document.createElement('section');detail.id='floodGISDetails';detail.className='flood-gis-details';detail.hidden=true;
-  document.querySelector('.map-column').append(status,detail);
+  document.getElementById('layersPanel').append(status);document.getElementById('detailPanel').insertBefore(detail,document.getElementById('asset'));
   map.setMinZoom(6);map.setMaxZoom(19);map.createPane('floodRegionalGIS');map.getPane('floodRegionalGIS').style.zIndex=460;
   const network=L.layerGroup().addTo(map),renderer=L.canvas({pane:'floodRegionalGIS'});
   const oldSetBase=setBase;let requestedBase='optical',sentinelYear=2025,nationalLayer=null;const regionalOptical=baseLayers.optical;map.removeLayer(baseLayers.ortho);
@@ -47,13 +47,17 @@ async function installFloodFacilityWorkspace(){
     $('floodScenarioBadge').textContent=modelAvailable?'SYNTETYCZNY':'BRAK MODELU';
     $('floodScenarioIntro').textContent=modelAvailable?'Dobierz wysokość i czas kulminacji, a następnie prześledź zmiany w 2D lub 3D.':'Dla tego obszaru nie przygotowano modelu zalania. Dostępny jest GIS i podkład obrazowy. Model demonstracyjny możesz zobaczyć w otoczeniu Elektrowni Kozienice.';
   };
+  window.clearFloodGISSelection=()=>{selectedGIS=null;detail.hidden=true};
+  window.focusFloodGISSelection=()=>{if(!selectedGIS)return;setView('2d');map.fitBounds(L.geoJSON(selectedGIS).getBounds(),{padding:[24,24],maxZoom:16})};
   function selectGIS(f){
+    selectedGIS=f;
     detail.hidden=false;detail.replaceChildren();const title=document.createElement('h3');title.textContent=f.properties.name||f.properties.ref||f.id;detail.append(title);
     for(const text of [f.id,'Rodzaj wg OSM: '+f.properties.power,'Napięcie wg OSM: '+(f.properties.voltage||'brak')+' V','Operator wg OSM: '+(f.properties.operator||'brak'),'Dla tej geometrii nie przypisano pomiaru ani oceny uszkodzeń. Model odnosi się do siatki terenu i wybranych słupów F401.']){const p=document.createElement('p');p.textContent=text;detail.append(p)}
-    const a=document.createElement('a');a.href=f.properties.source_url;a.textContent='Obiekt źródłowy OSM ↗';a.target='_blank';a.rel='noopener';detail.append(a);
+    const a=document.createElement('a');a.href=f.properties.source_url;a.textContent='Obiekt źródłowy OSM ↗';a.target='_blank';a.rel='noopener';detail.append(a);window.InfraWatchFloodWorkspace?.selected('gis');
   }
   function updateSelection(){
-    const selection=InfraWatchArea.getReport();activeGIS=nationalData.features.filter(InfraWatchArea.intersectsFeature);network.clearLayers();detail.hidden=true;
+    const selection=InfraWatchArea.getReport();activeGIS=nationalData.features.filter(InfraWatchArea.intersectsFeature);network.clearLayers();
+    if(!selectedGIS||!InfraWatchArea.intersectsFeature(selectedGIS)||!InfraWatchFilters.matchesNetwork(selectedGIS)){selectedGIS=null;detail.hidden=true;window.InfraWatchFloodWorkspace?.clearGIS()}
     const shown=activeGIS.filter(f=>f.properties.kind!=='support'||map.getZoom()>=14&&(f.properties.power!=='pole'||map.getZoom()>=16));
     L.geoJSON({type:'FeatureCollection',features:shown},{pane:'floodRegionalGIS',renderer,style:f=>({color:f.properties.power==='substation'?'#89cdd1':f.properties.kind==='device'?'#c7b2e4':['minor_line','cable'].includes(f.properties.power)?'#8ebc81':'#dcca85',weight:1.7,fillOpacity:.1,...(f.properties.power==='cable'?{dashArray:'5 4'}:{})}),pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:f.properties.kind==='support'?2.5:4,renderer,pane:'floodRegionalGIS'}),onEachFeature:(f,l)=>{const text=document.createElement('span');text.textContent=f.properties.name||f.properties.ref||f.id;l.bindTooltip(text);l.on('click',async()=>{try{selectGIS(await InfraWatchNationalPower.detail(f))}catch(error){status.textContent='Nie udało się pobrać szczegółów obiektu GIS.'}})}}).addTo(network);
     modelAvailable=source.region==='kozienice'&&(!selection||InfraWatchArea.intersectsFeature({geometry:modelGeometry}));
@@ -73,11 +77,11 @@ async function installFloodFacilityWorkspace(){
     window.refreshFloodAvailability();render();
   }
   const areaConfig={name:'Polska',imageryBox:InfraWatchSentinel.national()?InfraWatchSentinel.bbox:source.imagery.bbox,gisBox:nationalMeta.aoi_bbox,
-    showMap:()=>setView('2d'),onChange:()=>{updateSelection();nationalGIS?.refresh()},stats:()=>({total:activeGIS.length,lines:activeGIS.filter(f=>f.properties.kind==='line').length}),
+    showMap:()=>{window.InfraWatchFloodWorkspace?.show('map');setView('2d')},onChange:()=>{updateSelection();nationalGIS?.refresh()},stats:()=>({total:activeGIS.length,lines:activeGIS.filter(f=>f.properties.kind==='line').length}),
     onNavigate:()=>applyBase()
   };
   InfraWatchArea.install(map,areaConfig);map.getPane('studyArea').style.zIndex=480;
-  nationalGIS=InfraWatchNationalPower.install(map,{container:document.querySelector('.mapbuttons').parentElement,onData:(fc,m)=>{nationalData=fc;if(m)nationalMeta=m;updateSelection()}});
+  nationalGIS=InfraWatchNationalPower.install(map,{container:document.getElementById('layersPanel'),onData:(fc,m)=>{nationalData=fc;if(m)nationalMeta=m;updateSelection()}});
   $('modal').insertAdjacentHTML('afterbegin',InfraWatchNationalPower.sourceHTML(nationalMeta));
   const chooseRegion=async region=>{await ready;source=allSources.get(region);areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:source.imagery.bbox;updateSourceImagery();setBase('optical')};
   await InfraWatchFacility.install(map,{mode:'flood',region:'kozienice',name:'Cała Polska',ready,getFeatures:async(f,r)=>(await InfraWatchNationalPower.query(InfraWatchArea.boxFromDimensions(f.lat,f.lon,2*r,2*r))).features,
