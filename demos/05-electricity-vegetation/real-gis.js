@@ -1,6 +1,6 @@
 'use strict';
 // Public GIS snapshot. Source attributes are escaped; no risks or clearances are inferred.
-let realPower,realMeta,realGroups,realSelected=null,realSelectionGeneration=0,demoMode=false,realFeatureIndex=new Map(),realLayerIndex=new Map(),realPlan={};
+let realPower,realMeta,realGroups,realSelected=null,realSelectionGeneration=0,demoMode=false,realFeatureIndex=new Map(),realLayerIndex=new Map(),realPlan={},realLineCatalogPromise=null,realLineSearchGeneration=0,realNationwideLineQuery='';
 try{realPlan=JSON.parse(localStorage.getItem('infrawatch-real-plan-v1')||'{}')}catch(e){}
 const gisEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const gisText=v=>v===undefined||v===null||v===''?'Brak w OSM':gisEsc(v);
@@ -108,13 +108,44 @@ function renderRealActions(){const fs=Object.keys(realPlan).map(id=>realFeatureI
 function renderRealAnalysis(){
  const c=realMeta.counts,loaded=realPower.features.length;
  $('#analysisView').innerHTML=`<h2>Infrastruktura energetyczna · cała Polska</h2><p>Ogólnopolski snapshot OpenStreetMap: ${gisCount(realMeta.feature_count)} obiektów. Aktualnie wczytano ${gisCount(loaded)}. ${realPower.loading_scope?.detail?'Szczegółowa geometria dla kadru lub wybranego obszaru.':'Przegląd sieci głównej jest uproszczony; sieć lokalna, kable i urządzenia są pobierane po zbliżeniu do z11.'}</p><div class="analysis-grid"><article class="analysis-card"><h3>Zawartość ogólnopolskiego zbioru</h3><p>${gisCount(c.line)} odcinków power=line, ${gisCount(c.minor_line)} linii lokalnych, ${gisCount(c.cable)} kabli, ${gisCount(c.tower+c.pole)} podpór, ${gisCount(c.substation)} stacji i ${gisCount(c.transformer)} transformatorów. Dodatkowo łączniki, kompensatory i przekształtniki według tagów OSM.</p><h3>Zakres licznika i eksportu</h3><p>Liczniki, wyszukiwarka, CSV i GeoJSON dotyczą aktualnie wczytanych obiektów po aktywnych filtrach. Wskaż obszar badania, aby pobrać wszystkie kategorie w jego zasięgu. Geometrie zachowują pełny przebieg; długości nie są przycinane do wyboru.</p></article><article class="analysis-card"><h3>Dane publiczne wymagają weryfikacji</h3><p>Snapshot: ${gisEsc(realMeta.snapshot)}. Zbiór nie gwarantuje kompletności sieci. power=line obejmuje przesył i dystrybucję; napięcie i operator pochodzą wyłącznie z OSM. Nie uzupełniamy braków domysłami.</p><h3>Obrazy i pomiary</h3><p>Data GIS jest niezależna od wybranego roku Sentinel i nalotu GUGiK. Nie wyznaczono prześwitu, wysokości roślin ani zagrożeń. Osobny scenariusz symulowany zachowuje swój pierwotny zasięg na Śląsku.</p></article></div>`;
- $('#analysisView').insertAdjacentHTML('afterbegin',realLineAnalysisCard());bindRealLineAnalysisActions();
+ $('#analysisView').insertAdjacentHTML('afterbegin',realLineAnalysisCard());
+ $('#analysisView .line-target-card, #analysisView .line-target-empty').insertAdjacentHTML('afterend',realNationwideLinePicker());
+ bindRealLineAnalysisActions();bindRealNationwideLinePicker();
 }
 function realLineAnalysisCard(){
  const record=window.InfraWatchLineAnalysis?.get();
- if(!record)return '<section class="line-target-empty"><h2>Wybierz linię do analizy</h2><p>Wskaż odcinek na mapie lub użyj przycisku „Analizuj tę linię” w szczegółach obiektu.</p><button type="button" data-line-action="pick">Wybierz linię na mapie</button></section>';
+ if(!record)return '<section class="line-target-empty"><h2>Wybierz linię do analizy</h2><p>Wyszukaj linię na terenie całego kraju albo wskaż odcinek na mapie.</p><button type="button" data-line-action="pick">Wybierz linię na mapie</button></section>';
  const f=record.feature,p=f.properties,length=Number(p.length_km_in_aoi);
  return `<section class="line-target-card"><small>WYBRANA LINIA DO ANALIZY</small><h2>${gisEsc(realName(f))}</h2><p>${gisEsc(f.id)} · ${gisEsc(realKind(f))} · ${gisEsc(realVoltageLabel(p))}${Number.isFinite(length)?' · '+fmt(length,3)+' km':''}</p><p>Operator wg OSM: ${gisText(p.operator)}. Snapshot GIS: ${gisEsc(record.snapshot)}.</p><p>Zakres: pełna geometria jednego odcinka OSM. Może stanowić część dłuższej linii energetycznej. Podkład: ${effectiveImagery==='aerial'?'ortofotomapa GUGiK z uzupełnieniem Sentinel-2':effectiveImagery==='ndvi'?'NDVI Sentinel-2':'Sentinel-2'}, rok Sentinel: ${state.year}. Zmiana podkładu i filtrów zachowuje wybór.</p><p><strong>Wybrano obiekt; nie wykonano pomiaru zagrożeń.</strong> Brak wyliczenia prześwitu, wysokości drzew i kolizji dla tego odcinka.</p><div class="line-target-buttons"><button type="button" data-line-action="fit">Pokaż linię na mapie</button><button type="button" data-line-action="export">Pobierz wybraną linię · GeoJSON</button><button type="button" data-line-action="pick">Zmień linię</button><button type="button" data-line-action="clear">Usuń wybór</button></div></section>`;
+}
+function realNationwideLinePicker(){
+ return `<section class="national-line-picker"><div><small>WYBÓR KRAJOWY</small><h2>Znajdź linię w całej Polsce</h2><p>Katalog obejmuje linie napowietrzne, sieć lokalną i kable ujęte w publicznym snapshotcie OSM. Po wyborze pobierana jest pełna geometria odcinka.</p></div><label for="nationalLineSearch">Nazwa, operator, napięcie lub ID OSM</label><input id="nationalLineSearch" type="search" autocomplete="off" value="${gisEsc(realNationwideLineQuery)}" placeholder="Np. 110 kV, Warszawa lub way/123…"><p id="nationalLineStatus" role="status" aria-live="polite">Wpisz co najmniej 2 znaki. Wyszukiwanie obejmuje dane GIS całej Polski.</p><div id="nationalLineResults"></div></section>`;
+}
+function bindRealNationwideLinePicker(){
+ const input=$('#nationalLineSearch');if(!input)return;
+ input.oninput=()=>{realNationwideLineQuery=input.value;searchNationwideLines(input.value)};
+ if(input.value.trim().length>=2)searchNationwideLines(input.value);
+}
+async function searchNationwideLines(query){
+ const status=$('#nationalLineStatus'),results=$('#nationalLineResults'),q=String(query||'').trim().toLocaleLowerCase('pl');
+ const generation=++realLineSearchGeneration;results.innerHTML='';
+ if(q.length<2){status.textContent='Wpisz co najmniej 2 znaki. Wyszukiwanie obejmuje dane GIS całej Polski.';return}
+ status.textContent='Wczytywanie krajowego katalogu linii…';
+ try{
+  realLineCatalogPromise??=InfraWatchNationalPower.lineCatalog();
+  const catalog=await realLineCatalogPromise;if(generation!==realLineSearchGeneration)return;
+  const matches=catalog.features.filter(f=>`${realName(f)} ${f.id} ${f.properties.operator||''} ${f.properties.voltage||''} ${realVoltageLabel(f.properties)} ${f.properties.power||''}`.toLocaleLowerCase('pl').includes(q));
+  status.textContent=`Wyniki w całej Polsce: ${gisCount(matches.length)} · pokazano ${Math.min(matches.length,20)} · snapshot ${String(catalog.snapshot||realMeta.snapshot).slice(0,10)}.`;
+  results.innerHTML=matches.slice(0,20).map(f=>`<button type="button" class="national-line-result" data-national-line-id="${gisEsc(f.id)}"><strong>${gisEsc(realName(f))}</strong><span>${gisEsc(realVoltageLabel(f.properties))} · ${gisEsc(realKind(f))}</span><small>${gisEsc(f.id)} · ${gisEsc(f.properties.operator||'Operator niepodany w OSM')}${Number.isFinite(Number(f.properties.length_km_in_aoi))?' · '+fmt(Number(f.properties.length_km_in_aoi),2)+' km':''}</small></button>`).join('');
+  $$('#nationalLineResults [data-national-line-id]').forEach(button=>button.onclick=async()=>{
+   const feature=catalog.features.find(f=>f.id===button.dataset.nationalLineId);if(!feature)return;
+   status.textContent='Pobieranie pełnej geometrii linii…';results.querySelectorAll('button').forEach(b=>b.disabled=true);
+   const selected=await InfraWatchLineAnalysis.choose(feature),currentStatus=$('#nationalLineStatus');
+   if(currentStatus&&selected?.status==='selected')currentStatus.textContent='Pełna geometria została wczytana. Możesz otworzyć linię na mapie lub pobrać GeoJSON.';
+   else if(currentStatus&&selected?.status==='error')currentStatus.textContent=selected.error?.message||'Nie udało się pobrać pełnej geometrii. Spróbuj ponownie.';
+   results.querySelectorAll('button').forEach(b=>b.disabled=false);
+  });
+ }catch(error){if(generation===realLineSearchGeneration){realLineCatalogPromise=null;status.textContent=`Nie udało się wczytać krajowego katalogu: ${error.message} Możesz spróbować ponownie.`}}
 }
 function realLineAnalysisReport(){const record=window.InfraWatchLineAnalysis?.get();return record?{...record,imagery_context:{requested_layer:state.layer,displayed_layer:effectiveImagery,sentinel_year:state.year},assessment_status:'not_computed'}:null}
 function bindRealLineAnalysisActions(){

@@ -6369,5 +6369,10 @@
   "operator_verified": false,
   "total_partition_bytes": 52578263,
   "overview_includes_hv_cables": true,
-  "overview_cable_count": 1472
+  "overview_cable_count": 1472,
+  "line_catalog": {
+    "bytes": 5297624,
+    "sha256": "d9b8c083bb30c499001677f18305f271580f98bba86fdde37cdd1af7a6728a96"
+  },
+  "line_catalog_count": 134230
 }

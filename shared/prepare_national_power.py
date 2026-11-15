@@ -106,7 +106,7 @@ def write_gzip(path,obj):
     return {'bytes':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
 
 # Keep each partition independently usable and deduplicate by OSM ID in the reader.
-tiles=collections.defaultdict(list);overview=[];facilities=[];seen=set();dedup=collections.Counter()
+tiles=collections.defaultdict(list);overview=[];line_catalog=[];facilities=[];seen=set();dedup=collections.Counter()
 for row in RAW.open(encoding='utf8'):
     f=json.loads(row)
     if f['id'] in seen:dedup[f['properties']['power']]+=1;continue
@@ -117,6 +117,14 @@ for row in RAW.open(encoding='utf8'):
         for y in range(y0,y1+1):
             # Bounding-box indexing is conservative: crossing lines are not lost.
             tiles[f'{group}/10/{x}/{y}.json.gz'].append(f)
+    if p['power'] in ['line','minor_line','cable']:
+        # Compact countrywide search index. Full geometry stays in the partition.
+        parts=list(g.geoms) if g.geom_type=='MultiLineString' else [g]
+        endpoints=[parts[0].coords[0],parts[-1].coords[-1]]
+        catalog_props={k:v for k,v in p.items() if k in ['power','kind','name','ref','voltage','operator','circuits','cables','osm_type','osm_id','length_km_in_aoi']}
+        catalog_props.update(generalized=True,detail_tile=f'network/10/{x0}/{y0}.json.gz')
+        catalog_coords=[[round(float(v),7) for v in point] for point in endpoints]
+        line_catalog.append({'type':'Feature','id':f['id'],'properties':catalog_props,'geometry':{'type':'LineString','coordinates':catalog_coords},'bbox':b})
     if p['power']=='line' or p['power'] in ['substation','cable'] and max([float(v) for v in p.get('voltage','').split(';') if v.strip().isdigit()]+[0])>=110000:
         simplified={**f,'properties':{k:v for k,v in p.items() if k!='node_ids'},'geometry':normalize(g.simplify(.0005,preserve_topology=True))}
         simplified['properties']['generalized']=True
@@ -130,9 +138,10 @@ for i,(name,features) in enumerate(sorted(tiles.items())):
     index[name]={**write_gzip(OUT/name,{'type':'FeatureCollection','features':features}),'count':len(features)}
     if i%500==0:print('Packed',i,'/',len(tiles),'partitions',flush=True)
 overview_info=write_gzip(OUT/'overview.json.gz',{'type':'FeatureCollection','features':overview})
+line_catalog_info=write_gzip(OUT/'line-catalog.json.gz',{'type':'FeatureCollection','features':line_catalog,'snapshot':source_meta['snapshot']})
 facilities_info=write_gzip(OUT/'facilities.json.gz',{'items':facilities,'snapshot':source_meta['snapshot']})
 meta={**source_meta,'aoi_bbox':list(country.bounds),'counts':counts,'feature_count':len(seen),'excluded':excluded,'deduplicated':dict(dedup),'powers':POWERS,'overview_includes_hv_cables':True,'overview_cable_count':sum(f['properties']['power']=='cable' for f in overview),
-      'partition_zoom':10,'detail_min_zoom':11,'supports_min_zoom':14,'poles_min_zoom':16,'overview':overview_info,'overview_count':len(overview),'facilities':facilities_info,'tiles':index,
+      'partition_zoom':10,'detail_min_zoom':11,'supports_min_zoom':14,'poles_min_zoom':16,'overview':overview_info,'overview_count':len(overview),'line_catalog':line_catalog_info,'line_catalog_count':len(line_catalog),'facilities':facilities_info,'tiles':index,
       'geometry_processing':'Original OSM geometries intersecting Poland PRG boundary; full geometries retained at borders. All coordinates remain in EPSG:4326. Overview is simplified by 0.0005 degrees; detail partitions preserve source coordinates.',
       'completeness':'Nationwide coverage of the selected public OSM tags, not a complete or operator-verified inventory. Unknown voltage/operator are left unknown. power=line includes transmission and distribution; voltage alone does not establish operator responsibility.',
       'source_license':'ODbL 1.0','source_url':'https://www.openstreetmap.org/copyright','operator_verified':False,

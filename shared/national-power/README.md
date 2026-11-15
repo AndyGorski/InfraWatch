@@ -9,6 +9,7 @@ Geometrie zachowują współrzędne źródłowe EPSG:4326 i identyfikatory OSM. 
 ## Ładowanie
 
 - `overview.json.gz`: uproszczone linie główne oraz kable i stacje z podanym napięciem >=110 kV, tolerancja 0,0005 stopnia. Geometria przeglądowa ma `generalized: true` i odnośnik do pełnych szczegółów.
+- `line-catalog.json.gz`: lekki krajowy indeks wszystkich odcinków `line`, `minor_line` i `cable`, przechowujący podstawowe atrybuty, identyfikator partycji i końce geometrii. Wyszukiwarka może znaleźć linię w całej Polsce, a jej wybór pobiera dokładny obiekt z partycji. Indeks jest przeznaczony do wyszukiwania, nie do pomiarów ani wyznaczania zagrożeń.
 - `network/10/x/y.json.gz`: pełne linie, kable, stacje i urządzenia. Pobierane od z11.
 - `supports/10/x/y.json.gz`: pełne podpory. Pobierane od z14; lokalne słupy wyświetlane od z16.
 - Wybór obszaru badania udostępnia wszystkie kategorie niezależnie od zoomu; podpory są pobierane dopiero po ich włączeniu. Liczniki, wyszukiwarka i eksport uwzględniają aktywne filtry i dotyczą wczytanego kadru/wyboru, a nie całego krajowego zbioru. `loading_scope` w GeoJSON opisuje zakres i poziom szczegółowości.
@@ -26,5 +27,7 @@ Python: `osmium`, `shapely`. PBF i cache poza repozytorium:
 python shared/prepare_national_power.py --input /cache/poland.osm.pbf --cache /cache/power
 node shared/national-power.test.cjs
 ```
+
+Po zbudowaniu partycji istniejącego snapshotu można odtworzyć sam indeks wyszukiwania poleceniem `node shared/build_line_catalog.cjs`.
 
 Opcjonalne `--geo-libs` wskazuje katalog bibliotek, a `--repack` ponownie pakuje wcześniej wyodrębniony NDJSON. Przed ponownym generowaniem należy użyć czystego katalogu wyjściowego; manifest określa aktywne partycje. Duży PBF i pliki robocze nie są publikowane. Atrybucja ODbL jest dodawana do każdego obiektu przy wczytaniu i zachowywana w eksporcie.

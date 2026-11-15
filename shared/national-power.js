@@ -1,9 +1,9 @@
 /* Nationwide OSM electricity snapshot. Spatial loading; no inferred network or measurements. */
 window.InfraWatchNationalPower=(()=>{
   'use strict';
-  const scriptURL=new URL(document.currentScript.src),root=new URL('national-power/',scriptURL),dataVersion=scriptURL.searchParams.get('v')||'20261115-filters1',cache=new Map();
+  const scriptURL=new URL(document.currentScript.src),root=new URL('national-power/',scriptURL),dataVersion=scriptURL.searchParams.get('v')||'20261116-national-lines1',cache=new Map();
   const source='© OpenStreetMap contributors',license='ODbL 1.0';
-  let metadataPromise,overviewPromise,facilitiesPromise;
+  let metadataPromise,overviewPromise,facilitiesPromise,lineCatalogPromise;
   async function read(path){
     const target=new URL(path,root);target.searchParams.set('v',dataVersion);const response=await fetch(target);
     if(!response.ok)throw Error('Nie udało się pobrać GIS ('+response.status+').');
@@ -15,6 +15,7 @@ window.InfraWatchNationalPower=(()=>{
   function inflate(fc){for(const f of fc.features){Object.assign(f.properties,{source,source_license:license,source_url:'https://www.openstreetmap.org/'+f.id,operator_verified:false,demo:false});if(f.properties.osm_last_edit)f.properties.osm_last_edit=f.properties.osm_last_edit.replace(' ','T')}return fc}
   function overview(){return overviewPromise??=read('overview.json.gz').then(inflate).catch(e=>{overviewPromise=null;throw e})}
   function facilities(){return facilitiesPromise??=read('facilities.json.gz').catch(e=>{facilitiesPromise=null;throw e})}
+  function lineCatalog(){return lineCatalogPromise??=read('line-catalog.json.gz').then(inflate).catch(e=>{lineCatalogPromise=null;throw e})}
   function tileXY(lon,lat,z=10){const n=2**z;return [Math.floor((lon+180)/360*n),Math.floor((1-Math.asinh(Math.tan(Math.max(-85,Math.min(85,lat))*Math.PI/180))/Math.PI)/2*n)]}
   function pathsForBox(b,meta,groups=['network']){
     const a=tileXY(b[0],b[3]),c=tileXY(b[2],b[1]),paths=[];
@@ -71,5 +72,5 @@ window.InfraWatchNationalPower=(()=>{
     map.on('moveend',schedule);document.addEventListener('iw:study-area-change',schedule);retry.onclick=refresh;
     const ready=refresh();return {ready,refresh:schedule,getData:()=>lastData,getMetadata:()=>meta,getStatus:()=>status.textContent};
   }
-  return {metadata,overview,facilities,query,detail,pathsForBox,tileXY,sourceHTML,install,cacheSize:()=>cache.size};
+  return {metadata,overview,facilities,lineCatalog,query,detail,pathsForBox,tileXY,sourceHTML,install,cacheSize:()=>cache.size};
 })();
