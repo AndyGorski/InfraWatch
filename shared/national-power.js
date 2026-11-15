@@ -1,11 +1,11 @@
 /* Nationwide OSM electricity snapshot. Spatial loading; no inferred network or measurements. */
 window.InfraWatchNationalPower=(()=>{
   'use strict';
-  const root=new URL('national-power/',document.currentScript.src),cache=new Map();
+  const scriptURL=new URL(document.currentScript.src),root=new URL('national-power/',scriptURL),dataVersion=scriptURL.searchParams.get('v')||'20261115-filters1',cache=new Map();
   const source='© OpenStreetMap contributors',license='ODbL 1.0';
   let metadataPromise,overviewPromise,facilitiesPromise;
   async function read(path){
-    const response=await fetch(new URL(path,root));
+    const target=new URL(path,root);target.searchParams.set('v',dataVersion);const response=await fetch(target);
     if(!response.ok)throw Error('Nie udało się pobrać GIS ('+response.status+').');
     if(!path.endsWith('.gz'))return response.json();
     if(typeof DecompressionStream==='undefined')throw Error('Przeglądarka wymaga aktualizacji do obsługi skompresowanych danych GIS.');
@@ -36,7 +36,7 @@ window.InfraWatchNationalPower=(()=>{
     return {type:'FeatureCollection',features:[...found.values()],loading_scope:{bbox:b,detail:true,supports,partitions:paths.length,complete_country_inventory:false}};
   }
   async function detail(f){if(!f?.properties.generalized)return f;const fc=await partition(f.properties.detail_tile);return fc.features.find(x=>x.id===f.id)||f}
-  function sourceHTML(meta){return `<h3>Ogólnopolska infrastruktura energetyczna · OSM</h3><p>© OpenStreetMap contributors · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">ODbL 1.0</a>. Wyciąg Polski: <a href="https://download.geofabrik.de/europe/poland.html" target="_blank" rel="noopener">Geofabrik</a>. Snapshot ${String(meta.snapshot||'').replace(/[<>&]/g,'')}.</p><p>Zasięg całej Polski; linie, linie lokalne, kable, słupy, wieże, stacje, transformatory, łączniki, kompensatory i przekształtniki według dostępnych tagów OSM. Przy granicy zachowano pełne geometrie przecinające Polskę. Przegląd kraju jest uproszczony; od z11 pobierane są szczegóły, od z14 podpory, od z16 słupy lokalne. W wybranym obszarze pobierane są wszystkie kategorie.</p><p>Dane publiczne mogą mieć braki. Nie są inwentaryzacją potwierdzoną przez operatora. power=line obejmuje przesył i dystrybucję; nieznany operator lub napięcie pozostaje nieznane. Daty GIS są niezależne od zobrazowań. Nie dodano ocen zagrożeń ani pomiarów. Listy, liczniki i eksport dotyczą wczytanego obszaru lub przeglądu, zgodnie z opisem zasięgu.</p>`}
+  function sourceHTML(meta){return `<h3>Ogólnopolska infrastruktura energetyczna · OSM</h3><p>© OpenStreetMap contributors · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">ODbL 1.0</a>. Wyciąg Polski: <a href="https://download.geofabrik.de/europe/poland.html" target="_blank" rel="noopener">Geofabrik</a>. Snapshot ${String(meta.snapshot||'').replace(/[<>&]/g,'')}.</p><p>Zasięg całej Polski; linie, linie lokalne, kable, słupy, wieże, stacje, transformatory, łączniki, kompensatory i przekształtniki według dostępnych tagów OSM. Przy granicy zachowano pełne geometrie przecinające Polskę. Przegląd kraju jest uproszczony; od z11 pobierane są szczegóły, od z14 podpory, od z16 słupy lokalne. W wybranym obszarze pobierane są wszystkie kategorie.</p><p>Dane publiczne mogą mieć braki. Nie są inwentaryzacją potwierdzoną przez operatora. power=line obejmuje przesył i dystrybucję; nieznany operator lub napięcie pozostaje nieznane. Daty GIS są niezależne od zobrazowań. Nie dodano ocen zagrożeń ani pomiarów. Listy, liczniki i eksport uwzględniają aktywne filtry i wczytany obszar lub przegląd, zgodnie z opisem zasięgu.</p>`}
   function install(map,{container,onData,enabled=()=>true,onStatus=()=>{}}){
     const panel=document.createElement('section');panel.className='national-power-control';
     const title=document.createElement('strong');title.textContent='Infrastruktura · cała Polska';
@@ -44,8 +44,13 @@ window.InfraWatchNationalPower=(()=>{
     const total=document.createElement('p');total.className='national-power-total';
     const retry=document.createElement('button');retry.type='button';retry.textContent='Ponów GIS';retry.hidden=true;
     panel.append(title,total,status,retry);container.prepend(panel);
-    let generation=0,timer,meta,lastData=null;
+    window.InfraWatchFilters?.install(container);
+    let generation=0,timer,meta,lastData=null,lastRaw=null;
     const emit=(text,error=false)=>{status.textContent=text;panel.classList.toggle('has-error',error);retry.hidden=!error;onStatus(text,error)};
+    function publish(fc){
+      lastRaw=fc;lastData=window.InfraWatchFilters?InfraWatchFilters.apply(fc):fc;window.InfraWatchFilters?.syncLegacyControls();onData(lastData,meta);
+      emit((fc.loading_scope?.detail?(InfraWatchArea.getBox()?'Wybrany obszar':'Szczegóły kadru'):'Przegląd sieci głównej · uproszczony')+' · '+lastData.features.length.toLocaleString('pl-PL')+' obiektów po filtrach');InfraWatchArea.refresh();
+    }
     async function refresh(){
       const own=++generation;if(!enabled()){panel.hidden=true;return}panel.hidden=false;
       try{
@@ -55,15 +60,14 @@ window.InfraWatchNationalPower=(()=>{
         const precise=!!selection||map.getZoom()>=meta.detail_min_zoom;
         emit(precise?'Wczytywanie infrastruktury dla obszaru…':'Wczytywanie przeglądu sieci głównej…');
         let fc;
-        if(precise)fc=await query(b,{supports:!!selection||map.getZoom()>=meta.supports_min_zoom,current:()=>own===generation});
+        if(precise)fc=await query(b,{supports:(!window.InfraWatchFilters||InfraWatchFilters.get().details.includes('supports'))&&(!!selection||map.getZoom()>=meta.supports_min_zoom),current:()=>own===generation});
         else {const all=await overview();fc={type:'FeatureCollection',features:all.features.filter(f=>overlap(f,b)),loading_scope:{bbox:b,detail:false,supports:false,complete_country_inventory:false,generalized:true}}}
         if(own!==generation||!enabled())return;
-        fc.features=fc.features.filter(InfraWatchArea.intersectsFeature);lastData=fc;onData(fc,meta);
-        emit((precise?(selection?'Wybrany obszar · wszystkie kategorie':'Szczegóły kadru'+(map.getZoom()<meta.supports_min_zoom?' · podpory od z14':'')):'Przegląd sieci głównej · uproszczony · sieć lokalna i kable od z11')+' · '+fc.features.length.toLocaleString('pl-PL')+' wczytanych obiektów');
-        InfraWatchArea.refresh();
-      }catch(error){if(own!==generation)return;lastData={type:'FeatureCollection',features:[],loading_scope:{error:true,complete_country_inventory:false}};onData(lastData,meta);emit('Błąd GIS: '+error.message+' Użyj „Ponów GIS”.',true)}
+        fc.features=fc.features.filter(InfraWatchArea.intersectsFeature);publish(fc);
+      }catch(error){if(own!==generation)return;lastRaw=null;lastData={type:'FeatureCollection',features:[],loading_scope:{error:true,complete_country_inventory:false}};onData(lastData,meta);emit('Błąd GIS: '+error.message+' Użyj „Ponów GIS”.',true)}
     }
     const schedule=()=>{clearTimeout(timer);generation++;timer=setTimeout(refresh,180)};
+    document.addEventListener('iw:map-filters-change',()=>{if(!enabled())return;if(lastRaw&&!lastRaw.loading_scope?.error){publish({...lastRaw,features:lastRaw.features.filter(InfraWatchArea.intersectsFeature)});if(InfraWatchFilters.get().details.includes('supports')&&lastRaw.loading_scope?.detail&&!lastRaw.loading_scope.supports&&(InfraWatchArea.getBox()||map.getZoom()>=meta.supports_min_zoom))schedule()}else if(!lastData?.loading_scope?.error)schedule()});
     map.on('moveend',schedule);document.addEventListener('iw:study-area-change',schedule);retry.onclick=refresh;
     const ready=refresh();return {ready,refresh:schedule,getData:()=>lastData,getMetadata:()=>meta,getStatus:()=>status.textContent};
   }

@@ -47,10 +47,10 @@
   "supports_min_zoom": 14,
   "poles_min_zoom": 16,
   "overview": {
-    "bytes": 1381259,
-    "sha256": "3cd7f81c814382e5f4e558903740bd37182d2e077cee17168adf6c51683df90e"
+    "bytes": 1501795,
+    "sha256": "fc835ee681b62cc428d86bfca4891b23db48b815758a56934e7fe4eaec39b4a2"
   },
-  "overview_count": 19430,
+  "overview_count": 20902,
   "facilities": {
     "bytes": 1074559,
     "sha256": "f192f227815e0a3baa26fcfc3417eba38a6c9980c2f76eddec63af68539597bf"
@@ -6367,5 +6367,7 @@
   "source_license": "ODbL 1.0",
   "source_url": "https://www.openstreetmap.org/copyright",
   "operator_verified": false,
-  "total_partition_bytes": 52578263
+  "total_partition_bytes": 52578263,
+  "overview_includes_hv_cables": true,
+  "overview_cable_count": 1472
 }

@@ -33,7 +33,7 @@ window.InfraWatchPlants=(()=>{
     map.createPane('powerPlants');map.getPane('powerPlants').style.zIndex=520;
     const layer=L.layerGroup().addTo(map),panel=document.createElement('section');panel.className='plant-landmark-control';
     panel.innerHTML='<label class="plant-landmark-toggle"><input type="checkbox" id="showPowerPlants" checked><span>Elektrownie / elektrociepłownie / OZE<small>Osobne symbole i nazwy na mapie</small></span></label><p class="plant-landmark-status" role="status"></p><details><summary>Legenda obiektów wytwarzania</summary><div class="plant-landmark-key"></div><p>Typ i moc pochodzą z tagów OSM. Brak informacji pozostaje brakiem. Punkty referencyjne nie określają wysokości budynku ani terenu.</p></details>';
-    container.prepend(panel);const toggle=panel.querySelector('input'),status=panel.querySelector('.plant-landmark-status'),key=panel.querySelector('.plant-landmark-key');
+    container.prepend(panel);window.InfraWatchFilters?.install(container);const toggle=panel.querySelector('input'),status=panel.querySelector('.plant-landmark-status'),key=panel.querySelector('.plant-landmark-key');
     for(const [id,symbol] of Object.entries(symbols)){const entry=document.createElement('span');entry.innerHTML=`<i style="--plant-color:${symbol.color}">${svg(id)}</i><span>${esc(symbol.name)}</span>`;key.append(entry)}
     let selected=null;const markers=new Map();
     function popup(f){
@@ -47,7 +47,7 @@ window.InfraWatchPlants=(()=>{
     function refresh(){
       const enabled=toggle.checked&&!document.body.classList.contains('demo-mode');
       if(!enabled){map.removeLayer(layer);status.textContent='Warstwa elektrowni wyłączona.';return}layer.addTo(map);
-      const zoom=map.getZoom(),bounds=map.getBounds().pad(.06),visible=plants.filter(f=>bounds.contains([f.lat,f.lon]));
+      const zoom=map.getZoom(),bounds=map.getBounds().pad(.06),visible=plants.filter(f=>bounds.contains([f.lat,f.lon])&&(!window.InfraWatchFilters||InfraWatchFilters.matchesPlant(f)));
       const all=groups(visible,zoom,f=>map.project([f.lat,f.lon],zoom),selected).sort((a,b)=>Number(b.items.some(f=>f.id===selected))-Number(a.items.some(f=>f.id===selected))||Math.max(...b.items.map(f=>capacity(f)||0))-Math.max(...a.items.map(f=>capacity(f)||0))),retained=new Set(),labels=[];
       for(const group of all){
         const many=group.items.length>1,first=group.items.slice().sort((a,b)=>Number(b.id===selected)-Number(a.id===selected)||(capacity(b)||0)-(capacity(a)||0)||Number(!!b.named)-Number(!!a.named)||a.name.localeCompare(b.name,'pl'))[0],t=type(first);
@@ -56,7 +56,8 @@ window.InfraWatchPlants=(()=>{
         if(labelled&&!isSelected&&labels.some(b=>rect[0]<b[2]+5&&rect[2]>b[0]-5&&rect[1]<b[3]+5&&rect[3]>b[1]-5))labelled=false;
         if(labelled)labels.push(rect);
         const key=zoom+'|'+selected+'|'+labelled+'|'+group.items.map(f=>f.id).sort().join(',');retained.add(key);if(markers.has(key))continue;
-        const html=many?`<span class="plant-symbol plant-cluster">${svg('thermal')}<b>${group.items.length}</b></span>`:`<span class="plant-symbol plant-${t}">${svg(t)}</span>${labelled?`<span class="plant-map-name ${zoom>=12?'plant-map-name-detail':''}">${esc(first.name)}</span>`:''}`;
+        const clusterType=new Set(group.items.map(type)).size===1?t:null;
+        const html=many?`<span class="plant-symbol plant-cluster" style="color:${clusterType?symbols[clusterType].color:'#f4dfae'}">${svg(clusterType||'thermal')}<b>${group.items.length}</b></span>`:`<span class="plant-symbol plant-${t}">${svg(t)}</span>${labelled?`<span class="plant-map-name ${zoom>=12?'plant-map-name-detail':''}">${esc(first.name)}</span>`:''}`;
         const title=many?`${group.items.length} obiektów wytwarzania energii · przybliż, aby rozdzielić`:first.name+' · '+symbols[t].name;
         const marker=L.marker([group.lat,group.lon],{pane:'powerPlants',keyboard:true,title,alt:title,zIndexOffset:isSelected?1000:0,icon:L.divIcon({className:'plant-landmark-marker'+(isSelected?' plant-is-selected':'')+(zoom<=7?' plant-overview':''),html,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]})});
         if(many)marker.on('add',()=>marker.getElement()?.setAttribute('aria-label',title));
@@ -66,11 +67,12 @@ window.InfraWatchPlants=(()=>{
         marker.addTo(layer);markers.set(key,marker);
       }
       for(const [key,marker] of markers)if(!retained.has(key)){layer.removeLayer(marker);markers.delete(key)}
-      status.textContent=visible.length.toLocaleString('pl-PL')+' obiektów w kadrze · '+(zoom<12?'zbliż mapę, aby rozdzielić grupy':'osobne symbole i nazwy')+' · kliknij symbol';
+      status.textContent=visible.length.toLocaleString('pl-PL')+' obiektów po filtrach · '+(zoom<12?'zbliż, aby rozdzielić grupy':'kliknij symbol, aby zobaczyć kartę');
     }
     function sync(){selected=window.InfraWatchArea?.getReport()?.facility?.id||null;refresh()}
     toggle.onchange=()=>{refresh();document.dispatchEvent(new CustomEvent('iw:plant-layer-change'))};map.on('moveend',refresh);document.addEventListener('iw:study-area-change',sync);document.addEventListener('iw:gis-mode-change',refresh);sync();
-    return {refresh,setPlants:items=>{plants=items;refresh()},getCount:()=>plants.length,isVisible:()=>toggle.checked&&!document.body.classList.contains('demo-mode')};
+    document.addEventListener('iw:map-filters-change',()=>{toggle.checked=true;refresh();document.dispatchEvent(new CustomEvent('iw:plant-layer-change'))});
+    return {refresh,setPlants:items=>{plants=items;refresh()},getCount:()=>plants.length,isVisible:plant=>toggle.checked&&!document.body.classList.contains('demo-mode')&&(!plant||!window.InfraWatchFilters||InfraWatchFilters.matchesPlant(plant))};
   }
   return {catalog,install,type,capacity,groups,symbols};
 })();

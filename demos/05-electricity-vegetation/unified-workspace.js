@@ -49,6 +49,7 @@ function installUnifiedVegetation(){
   };InfraWatchArea.install(map,areaConfig);
   nationalGIS=InfraWatchNationalPower.install(map,{container:document.getElementById('layersPanel'),enabled:()=>!demoMode,onStatus:text=>{if(!demoMode)document.querySelector('.map-status').textContent='GIS OSM · '+text},onData:(fc,meta)=>{
     if(meta)realMeta=meta;realPower=fc;realLayerIndex.clear();
+    for(const [id,key] of [['showRealLines','lines'],['showRealMinor','minor'],['showRealCables','cables'],['showRealStations','stations'],['showRealDevices','devices'],['showRealSupports','supports']])document.getElementById(id).checked?realGroups[key].addTo(map):map.removeLayer(realGroups[key]);
     const retained=[realSelected,...Object.keys(realPlan)].map(id=>realFeatureIndex.get(id)).filter(Boolean);realFeatureIndex.clear();retained.forEach(f=>realFeatureIndex.set(f.id,f));fc.features.forEach(f=>{if(f.id!==realSelected||!f.properties.generalized)realFeatureIndex.set(f.id,f)});
     for(const key of ['lines','minor','stations','cables','devices'])realGroups[key].clearLayers().addData(fc);
     if(realSelected&&!fc.features.some(f=>f.id===realSelected))realSelected=null;

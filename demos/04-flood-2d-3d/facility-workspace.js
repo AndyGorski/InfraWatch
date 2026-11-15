@@ -63,7 +63,9 @@ async function installFloodFacilityWorkspace(){
     for(let y=0;y<dem.height;y++)for(let x=0;x<dem.width;x++)window.floodSelectionMask[y*dem.width+x]=Number(InfraWatchArea.contains(bbox[3]-(bbox[3]-bbox[1])*y/(dem.height-1),bbox[0]+(bbox[2]-bbox[0])*x/(dem.width-1)));
     towerLayer.clearLayers();for(const p of points)L.marker([p.lat,p.lon],{icon:L.divIcon({className:'towerIcon',html:'◇',iconSize:[20,20],iconAnchor:[10,10]})}).bindTooltip('Słup F401 · OSM '+p.id).on('click',()=>select(p)).addTo(towerLayer);
     line.setLatLngs(selection?infra.way.nodes.map(id=>points.find(p=>p.id===id)).filter(Boolean).map(p=>[p.lat,p.lon]):legacyCoords);
-    for(const layer of [line,towerLayer])modelAvailable?layer.addTo(map):map.removeLayer(layer);
+    const focusVisible=modelAvailable&&InfraWatchFilters.matchesLine({properties:{power:'line',voltage:'400000'}});
+    focusVisible?line.addTo(map):map.removeLayer(line);
+    focusVisible&&InfraWatchFilters.get().details.includes('supports')?towerLayer.addTo(map):map.removeLayer(towerLayer);
     if(!modelAvailable&&waterOverlay)map.removeLayer(waterOverlay);
     status.classList.toggle('unavailable',!modelAvailable);
     status.textContent=!modelAvailable?'Brak przygotowanego modelu zalania dla wybranego otoczenia. Dostępne są rzeczywiste linie GIS, Sentinel-2 i ortofotomapa.':selection?'Model demonstracyjny Wisły koło Kozienic · '+(InfraWatchArea.coverage(selection.bbox,legacyBox)==='full'?'wybór w zasięgu modelu':'częściowe pokrycie otoczenia')+' · słupy F401 w wyborze: '+points.length:'Model demonstracyjny Wisły koło Kozienic · 30 słupów F401.';
