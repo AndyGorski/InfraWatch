@@ -1,4 +1,10 @@
-# Zalanie infrastruktury — wybór obiektu
+# Zalanie infrastruktury — wspólne menu energetyki
+
+Od 15.11.2026 aktywny demonstrator korzysta z `shared/monitoring-workspace.css` i `InfraWatchUI`, tak jak roślinność i deformacje. Zakładki **Mapa / Obiekt / Analiza** oddzielają nawigację od stanu kamery **2D / 3D**. W lewym, zwijanym panelu są warstwy oraz lista słupów F401, w prawym karta wskazanego słupa albo obiektu GIS. Parametry wezbrania i wykres są w Analizie; oś czasu pozostaje pod mapą. Przejście do innej zakładki zatrzymuje odtwarzanie. Powrót zachowuje parametry i kamerę, a wysokość nagłówka oraz rozmiar mapy są aktualizowane przy zmianie układu.
+
+Dotychczasowy układ zachowano jako [powódź v2](../04-flood-2d-3d-v2/) i dodano do głównego archiwum. Migawka zawiera wszystkie 48 wcześniejszych plików lokalnych, w tym DEM i 30 szczegółowych zdjęć. `snapshot.json` zapisuje commit źródłowy i SHA-256 każdego pliku. Wspólne moduły oraz ogólnopolskie dane nadal korzystają ze ścieżki `../../shared`. Test `node demos/04-flood-2d-3d/workspace.test.cjs` sprawdza niezależność nawigacji i kamery, rozdzielenie kart GIS / F401, powrót do mapy oraz integralność migawki v2.
+
+## Wybór obiektu i zasięg modelu
 
 Wspólne menu **Wybierz obiekt** udostępnia te same 9 nazwanych elektrowni, elektrociepłowni i OZE co panele roślinności i deformacji. Dodatkowo można wyszukiwać 911 stacji energetycznych. Wybrany obiekt, promień 1–30 km i ustawienie lokalnych linii są zapisywane w URL; odnośniki Roślinność / Deformacje / Zalanie w menu zachowują wybór. Nawigacja nagłówka także przenosi kontekst.
 

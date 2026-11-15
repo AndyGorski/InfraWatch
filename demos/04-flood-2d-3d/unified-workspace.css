@@ -1,0 +1,51 @@
+/* Flood-specific geometry; shared monitoring-workspace owns navigation and drawers. */
+body.iw-flood.iw-monitoring{--iw-header:64px}
+.iw-flood.iw-monitoring .iw-status-strip{display:none}
+.iw-flood.iw-monitoring .workspace-toolbar{flex-wrap:wrap;padding-block:3px}
+.iw-flood.iw-monitoring .panel-buttons{flex-wrap:wrap}
+.iw-flood.iw-monitoring .flood-metrics{margin:0;gap:0}
+.iw-flood.iw-monitoring .flood-metric{flex-wrap:wrap;gap:0 12px}
+.iw-flood.iw-monitoring .flood-metric>small:first-child{flex:1;min-width:90px}
+.iw-flood.iw-monitoring .flood-metric>small:last-child{width:100%;font-size:9px}
+.iw-flood.iw-monitoring .flood-metric strong{margin:0;font-size:19px}
+.iw-flood.iw-monitoring .sidebar-heading{min-height:0;padding-top:18px}
+.iw-flood.iw-monitoring #floodScopeLabel{font-size:11px;color:var(--iw-muted)}
+.iw-flood.iw-monitoring .mapbuttons{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.iw-flood.iw-monitoring .mapbuttons button{font-size:11px}
+.iw-flood.iw-monitoring .map-column>.titleRow{margin:0;padding:9px 12px;border-bottom:1px solid var(--iw-border);flex-shrink:0}
+.iw-flood.iw-monitoring .map-column>.titleRow .eyebrow{display:none}
+.iw-flood.iw-monitoring #viewTitle{font-size:12px}
+.iw-flood.iw-monitoring .mapShell{flex:1;height:auto;min-height:180px;border-radius:0}
+.iw-flood.iw-monitoring .terrain3d-stage .mapShell{height:100%;min-height:0;flex:none}
+.iw-flood.iw-monitoring:not([data-flood-view="3d"]) .terrain3d-selected-label{display:none}
+.iw-flood.iw-monitoring .map-column>.legend{padding:5px 10px;margin:0;font-size:9px;gap:5px 8px;flex-shrink:0}
+.iw-flood.iw-monitoring .map-column>.mapWarning{margin:0;padding:3px 10px 6px;font-size:9px;flex-shrink:0}
+.iw-flood.iw-monitoring .mapnote{font-size:10px;max-width:calc(100% - 24px);bottom:22px}
+.iw-flood.iw-monitoring .timeline h2{font-size:12px}
+.iw-flood.iw-monitoring .timeline .titleRow{margin-bottom:5px}
+.iw-flood.iw-monitoring .timelineLabel{margin-top:3px;font-size:9px}
+.iw-flood.iw-monitoring .timeline .eyebrow{font-size:9px}
+.iw-flood.iw-monitoring .timeRow button{font-size:10px;padding:5px 8px}
+.iw-flood.iw-monitoring .flood-model-coverage{font-size:10px;padding:9px;margin:12px 0}
+.iw-flood.iw-monitoring .flood-objects{padding-top:16px}
+.iw-flood.iw-monitoring .flood-objects h2{font-size:14px}
+.iw-flood.iw-monitoring .flood-objects .titleRow{display:block}
+.iw-flood.iw-monitoring #table{max-height:none;overflow:visible}
+.iw-flood.iw-monitoring .riskrow{font-size:11px;align-items:center}
+.iw-flood.iw-monitoring .riskrow button{font-size:10px}
+.iw-flood.iw-monitoring .flood-gis-details{border:0;padding:0}
+.iw-flood.iw-monitoring .flood-analysis-grid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(250px,1fr);gap:20px;margin:20px 0}
+.iw-flood.iw-monitoring .analysis-card .titleRow{flex-wrap:wrap}
+.iw-flood.iw-monitoring .analysis-card .badge{font-size:9px}
+.iw-flood.iw-monitoring #modal{padding:24px}
+.iw-flood.iw-monitoring .terrain3d-controls{margin:0;border:0;border-bottom:1px solid var(--iw-border);border-radius:0;padding:8px 12px;flex-shrink:0;max-height:210px;overflow:auto}
+.iw-flood.iw-monitoring .terrain3d-settings{gap:7px}
+.iw-flood.iw-monitoring .terrain3d-settings>label:first-child{min-width:160px;font-size:10px}
+.iw-flood.iw-monitoring .terrain3d-controls p{font-size:9px;margin-top:4px}
+.iw-flood.iw-monitoring .terrain3d-detail-actions{margin-top:6px;gap:6px}
+.iw-flood.iw-monitoring .terrain3d-detail-actions button{font-size:10px;padding:5px 7px}
+.iw-flood.iw-monitoring .study-area-bar{margin:0;border-radius:0;font-size:10px;padding:6px 10px;flex-shrink:0}
+.iw-flood.iw-monitoring #assetContent{font-size:13px;line-height:1.7}
+.iw-flood.iw-monitoring .flood-source-foot{color:var(--iw-muted);font-size:10px;margin:16px 0}
+@media(max-width:1000px){.iw-flood.iw-monitoring .flood-analysis-grid{grid-template-columns:1fr}}
+@media(max-width:650px){body.iw-flood.iw-monitoring{--iw-header:52px}.iw-flood.iw-monitoring .workspace-toolbar{padding-inline:8px}.iw-flood.iw-monitoring .map-column>.titleRow{flex-wrap:wrap;gap:5px}.iw-flood.iw-monitoring .flood-metric strong{font-size:16px}.iw-flood.iw-monitoring .flood-metric{min-height:64px}}
