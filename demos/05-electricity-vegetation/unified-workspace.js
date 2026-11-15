@@ -81,6 +81,7 @@ function installUnifiedVegetation(){
   ['sourcesButton','helpButton','aboutButton'].forEach(id=>document.getElementById(id).onclick=showSources);
   document.querySelectorAll('[data-layer]').forEach(button=>{button.onclick=()=>{state.layer=button.dataset.layer;if(state.layer==='aerial'){if(!isDetailView())map.setZoom(13)}else if(isDetailView()){if(InfraWatchSentinel.national())map.setZoom(11);else fit()}updateLayer();renderTimeline()}});
   document.querySelector('#studyAreaDialog .note').textContent='GIS: cała Polska, szczegóły pobierane dla wybranego obszaru. Sentinel-2 i NDVI: ogólnopolskie mozaiki letnie. Archiwum konkretnych dat i scenariusz roślinności pozostają regionalne. Wybór nie tworzy analizy bezpieczeństwa.';
+  InfraWatchVegetationScenario.install({ready:regionalReady,onExit:()=>{areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:data.bbox}});
   updateSummary();renderImageryStatus();
-  requestAnimationFrame(()=>{map.invalidateSize({pan:false});const entry=new URL(location.href).searchParams;if(!InfraWatchArea.getBox()&&!entry.has('facility'))fit();if(entry.get('start')==='line')InfraWatchLineAnalysis.start()});
+  requestAnimationFrame(()=>{map.invalidateSize({pan:false});const entry=new URL(location.href).searchParams;if(!InfraWatchArea.getBox()&&!entry.has('facility')&&entry.get('scenario')!=='vegetation')fit();if(entry.get('start')==='line'&&entry.get('scenario')!=='vegetation')InfraWatchLineAnalysis.start()});
 }
