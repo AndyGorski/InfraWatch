@@ -21,16 +21,16 @@ function areaAvailability({sentinel,sar}){
 }
 const areaConfig={
   name:'Kozienice',imageryBox:historyBox,gisBox:historyBox,sarBox:radarBox,showMap:()=>showWorkspaceView('map'),
-  stats:()=>{const c=powerGIS.getReport().counts||{};return {total:Object.values(c).reduce((a,b)=>a+b,0),lines:(c.line||0)+(c.minor_line||0)}},
-  onChange:()=>{powerGIS.refreshStudyArea();render();imagery.refresh()},setAvailability:areaAvailability,
+  stats:()=>{const c=powerGIS.getReport().counts||{};return {total:Object.values(c).reduce((a,b)=>a+b,0),lines:(c.line||0)+(c.minor_line||0)+(c.cable||0)}},
+  onChange:()=>{powerGIS.refreshStudyArea();powerGIS.refreshNational();render();imagery.refresh()},setAvailability:areaAvailability,
   onNavigate:coverage=>{if(!InfraWatchSentinel.national()&&coverage!=='full')imagery.setMode('ortho',true);else if(InfraWatchArea.coverage(InfraWatchArea.getBox(),radarBox)==='none'&&['sar','mix'].includes(imagery.getReport().requested_mode))imagery.setMode('optical',true)}
 };InfraWatchArea.install(map,areaConfig);
-const regionalReady=Promise.all([InfraWatchData.all().then(items=>items.forEach(s=>sources.set(s.region,s))),powerGIS.ready,imagery.ready,initialInfrastructureReady]);
-regionalReady.then(()=>{const s=sources.get(activeRegion);historyBox=s.imagery.bbox;areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:historyBox;areaConfig.gisBox=s.meta.aoi_bbox;InfraWatchArea.refresh()});
-InfraWatchFacility.install(map,{mode:'deformation',region:'kozienice',name:'Wszystkie regiony',ready:regionalReady,getFeatures:f=>sources.get(f.region).gis.features,
-  beforeApply:async f=>{await regionalReady;const s=sources.get(f.region);activeRegion=s.region;historyBox=s.imagery.bbox;areaConfig.name=s.name;areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:historyBox;areaConfig.gisBox=s.meta.aoi_bbox;powerGIS.setDataset(s);imagery.setDataset(s);document.querySelector('.sidebar-heading .eyebrow').textContent=s.name+' / GIS energetyczny';document.querySelector('#areaLocationPreset option[value=source]').textContent='Obszar danych: '+s.name;if(!imported)$('mode').textContent=s.region==='kozienice'?'36 syntetycznych epok miesięcznych':'Punkty demo: Kozienice · dla tego regionu użyj importu CSV'},
+const regionalReady=Promise.all([InfraWatchData.allImagery().then(items=>items.forEach(s=>sources.set(s.region,s))),powerGIS.ready,imagery.ready,initialInfrastructureReady]);
+regionalReady.then(async()=>{const s=sources.get(activeRegion),meta=await InfraWatchNationalPower.metadata();historyBox=s.imagery.bbox;areaConfig.name='Polska';areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:historyBox;areaConfig.gisBox=meta.aoi_bbox;document.querySelector('#areaLocationPreset option[value=source]').textContent='Obszar danych GIS: Polska';InfraWatchArea.refresh()});
+InfraWatchFacility.install(map,{mode:'deformation',region:'kozienice',name:'Cała Polska',ready:regionalReady,getFeatures:async(f,r)=>(await InfraWatchNationalPower.query(InfraWatchArea.boxFromDimensions(f.lat,f.lon,2*r,2*r))).features,
+  beforeApply:async f=>{await regionalReady;const s=sources.get(f.region==='poland'?InfraWatchData.nearestRegion(f):f.region);activeRegion=s.region;historyBox=s.imagery.bbox;areaConfig.imageryBox=InfraWatchSentinel.national()?InfraWatchSentinel.bbox:historyBox;imagery.setDataset(s);document.querySelector('.sidebar-heading .eyebrow').textContent='Polska / GIS energetyczny';if(!imported)$('mode').textContent=s.region==='kozienice'?'36 syntetycznych epok miesięcznych':'Punkty demo: Kozienice · dla tego regionu użyj importu CSV'},
   prepareLayers:local=>{$('showGISLines').checked=true;$('showGISMinor').checked=local},
-  showLines:()=>{$('gisSearch').value='';$('gisSearch').oninput();document.querySelector('[data-deform-side="objects"]').click()},selectLine:id=>powerGIS.selectFeature(id)
+  showLines:()=>{$('gisSearch').value='';$('gisSearch').oninput();document.querySelector('[data-deform-side="objects"]').click()},selectLine:(id,f)=>powerGIS.selectFeature(id,f)
 });
 const fitOriginalGIS=$('fitGIS').onclick,fitOriginalLine=$('fitBtn').onclick;
 $('fitGIS').onclick=()=>InfraWatchArea.getBox()?InfraWatchArea.focus():fitOriginalGIS();

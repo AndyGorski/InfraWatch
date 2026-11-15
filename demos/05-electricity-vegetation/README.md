@@ -10,8 +10,8 @@ Lokalnie uruchom serwer z katalogu głównego repozytorium: `python -m http.serv
 
 ## Rzeczywiste dane
 
-- OpenStreetMap przez Overpass, snapshot bazy 06.11.2026 10:10:51 UTC. Bbox [18.34,50.035,18.84,50.46]. 555 odcinków `power=line`, 1654 `power=minor_line`, 2772 wieże/słupy kratowe, 12709 słupów i 817 stacji. Linie przycięto do obszaru; pominięto jedną relację stacji. Nie jest to kompletna inwentaryzacja operatora.
-- Widok początkowy: OSM way/171537807, Wielopole–Joachimów, Wielopole–Rokitnica, oznaczenie 400 kV, 50,840 km geometrii w obszarze i 137 podpór powiązanych węzłami źródłowej linii. Atrybuty napięcia i operatora pochodzą z OSM i nie są niezależnie potwierdzone.
+- Ogólnopolski snapshot OpenStreetMap / Geofabrik: linie, linie lokalne, kable, podpory, stacje i urządzenia. Dokładne liczby i daty w `../../shared/national-power/metadata.json`; metodologia w `../../shared/national-power/README.md`. Dane nie są kompletną inwentaryzacją operatora.
+- Widok początkowy: przegląd sieci głównej w Polsce. Szczegóły kadru od z11; wybór obszaru pobiera wszystkie kategorie. Liczniki i eksport dotyczą wczytanego zakresu, nie całej inwentaryzacji. Atrybuty napięcia i operatora pochodzą z OSM i nie są niezależnie potwierdzone.
 - Cztery mozaiki Sentinel-2 L2A (2020, 2022, 2024, 2025), Earth Search / Element 84, sąsiednie kafle z tego samego dnia i przelotu. NDVI obliczono z B04/B08, z uwzględnieniem skali/offsetu STAC i uproszczonej maski SCL. Regionalny widok Śląska jest przeskalowany do około 42 m/px; nie mierzą wysokości drzew.
 - Od poziomu mapy 12 automatycznie włącza się szczegółowa mozaika ortofotomap GUGiK WMTS. Data nalotu wymaga sprawdzenia w skorowidzu; mozaika nie jest zdjęciem z roku wybranego na osi czasu. GIS także pozostaje snapshotem z 2026, niezależnym od daty Sentinel.
 

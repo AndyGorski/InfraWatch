@@ -1,6 +1,6 @@
 /* Reuse attributed datasets at their actual coordinates across the three panels. */
 window.InfraWatchData=(()=>{
-  const root=new URL('../',document.currentScript.src),cache=new Map(),seeded=new Map();
+  const root=new URL('../',document.currentScript.src),cache=new Map(),seeded=new Map(),imageryCache=new Map();
   const regions={silesia:{name:'Śląsk',folder:'05-electricity-vegetation',history:'scenes.json'},kozienice:{name:'Kozienice',folder:'03-insar-multisensor-v2',history:'imagery-history.json'}};
   const url=path=>new URL(path,root).href;
   function seed(region,gis,meta){seeded.set(region,{gis,meta})}
@@ -21,5 +21,15 @@ window.InfraWatchData=(()=>{
     if(mode==='flood'){const g={type:'Polygon',coordinates:[[[extent[0],extent[1]],[extent[2],extent[1]],[extent[2],extent[3]],[extent[0],extent[3]],[extent[0],extent[1]]]]};return InfraWatchArea.distanceToGeometry(g,f.lat,f.lon)>radius*1000?'Zalanie: brak przygotowanego modelu · GIS i obrazy dostępne':InfraWatchArea.coverage(box,extent)==='full'?'Zalanie: w zasięgu modelu demonstracyjnego':'Zalanie: model obejmuje część otoczenia'}
     return mode==='deformation'?'Deformacje: GIS i historia obrazów · rzeczywiste InSAR wymaga importu':'Roślinność: GIS i historia Sentinel-2 / NDVI';
   }
-  return {root,url,regions,seed,load,coverage,all:()=>Promise.all(Object.keys(regions).map(load))};
+  function nearestRegion(f){return InfraWatchArea.pointDistance([f.lon,f.lat],[18.55,50.25])<InfraWatchArea.pointDistance([f.lon,f.lat],[21.46,51.65])?'silesia':'kozienice'}
+  function loadImagery(region){
+    if(!regions[region])return Promise.reject(Error('Nieznany region.'));
+    if(!imageryCache.has(region))imageryCache.set(region,(async()=>{
+      const r=regions[region],base=url(`demos/${r.folder}/assets/`);
+      const history=await json(base+r.history+'?v=20261107-coverage3');
+      const imagery={...history,scenes:history.scenes.map(s=>({...s,cloud:s.cloud??s.cloud_scene_percent,rgbURL:new URL(s.rgb||`sentinel-${s.year}.jpg`,base).href,ndviURL:new URL(s.ndvi||`ndvi-${s.year}.png`,base).href}))};
+      return {region,name:r.name,imagery};
+    })().catch(e=>{imageryCache.delete(region);throw e}));return imageryCache.get(region);
+  }
+  return {root,url,regions,seed,load,loadImagery,coverage,nearestRegion,all:()=>Promise.all(Object.keys(regions).map(load)),allImagery:()=>Promise.all(Object.keys(regions).map(loadImagery))};
 })();

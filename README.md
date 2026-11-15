@@ -2,6 +2,8 @@
 
 Centrum demonstracyjne projektu InfraWatch. Strona główna prezentuje trzy aktualne zastosowania: roślinność przy liniach energetycznych, deformacje terenu i infrastruktury oraz zalanie infrastruktury. Każda aplikacja znajduje się w osobnym katalogu.
 
+Aktualna warstwa GIS w trzech panelach obejmuje całą Polskę: **1 119 942 obiekty**, snapshot **14.11.2026 21:20:41 UTC**. Zawiera 17 162 odcinki główne, 90 894 lokalne, 26 174 kable, 942 048 podpór, 32 594 stacje i 10 424 transformatory oraz pozostałe urządzenia OSM. Szczegóły są pobierane przestrzennie; skompresowane partycje zajmują 52,6 MB, przegląd 1,4 MB, katalog stacji 1,1 MB. Dawne regionalne pliki GIS pozostają w repozytorium jako źródła archiwalne i do migracji istniejących planów. Ich zasięg nie ogranicza bieżącej mapy. Modele analiz i archiwum obrazów zachowują własne, odrębne zasięgi.
+
 Wspólna nawigacja prowadzi do katalogu aplikacji, [danych i metodologii](dane-i-metodologia.html), [archiwum](archiwum.html) i repozytorium. Nagłówki aktualnych aplikacji oraz wersji SAR/GIS i InSAR v1 korzystają z komponentu `shared/infrawatch-shell.js` i stylów `shared/infrawatch-shell.css`. W nagłówku aplikacji można przełączyć demonstrator lub wrócić do katalogu. Oryginalne wczesne prototypy zachowano jako migawki w archiwum.
 
 Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`). Karty oddzielnie opisują pochodzenie podkładów/GIS i charakter wyników analizy. Gaz, transport i woda są oznaczone jako planowane moduły drugiego zestawu.
@@ -11,9 +13,9 @@ Wygląd katalogu, archiwum i opisu źródeł jest wspólny (`shared/portal.css`)
 | `demos/00-early-prototypes/` | Dwa pierwsze prototypy HTML: mapa SAR/GIS oraz porównanie SAR/GIS. |
 | `demos/01-sar-gis/` | Demo SAR Sentinel‑1 i geometrii linii energetycznej koło Kozienic. |
 | `demos/02-insar-v1/` | Pierwsza wersja InSAR: syntetyczne szeregi przemieszczeń, prognoza trendu i import CSV. |
-| `demos/03-insar-multisensor-v2/` | Mapa deformacji: historia Sentinel-2 / NDVI 2020–2025, szczegółowy GUGiK WMS (PNG), osobna oś epok InSAR, regionalne warstwy OSM, karty obiektów, eksport GIS i import CSV. |
+| `demos/03-insar-multisensor-v2/` | Mapa deformacji: historia Sentinel-2 / NDVI 2020–2025, szczegółowy GUGiK WMS (PNG), osobna oś epok InSAR, ogólnopolskie warstwy OSM, karty obiektów, eksport GIS i import CSV. |
 | `demos/04-flood-2d-3d/` | Flood Lab: mapa 2D, model terenu 3D i scenariusze wezbrania 0–72 godzin. |
-| `demos/05-electricity-vegetation/` | Zestaw 2 / Energia: rzeczywiste GIS OSM na Śląsku, historia Sentinel-2 / NDVI, zbliżenia GUGiK oraz osobny scenariusz zarastania pasa linii. |
+| `demos/05-electricity-vegetation/` | Zestaw 2 / Energia: ogólnopolski GIS OSM, linie, kable i urządzenia, historia Sentinel-2 / NDVI, zbliżenia GUGiK oraz osobny scenariusz zarastania pasa linii. |
 
 ## Uruchamianie lokalne
 
@@ -73,7 +75,7 @@ Wybór filtruje obiekty GIS przecinające prostokąt, liczniki, wyszukiwarkę i 
 
 W trybie obiektu `study_area` zawiera również `shape: circle`, dane wybranego obiektu, promień i ustawienie sieci lokalnej. Osobny eksport obszaru zapisuje koło jako przybliżenie wielokątem 128 odcinków. Filtr punktów i geometrii działa według odległości sferycznej; nie ogranicza się do kwadratu otaczającego koło. Testy obejmują linie przecinające koło przy obu końcach poza nim, narożniki bbox, końce odcinków i otwory poligonów. Żaden nowy rzeczywisty pomiar InSAR ani prześwitu nie został dodany.
 
-Wskazanie nowej lokalizacji nie pobiera automatycznie nowego GIS ani nie tworzy pomiarów. W trybie „Cała Polska” dostępne są ogólnopolskie mozaiki letnie Sentinel-2 i NDVI. W trybie „Archiwum regionalne” poza przygotowanym zbiorem dostępna pozostaje ortofotomapa GUGiK; niedostępna historia jest blokowana. Dane zachowują oryginalne współrzędne; nie przenosi się zdjęć ani pomiarów z obszaru demonstracyjnego. Wymiary są przybliżeniem sferycznym, nie pomiarem geodezyjnym. Testy granic geometrii i wymiarów: `node shared/study-area.test.cjs`.
+Wskazanie nowej lokalizacji pobiera ogólnopolski GIS dla kadru/wyboru, ale nie tworzy pomiarów. W trybie „Cała Polska” dostępne są ogólnopolskie mozaiki letnie Sentinel-2 i NDVI. W trybie „Archiwum regionalne” poza przygotowanym zbiorem dostępna pozostaje ortofotomapa GUGiK; niedostępna historia jest blokowana. Dane zachowują oryginalne współrzędne; nie przenosi się zdjęć ani pomiarów z obszaru demonstracyjnego. Wymiary są przybliżeniem sferycznym, nie pomiarem geodezyjnym. Testy granic geometrii i wymiarów: `node shared/study-area.test.cjs`.
 
 
 ## Większy geograficzny zasięg Sentinel-2
@@ -93,7 +95,7 @@ Odtworzenie: `python shared/prepare_expanded_history.py --cache <katalog-cache>`
 
 ## Sentinel-2 dla całej Polski
 
-Trzy aktualne panele udostępniają przełącznik „Cała Polska · mozaika letnia” / „Archiwum regionalne” i przycisk „Pokaż Polskę”. Domyślne pokrycie Sentinel-2 obejmuje Polskę (bbox 13–25°E / 48,9–56,2°N, z pasem Bałtyku); GIS, SAR, InSAR i model zalania zachowują niezależne, regionalne zasięgi. Panel zalania udostępnia także wybór roku podkładu 2D; tekstura terenu 3D pozostaje oryginalnym obrazem lokalnym.
+Trzy aktualne panele udostępniają przełącznik „Cała Polska · mozaika letnia” / „Archiwum regionalne” i przycisk „Pokaż Polskę”. Domyślne pokrycie Sentinel-2 obejmuje Polskę (bbox 13–25°E / 48,9–56,2°N, z pasem Bałtyku); GIS ma także zasięg ogólnopolski; SAR, InSAR i model zalania zachowują niezależne, regionalne zasięgi. Panel zalania udostępnia także wybór roku podkładu 2D; tekstura terenu 3D pozostaje oryginalnym obrazem lokalnym.
 
 Na mapach trzech paneli znajduje się jasny obrys granicy Polski z ciemnym podbiciem. Źródło: publiczna usługa WFS GUGiK / PRG, warstwa `ms:A00_Granice_panstwa`, pobranie 14.11.2026, wersja źródłowa 28.07.2026. Granica obejmuje także morze terytorialne. Lokalny GeoJSON `shared/poland-boundary.geojson` zachowuje metadane i oryginalne położenie; geometrię uproszczono do około 25 m dla płynnego wyświetlania. Obrys pozostaje widoczny przy zmianie lat, RGB/NDVI i ortofotomapy, nie blokuje klikania obiektów GIS. Odtworzenie: `python shared/prepare_poland_boundary.py`.
 
@@ -112,3 +114,12 @@ Mozaiki RGB i NDVI wszystkich czterech lat rozszerzono na pas Bałtyku; zapytani
 W trzech panelach podkład lotniczy korzysta z GUGiK WMS StandardResolution, warstwa Raster, PNG z przezroczystością. Nad morzem i w lukach ortofotomapy widoczny jest Sentinel-2 z wybranego roku, umieszczony pod kaflami lotniczymi. Identyfikacja źródeł jest jawna w podpisie mapy, opisie czasu i oknie danych. Daty nalotów GUGiK pozostają niezależne; satelitarne uzupełnienie nie jest fotografią lotniczą. Błędy usługi GUGiK odsłaniają uzupełnienie i są sygnalizowane.
 
 Wspólna fabryka warstwy `InfraWatchSentinel.createAerialLayer` utrzymuje kolejność podkładów, przełącza rok uzupełnienia oraz usuwa obie części przy zmianie warstwy. Model zalania i tekstury 3D zachowują własny zakres i źródła.
+
+
+## Ogólnopolska mapa infrastruktury energetycznej
+
+Trzy aktualne panele korzystają ze wspólnego snapshotu Polski OSM / Geofabrik, przygotowanego przez `shared/prepare_national_power.py`. Obejmuje linie, sieć lokalną, kable, podpory, stacje, transformatory, łączniki, kompensatory i przekształtniki według tagów OSM. Nie gwarantuje kompletności ani weryfikacji przez operatora. power=line może dotyczyć przesyłu i dystrybucji.
+
+`shared/national-power.js` pobiera przestrzenne partycje z `shared/national-power/`. Przegląd kraju pokazuje uproszczone linie główne i stacje wysokich napięć; szczegóły sieci lokalnej, kabli i urządzeń są pobierane od z11, podpory od z14, lokalne słupy wyświetlane od z16. W wybranym obszarze badania pobierane są wszystkie kategorie. Liczniki, wyszukiwarka i eksport obejmują aktualnie wczytany kadr/wybór, z opisem `loading_scope`. Pełne geometrie i OSM ID są zachowane; duplikaty na granicach partycji usuwane w kliencie. PBF i cache roboczy pozostają poza repozytorium.
+
+Wyszukiwarka obiektów obejmuje stacje z całej Polski i dziewięć dotychczasowych obiektów wytwarzania. Odległość od stacji nie dowodzi połączenia elektrycznego. Rozszerzenie GIS nie dodaje pomiarów prześwitu, InSAR ani modeli zalania poza ich pierwotnym zasięgiem. Dane źródłowe i odtworzenie opisuje [dokumentacja warstwy krajowej](shared/national-power/README.md). Kontrola całego zbioru i zapytań w dziewięciu miastach: `node shared/national-power.test.cjs`.

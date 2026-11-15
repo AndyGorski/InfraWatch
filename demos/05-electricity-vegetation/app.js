@@ -216,6 +216,6 @@ function renderImageryStatus(){
   $('#currentDate').textContent=`Czerwiec–sierpień ${state.year} · mozaika Polski`;
   $('#timeSlider').setAttribute('aria-valuetext',`Mozaika letnia ${state.year}`);
   $$('#yearTrack button').forEach(b=>b.title=`Czerwiec–sierpień ${b.dataset.year} · różne daty zdjęć`);
-  if(!aerial){notice.hidden=false;$('#imageryLabel').textContent=`${effectiveImagery==='ndvi'?'NDVI':'Sentinel-2'} · Polska · ${state.year}`;$('#imageryNoticeText').textContent=InfraWatchSentinel.status(nationalSentinelLayer);$('#retryAerial').hidden=true;notice.classList.toggle('imagery-error',!!nationalSentinelLayer?.iwStatus.errors);$('#timelineNote').textContent='Mozaika z czerwca–sierpnia; różne daty pikseli. NDVI online bez maski chmur SCL. GIS i pomiary pozostają regionalne.'}
+  if(!aerial){notice.hidden=false;$('#imageryLabel').textContent=`${effectiveImagery==='ndvi'?'NDVI':'Sentinel-2'} · Polska · ${state.year}`;$('#imageryNoticeText').textContent=InfraWatchSentinel.status(nationalSentinelLayer);$('#retryAerial').hidden=true;notice.classList.toggle('imagery-error',!!nationalSentinelLayer?.iwStatus.errors);$('#timelineNote').textContent='Mozaika z czerwca–sierpnia; różne daty pikseli. NDVI online bez maski chmur SCL. Ogólnopolski GIS nie zawiera pomiarów zagrożeń.'}
  }
 }

@@ -11,6 +11,12 @@ vm.runInNewContext(fs.readFileSync(__dirname+'/regional-data.js','utf8'),sandbox
  assert.notEqual(s.imagery.scenes[3].rgbURL,k.imagery.scenes[3].rgbURL);
  for(const source of [s,k])for(const scene of source.imagery.scenes)for(const key of ['rgbURL','ndviURL'])assert(fs.existsSync(path.join(root,new URL(scene[key]).pathname.replace('/InfraWatch/',''))),'All historical assets must exist at their source path');
  await data.load('silesia');assert.equal(calls.length,6,'Datasets should be loaded once');
+ const before=calls.length,images=await data.allImagery();
+ assert.equal(calls.length-before,2,'Imagery-only path must not fetch legacy regional GeoJSON');
+ assert(calls.slice(before).every(url=>!url.includes('real-power')));
+ assert.equal(images[0].imagery.bbox.join(','),s.imagery.bbox.join(','));
+ assert.equal(images[1].imagery.scenes[3].rgbURL,k.imagery.scenes[3].rgbURL);
+ await data.loadImagery('silesia');assert.equal(calls.length,before+2,'Cache regional image metadata');
  const catalog=JSON.parse(fs.readFileSync(__dirname+'/analysis-facilities.json','utf8')),plants=catalog.items.filter(x=>x.kind==='plant');assert.equal(plants.length,9);
  const rybnik=plants.find(x=>x.id==='relation/12825526'),kozienice=plants.find(x=>x.id==='way/386883572');
  assert(data.coverage(rybnik,5,'flood').includes('brak przygotowanego modelu'));
