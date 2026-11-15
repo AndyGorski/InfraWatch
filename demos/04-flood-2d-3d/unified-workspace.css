@@ -54,3 +54,8 @@ body.iw-flood.iw-monitoring{--iw-header:64px}
 .iw-flood .towerIcon:not(.towerIcon-wet){color:#ffdc8f}
 .iw-flood.iw-monitoring .detail-panel>.analysis-card{margin-top:18px;border-top:1px solid var(--iw-border)}
 .iw-flood.iw-monitoring #detailPanel{overflow:auto}
+.iw-flood.iw-monitoring .flood-detail-switcher{display:flex;gap:6px;padding:0 0 12px;border-bottom:1px solid var(--iw-border);margin:0 0 12px}
+.iw-flood.iw-monitoring .flood-detail-switcher button{flex:1;font-size:11px;padding:7px 5px}
+.iw-flood.iw-monitoring .flood-detail-switcher button[aria-selected=true]{background:#28584b;border-color:#84e2c2;color:#d3faeb}
+.iw-flood.iw-monitoring .flood-scenario-card{margin:0;padding:14px;border-radius:7px}
+.iw-flood.iw-monitoring .flood-scenario-card .chart{max-height:130px}

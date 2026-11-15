@@ -19,8 +19,11 @@
   oldMap.className='map-column';oldMap.id='floodMapColumn';
   timeline.className='timeline';timeline.removeAttribute('style');timeline.querySelector('.eyebrow').textContent='Oś czasu scenariusza';timeline.querySelector('h2').textContent='Przebieg wezbrania · 0–72 h';oldMap.append(timeline);
   objectCard.className='detail-panel';objectCard.id='detailPanel';objectCard.prepend(Object.assign(document.createElement('button'),{className:'close-drawer',textContent:'×'}));objectCard.firstChild.setAttribute('data-close-workspace','');objectCard.firstChild.setAttribute('aria-label','Zamknij szczegóły');
+  const switcher=document.createElement('div');switcher.className='flood-detail-switcher';switcher.setAttribute('role','tablist');switcher.setAttribute('aria-label','Karta boczna');
+  for(const [id,label,mode]of [['detailObjectTab','Obiekt','object'],['detailScenarioTab','Scenariusz wezbrania','scenario']]){const button=document.createElement('button');button.type='button';button.id=id;button.textContent=label;button.dataset.detailMode=mode;button.setAttribute('role','tab');button.setAttribute('aria-selected',String(mode==='object'));switcher.append(button)}
+  const objectContent=document.createElement('div');objectContent.className='flood-detail-object';while(objectCard.children.length>1)objectContent.append(objectCard.children[1]);objectCard.append(switcher,objectContent);
   shell.querySelector('#mapView').append(oldMap,objectCard);
-  config.className='analysis-card';shell.querySelector('.flood-analysis-grid').append(config);
+  config.className='analysis-card flood-scenario-card';objectCard.append(config);config.hidden=true;
   const summary=document.createElement('section');summary.className='analysis-card';summary.innerHTML='<h3>Jak czytać wynik?</h3><p>Wybierz „Do kulminacji” na osi czasu, a następnie słup na mapie lub na liście „Obiekty F401”. Karta pokazuje modelową głębokość w komórce terenu.</p><p>Tryb 3D oferuje detal wybranego słupa, warstwice, zmianę skali pionowej i duży widok. Te ustawienia służą wizualizacji i nie zmieniają obliczeń.</p><p>Model obejmuje rejon Kozienic. W innych lokalizacjach dostępne są zdjęcia i infrastruktura GIS; symulacja pozostaje wyłączona.</p><p>Scenariusz nie jest prognozą ani oceną uszkodzeń. Nie uwzględnia przepływu i wałów.</p><a href="../04-flood-2d-3d-v2/">Otwórz archiwalne menu v2 →</a>';shell.querySelector('.flood-analysis-grid').append(summary);
   stats.className='workspace-metrics flood-metrics';stats.querySelectorAll('.stat').forEach(n=>n.className='flood-metric');
   main.replaceChildren(toolbar,stats,shell);
@@ -32,6 +35,8 @@
 
 function installUnifiedFloodWorkspace(){
   const q=s=>document.querySelector(s);let workspace='map',subject=q('#floodGISDetails').hidden?'tower':'gis';
+  function panelMode(mode){const scenario=mode==='scenario';q('.flood-detail-object').hidden=scenario;q('.flood-scenario-card').hidden=!scenario;for(const b of document.querySelectorAll('[data-detail-mode]'))b.setAttribute('aria-selected',String(b.dataset.detailMode===mode));q('#detailPanel').dataset.detailMode=mode}
+  document.querySelectorAll('[data-detail-mode]').forEach(b=>b.onclick=()=>panelMode(b.dataset.detailMode));
   const resize=()=>{if(workspace==='map'){map.invalidateSize({pan:false});if(state.view==='3d')draw3d()}};
   function show(view){
     if(!['map','asset','analysis'].includes(view))return;
@@ -57,11 +62,11 @@ function installUnifiedFloodWorkspace(){
     q('#objectOnMap').disabled=subject==='tower'?!state.selected:!window.focusFloodGISSelection;
   }
   const title=q('#detailPanel h2');title.id='detailSubjectTitle';
-  window.InfraWatchFloodWorkspace={show,selected(kind){subject=kind;if(kind==='tower')window.clearFloodGISSelection?.();mirror();InfraWatchUI.openDetails()},clearGIS(){subject='tower';mirror()}};
+  window.InfraWatchFloodWorkspace={show,selected(kind){subject=kind;if(kind==='tower')window.clearFloodGISSelection?.();panelMode('object');mirror();InfraWatchUI.openDetails()},clearGIS(){subject='tower';panelMode('object');mirror()}};
   const oldSelect=select;select=function(p){oldSelect(p);InfraWatchFloodWorkspace.selected('tower')};
   new MutationObserver(mirror).observe(q('#asset'),{childList:true,subtree:true,characterData:true});
   new MutationObserver(mirror).observe(q('#floodGISDetails'),{childList:true,subtree:true,characterData:true});
-  q('#configureFlood').onclick=()=>show('analysis');q('#analysisOnMap').onclick=()=>show('map');
+  q('#configureFlood').onclick=()=>{show('map');panelMode('scenario');InfraWatchUI.openDetails()};q('#analysisOnMap').onclick=()=>show('map');
   q('#objectOnMap').onclick=()=>{show('map');setView('2d');if(subject==='gis')window.focusFloodGISSelection?.();else if(state.selected)map.setView([state.selected.lat,state.selected.lon],15)};
   InfraWatchUI.install({layersButton:'#toggleLayers',detailsButton:'#toggleDetail',isMap:()=>workspace==='map',showMap:()=>show('map'),resize});
   const oldView=setView;setView=function(view){if(workspace!=='map')show('map');oldView(view);InfraWatchUI.sync()};
